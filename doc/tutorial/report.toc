@@ -1,0 +1,147 @@
+\contentsline {chapter}{\numberline {1}Introduction}{6}
+\contentsline {section}{\numberline {1.1}Conventions and style}{6}
+\contentsline {subsection}{\numberline {1.1.1}Function/name prefixes and case}{6}
+\contentsline {subsection}{\numberline {1.1.2}``Quick'', ``slow'' and ``in-place'' Gandalf routines}{6}
+\contentsline {subsection}{\numberline {1.1.3}Variable argument list functions}{7}
+\contentsline {subsection}{\numberline {1.1.4}Dynamic self-modification}{7}
+\contentsline {subsection}{\numberline {1.1.5}Coordinate pair ordering}{7}
+\contentsline {subsection}{\numberline {1.1.6}Pixel values}{7}
+\contentsline {subsection}{\numberline {1.1.7}Image orientation}{7}
+\contentsline {subsection}{\numberline {1.1.8}Error checking}{8}
+\contentsline {chapter}{\numberline {2}The Common Package}{9}
+\contentsline {section}{\numberline {2.1}Miscellaneous definitions}{9}
+\contentsline {subsection}{\numberline {2.1.1}Simple types}{9}
+\contentsline {subsection}{\numberline {2.1.2}Types with specific bit sizes}{10}
+\contentsline {subsection}{\numberline {2.1.3}Debugging tools}{10}
+\contentsline {section}{\numberline {2.2}Linked lists}{10}
+\contentsline {section}{\numberline {2.3}Bit arrays}{12}
+\contentsline {section}{\numberline {2.4}Memory allocation}{12}
+\contentsline {section}{\numberline {2.5}Array fill/copy}{13}
+\contentsline {section}{\numberline {2.6}Complex numbers}{13}
+\contentsline {section}{\numberline {2.7}Numerical routines}{13}
+\contentsline {section}{\numberline {2.8}Comparison routines}{14}
+\contentsline {section}{\numberline {2.9}Error handling}{14}
+\contentsline {subsection}{\numberline {2.9.1}More on the error trace}{15}
+\contentsline {section}{\numberline {2.10}Error tests and codes}{16}
+\contentsline {chapter}{\numberline {3}The Linear Algebra Package}{17}
+\contentsline {section}{\numberline {3.1}Fixed size matrices and vectors}{18}
+\contentsline {subsection}{\numberline {3.1.1}Fixed size vectors}{18}
+\contentsline {subsubsection}{\numberline {3.1.1.1}Creating and accessing fixed size vectors}{18}
+\contentsline {subsubsection}{\numberline {3.1.1.2}Fixed size vector addition}{19}
+\contentsline {subsubsection}{\numberline {3.1.1.3}Fixed size vector subtraction}{20}
+\contentsline {subsubsection}{\numberline {3.1.1.4}Rescaling a fixed size vector}{20}
+\contentsline {subsubsection}{\numberline {3.1.1.5}Fixed size vector products}{21}
+\contentsline {subsubsection}{\numberline {3.1.1.6}Fixed size vector file I/O}{21}
+\contentsline {subsubsection}{\numberline {3.1.1.7}Conversion from general to fixed size vector}{22}
+\contentsline {subsubsection}{\numberline {3.1.1.8}Single precision fixed size vectors}{22}
+\contentsline {subsubsection}{\numberline {3.1.1.9}Other types of fixed size vector}{23}
+\contentsline {subsubsection}{\numberline {3.1.1.10}Other sizes of fixed size vector}{23}
+\contentsline {subsubsection}{\numberline {3.1.1.11}Setting/extracting parts of fixed size vectors}{23}
+\contentsline {subsection}{\numberline {3.1.2}Fixed size matrices}{25}
+\contentsline {subsubsection}{\numberline {3.1.2.1}Definitions of fixed size matrice}{25}
+\contentsline {subsubsection}{\numberline {3.1.2.2}Creating and accessing fixed size matrices}{26}
+\contentsline {subsubsection}{\numberline {3.1.2.3}Fixed size matrix addition}{28}
+\contentsline {subsubsection}{\numberline {3.1.2.4}Fixed size matrix subtraction}{29}
+\contentsline {subsubsection}{\numberline {3.1.2.5}Rescaling a fixed size matrix}{30}
+\contentsline {subsubsection}{\numberline {3.1.2.6}Transposing a fixed size matrix}{31}
+\contentsline {subsubsection}{\numberline {3.1.2.7}Fixed size vector outer products}{31}
+\contentsline {subsubsection}{\numberline {3.1.2.8}Fixed size matrix/vector multiplication}{32}
+\contentsline {subsubsection}{\numberline {3.1.2.9}Fixed size matrix/matrix multiplication}{33}
+\contentsline {subsubsection}{\numberline {3.1.2.10}Fixed size matrix inverse}{37}
+\contentsline {subsubsection}{\numberline {3.1.2.11}Determinant, trace, norms of fixed size matrix}{37}
+\contentsline {subsubsection}{\numberline {3.1.2.12}Fixed size matrix decompositions}{38}
+\contentsline {subsubsection}{\numberline {3.1.2.13}Fixed size matrix file I/O}{40}
+\contentsline {subsubsection}{\numberline {3.1.2.14}Conversion from general to fixed size matrix}{41}
+\contentsline {subsubsection}{\numberline {3.1.2.15}Single precision fixed size matrices}{42}
+\contentsline {section}{\numberline {3.2}General size matrices and vectors}{42}
+\contentsline {subsection}{\numberline {3.2.1}General size vectors}{42}
+\contentsline {subsubsection}{\numberline {3.2.1.1}Creating and freeing general size vectors}{43}
+\contentsline {subsubsection}{\numberline {3.2.1.2}Adjusting the size of a general size vector}{43}
+\contentsline {subsubsection}{\numberline {3.2.1.3}Filling a general size vector with values}{44}
+\contentsline {subsubsection}{\numberline {3.2.1.4}Accessing the elements of a general size vector}{44}
+\contentsline {subsubsection}{\numberline {3.2.1.5}Copying a general size vector}{45}
+\contentsline {subsubsection}{\numberline {3.2.1.6}General size vector addition}{45}
+\contentsline {subsubsection}{\numberline {3.2.1.7}General size vector subtraction}{46}
+\contentsline {subsubsection}{\numberline {3.2.1.8}Rescaling a general size vector}{46}
+\contentsline {subsection}{\numberline {3.2.2}General size matrices}{47}
+\contentsline {subsubsection}{\numberline {3.2.2.1}Creating and freeing general size matrices}{48}
+\contentsline {subsubsection}{\numberline {3.2.2.2}Adjusting the size of a general size matrix}{50}
+\contentsline {subsubsection}{\numberline {3.2.2.3}Filling a general size matrix with values}{51}
+\contentsline {subsubsection}{\numberline {3.2.2.4}Accessing the elements of a general size matrix}{54}
+\contentsline {subsubsection}{\numberline {3.2.2.5}Copying a general size matrix}{55}
+\contentsline {subsubsection}{\numberline {3.2.2.6}Transposing a general size matrix}{56}
+\contentsline {subsubsection}{\numberline {3.2.2.7}General size matrix addition}{56}
+\contentsline {subsubsection}{\numberline {3.2.2.8}General size matrix subtraction}{58}
+\contentsline {subsubsection}{\numberline {3.2.2.9}Rescaling a general size matrix}{59}
+\contentsline {subsubsection}{\numberline {3.2.2.10}General size matrix/vector multiplication}{60}
+\contentsline {subsubsection}{\numberline {3.2.2.11}General size matrix/matrix multiplication}{61}
+\contentsline {subsubsection}{\numberline {3.2.2.12}Inverting a general size matrix}{65}
+\contentsline {subsubsection}{\numberline {3.2.2.13}Cholesky factorising a general size symmetric matrix}{66}
+\contentsline {subsubsection}{\numberline {3.2.2.14}Symmetric matrix eigendecomposition}{66}
+\contentsline {subsubsection}{\numberline {3.2.2.15}Accumulated symmetric matrix eigendecomposition}{67}
+\contentsline {subsection}{\numberline {3.2.3}Single precision general size matrices \& vectors}{68}
+\contentsline {chapter}{\numberline {4}The Image Package}{70}
+\contentsline {section}{\numberline {4.1}Image formats and types}{70}
+\contentsline {section}{\numberline {4.2}Simple image/pixel routines}{71}
+\contentsline {subsection}{\numberline {4.2.1}Image creation/destruction}{71}
+\contentsline {section}{\numberline {4.3}Image file I/O}{73}
+\contentsline {subsection}{\numberline {4.3.1}Setting an image to a new format, type and dimensions}{74}
+\contentsline {subsection}{\numberline {4.3.2}Accessing single pixels}{75}
+\contentsline {subsection}{\numberline {4.3.3}Filling an image with a constant value}{81}
+\contentsline {subsection}{\numberline {4.3.4}Converting a pixel to a given format/type}{82}
+\contentsline {section}{\numberline {4.4}Binary images}{83}
+\contentsline {section}{\numberline {4.5}Pointer images}{86}
+\contentsline {section}{\numberline {4.6}Copying/converting the whole or part of an image}{87}
+\contentsline {subsection}{\numberline {4.6.1}Accessing channels of an image}{88}
+\contentsline {section}{\numberline {4.7}Displaying images}{90}
+\contentsline {section}{\numberline {4.8}Image pyramids}{91}
+\contentsline {section}{\numberline {4.9}Inverting an image}{92}
+\contentsline {section}{\numberline {4.10}Image sequence I/O}{93}
+\contentsline {chapter}{\numberline {5}The Vision Package}{95}
+\contentsline {section}{\numberline {5.1}Cameras}{95}
+\contentsline {subsection}{\numberline {5.1.1}Building cameras}{100}
+\contentsline {subsection}{\numberline {5.1.2}Projecting points and lines}{101}
+\contentsline {subsection}{\numberline {5.1.3}Adding/removing camera distortion}{103}
+\contentsline {subsection}{\numberline {5.1.4}Building the camera calibration matrix}{104}
+\contentsline {subsection}{\numberline {5.1.5}Converting cameras between precisions}{105}
+\contentsline {section}{\numberline {5.2}Computing the fundamental/essential matrix}{105}
+\contentsline {section}{\numberline {5.3}Computing a homography between 2D scene and image}{107}
+\contentsline {subsection}{\numberline {5.3.1}Computing a 2D homography from an array of feature matches}{109}
+\contentsline {subsection}{\numberline {5.3.2}Computing a 2D affine homography}{110}
+\contentsline {section}{\numberline {5.4}Computing a homography between 3D scene and image}{111}
+\contentsline {section}{\numberline {5.5}Smoothing an image using a 1D convolution mask}{112}
+\contentsline {section}{\numberline {5.6}Smoothing an image using a 2D convolution mask }{114}
+\contentsline {section}{\numberline {5.7}Feature detection}{117}
+\contentsline {subsection}{\numberline {5.7.1}Image feature coordinate frames}{117}
+\contentsline {subsection}{\numberline {5.7.2}Edge detection}{117}
+\contentsline {subsection}{\numberline {5.7.3}Displaying an edge map}{120}
+\contentsline {subsection}{\numberline {5.7.4}The Canny edge detector}{121}
+\contentsline {subsection}{\numberline {5.7.5}Corner detection}{122}
+\contentsline {subsection}{\numberline {5.7.6}Displaying a corner map}{123}
+\contentsline {subsection}{\numberline {5.7.7}The Harris corner detector}{124}
+\contentsline {subsection}{\numberline {5.7.8}Line segment detection}{124}
+\contentsline {subsection}{\numberline {5.7.9}Displaying a line map}{126}
+\contentsline {subsection}{\numberline {5.7.10}The Gandalf line detector}{127}
+\contentsline {section}{\numberline {5.8}Representing 3D rotations}{127}
+\contentsline {subsection}{\numberline {5.8.1}Quaternion routines}{129}
+\contentsline {subsection}{\numberline {5.8.2}General rotation routines}{129}
+\contentsline {section}{\numberline {5.9}Representing 3D Euclidean transformations}{133}
+\contentsline {section}{\numberline {5.10}Levenberg-Marquardt minimisation}{135}
+\contentsline {subsection}{\numberline {5.10.1}Robust observations}{137}
+\contentsline {subsection}{\numberline {5.10.2}Generalised observations}{138}
+\contentsline {subsection}{\numberline {5.10.3}Levenberg-Marquardt software}{139}
+\contentsline {section}{\numberline {5.11}Fast Hough Transform}{144}
+\contentsline {subsection}{\numberline {5.11.1}The Fast Hough Transform (FHT)}{144}
+\contentsline {subsubsection}{\numberline {5.11.1.1}Notation}{144}
+\contentsline {subsubsection}{\numberline {5.11.1.2}The FHT Algorithm}{145}
+\contentsline {subsubsection}{\numberline {5.11.1.3}Example: Line Fitting}{145}
+\contentsline {subsection}{\numberline {5.11.2}Example: Plane Fitting}{145}
+\contentsline {subsubsection}{\numberline {5.11.2.1}Calculating the Intersection of a Plane and a Sphere}{147}
+\contentsline {subsubsection}{\numberline {5.11.2.2}Calculating the Plane Parameters of a Child Cube}{148}
+\contentsline {subsubsection}{\numberline {5.11.2.3}Formal Statement of the FHT Plane Fitting Algorithm}{148}
+\contentsline {subsection}{\numberline {5.11.3}Speed Improvement to FHT Line Finder}{151}
+\contentsline {subsubsection}{\numberline {5.11.3.1}Formal Statement of Algorithm}{153}
+\contentsline {subsubsection}{\numberline {5.11.3.2}Comparision of Speed and Memory Requirement with Standard FHT}{156}
+\contentsline {subsubsection}{\numberline {5.11.3.3}Complexity Comparison of FHT and MFHT}{157}
+\contentsline {chapter}{\numberline {6}The Test Framework}{158}
+\contentsline {section}{\numberline {6.1}Adding new tests}{158}

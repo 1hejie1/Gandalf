@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Adjusting the size of a general size matrix</TITLE>
+<META NAME="description" CONTENT="Adjusting the size of a general size matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node70.html">
+<LINK REL="previous" HREF="node68.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node70.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1252"
+  HREF="node70.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1248"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1242"
+  HREF="node68.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1250"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1253"
+  HREF="node70.html">Filling a general size</A>
+<B> Up:</B> <A NAME="tex2html1249"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1243"
+  HREF="node68.html">Creating and freeing general</A>
+ &nbsp; <B>  <A NAME="tex2html1251"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422200000000000000">
+Adjusting the size of a general size matrix</A>
+</H3>
+Once a matrix has been created, its size may be adjusted dynamically
+as needs arise. Gandalf stores the currently allocated maximum size of
+a matrix in the matrix structure, so it can determine when the size of
+the result of a computation will exceed the current size, and reallocate
+accordingly. This happens automatically when a matrix is the result
+of a calculation, but sometimes it is necessary to explicitly set the
+size of a matrix. This is done using the following routine.
+<PRE>
+      Gan_Marix mA;
+
+      /* create matrix A using e.g. gan_mat_form() */
+      gan_mat_set_size ( &amp;mA, 3 );
+</PRE>
+This resets the size of the matrix <TT>mA</TT> to 3.
+If the size of a matrix created
+by <TT>gan_mat_alloc()</TT> or <TT>gan_mat_form()</TT> is increased in size
+in this way beyond its originally allocated size, <TT>gan_mat_set_size()</TT>
+will automatically reallocate the matrix to the new size.
+On the other hand, if <TT>gan_mat_form_data()</TT> was used to create the
+matrix, it cannot be increased in size beyond the size of the array
+passed as the last argument into <TT>gan_mat_form_data()</TT>.
+
+<P>
+For square matrices there are similar routines for specific matrix types,
+for instance
+<PRE>
+      Gan_SquMarix smA;
+
+      /* create matrix A using e.g. gan_squmat_form() */
+      gan_symmat_set_size ( &amp;mA, 3 ); /* set A to be a symmetric matrix with size 3 */
+</PRE>
+An important feature here is that Gandalf allows both the size and type of
+the matrix to be changed. For instance, the following code is valid:
+<PRE>
+      Gan_SquMarix smA;
+
+      gan_diagmat_form ( &amp;smA, 2 ); /* create matrix A as diagonal with size 2 */
+      gan_symmat_set_size ( &amp;mA, 3 ); /* set A to be a symmetric matrix with size 3 */
+</PRE>
+Gandalf will reallocate the matrix internally if necessary. The main proviso
+here is that if the matrix was created using a <TT>..._form_data()</TT> routine,
+setting it to a type and size which requires more independent elements than
+the size of the data array passed in is an error, so for instance
+<PRE>
+      Gan_SquMarix smA;
+      double adAdata[10];
+
+      /* create matrix A as diagonal with size 2 */
+      gan_diagmat_form_data ( &amp;smA, 2, adAdata, 10 );
+
+      /* set A to be a symmetric matrix with size 4 */
+      gan_symmat_set_size ( &amp;mA, 4 );
+</PRE>
+is OK, because a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$4\times 4$"> symmetric matrix has ten independent elements,
+but an additional line
+<PRE>
+      gan_ltmat_set_size ( &amp;smA, 5 ); /* set A to be a lower triangular matrix with size 5 */
+</PRE>
+will fail (return <TT>NULL</TT>), because a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img63.png"
+ ALT="$5\times 5$"> triangular matrix
+has fifteen independent elements (see Equation&nbsp;<A HREF="node68.html#symtri-els">3.1</A>), and the
+array <TT>adAdata</TT> passed into the matrix originally has only ten elements.
+
+<P>
+The complete list of routines for setting a square matrix to a specific size
+(here 5) and type is
+<PRE>
+      gan_symmat_set_size ( &amp;smA, 5 ); /* set A to be a 5x5 symmetric matrix */
+      gan_ltmat_set_size ( &amp;smA, 5 ); /* set A to be a 5x5 lower triangular matrix */
+      gan_utmat_set_size ( &amp;smA, 5 ); /* set A to be a 5x5 upper triangular matrix */
+      gan_diagmat_set_size ( &amp;smA, 5 ); /* set A to be a 5x5 diagonal matrix */
+      gan_scalImat_set_size ( &amp;smA, 5 ); /* set A to be a 5x5 scaled identity matrix */
+</PRE>
+and there is also a function for setting a matrix with a variable type:
+<PRE>
+      /* set A to be a symmetric matrix with size 5 */
+      gan_squmat_set_type_size ( &amp;smA, GAN_SYMMETRIC_MATRIX, 5 );
+</PRE>
+and routines to set only the type, or only the size, of the matrix:
+<PRE>
+      /* set A to be a symmetric matrix, size unchanged */
+      gan_squmat_set_type ( &amp;smA, GAN_SYMMETRIC_MATRIX );
+
+      /* set A to be size 4, type unchanged */
+      gan_squmat_set_size ( &amp;smA, 4 );
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>NULL</TT> is returned and the error handler is
+invoked on failure. The most likely failure mode is failing to reallocate
+the matrix data, i.e. failure of a call to <TT>realloc()</TT>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1252"
+  HREF="node70.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1248"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1242"
+  HREF="node68.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1250"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1253"
+  HREF="node70.html">Filling a general size</A>
+<B> Up:</B> <A NAME="tex2html1249"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1243"
+  HREF="node68.html">Creating and freeing general</A>
+ &nbsp; <B>  <A NAME="tex2html1251"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

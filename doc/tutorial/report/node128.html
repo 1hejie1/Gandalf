@@ -1,0 +1,349 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General rotation routines</TITLE>
+<META NAME="description" CONTENT="General rotation routines">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node127.html">
+<LINK REL="up" HREF="node126.html">
+<LINK REL="next" HREF="node129.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2026"
+  HREF="node129.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2022"
+  HREF="node126.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2018"
+  HREF="node127.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2024"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2027"
+  HREF="node129.html">Representing 3D Euclidean transformations</A>
+<B> Up:</B> <A NAME="tex2html2023"
+  HREF="node126.html">Representing 3D rotations</A>
+<B> Previous:</B> <A NAME="tex2html2019"
+  HREF="node127.html">Quaternion routines</A>
+ &nbsp; <B>  <A NAME="tex2html2025"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00682000000000000000">
+General rotation routines</A>
+</H2>
+The different rotation representations are combined into the following
+structure:
+<PRE>
+      /* structure representing 3D rotation */
+      typedef struct Gan_Rot3D
+      {
+         Gan_Rot3D_Type type; /* representation used */
+         union
+         {
+            Gan_Quaternion                             q; /* quaternion form */
+            Gan_Vector3                                r; /* exponential form */
+            struct { Gan_Vector3 axis; double angle; } aa; /* angle/axis form */
+            Gan_Matrix33                               R; /* matrix form */
+         } d;
+      } Gan_Rot3D;
+</PRE>
+This structure can then be used to implement unary and binary operations
+involving rotations. Firstly there is a set of functions to build a rotation
+structure. For quaternions the function is
+<PRE>
+      Gan_Rot3D Rot; /* declare rotation structure */
+      double q0, q1, q2, q3; /* declare quaternion elements */
+
+      /* ... set q0, q1, q2 and q3 to quaternion coordinates, and scale to
+             unit length if desired ... */
+
+      /* build rotation structure from quaternion */
+      gan_rot3D_build_quaternion ( &amp;Rot, q0, q1, q2, q3 );
+</PRE>
+For the exponential representation use
+<PRE>
+      Gan_Rot3D Rot; /* declare rotation structure */
+      double rx, ry, rz; /* declare exponential rotation vector elements */
+
+      /* ... set rx, ry &amp; rz ... */
+
+      /* build rotation structure from exponential rotation vector */
+      gan_rot3D_build_exponential ( &amp;Rot, rx, ry, rz );
+</PRE>
+For the angle/axis representation use
+<PRE>
+      Gan_Rot3D Rot; /* declare rotation structure */
+      double angle, ax, ay, az; /* declare angle and axis elements */
+
+      /* ... set angle, ax, ay &amp; az ... */
+
+      /* build rotation structure from rotation angle and axis */
+      gan_rot3D_build_angle_axis ( &amp;Rot, angle, ax, ay, az );
+</PRE>
+Finally for the matrix representation we have
+<PRE>
+      Gan_Rot3D Rot; /* declare rotation structure */
+      double Rxx, Rxy, Rxz, Ryx, Ryy, Ryz, Rzx, Rzy, Rzz; /* declare matrix elements */
+
+      /* ... set matrix elements Rxx, Rxy etc. ... */
+
+      /* build rotation structure from rotation angle and axis */
+      gan_rot3D_build_matrix ( &amp;Rot, Rxx, Rxy, Rxz,
+                                     Ryx, Ryy, Ryz,
+                                     Rzx, Rzy, Rzz );
+</PRE>
+
+<P>
+Another way to build a rotation structure is from a fixed-size Gandalf vector
+or matrix. These routines give the added flexibility of allowing conversion
+to another rotation representation. So for instance
+<PRE>
+      Gan_Rot3D Rot; /* declare rotation structure */
+      Gan_Quaternion q; /* declare quaternion */
+
+      /* ... fill quaternion q using e.g. gan_quat_fill_q() ... */
+
+      /* fill rotation structure with rotation matrix equivalent to
+         quaternion q */
+      gan_rot3D_from_quaternion_q ( &amp;Rot, &amp;q, GAN_ROT3D_MATRIX ); /* OR */
+      Rot = gan_rot3D_from_quaternion_s ( &amp;q, GAN_ROT3D_MATRIX );
+</PRE>
+builds the rotation structure <TT>Rot</TT> containing the rotation matrix
+equivalent to the quaternion <TT>q</TT>. This routine and others in the same
+family do rescale and adjust as necessary to an exact rotation.
+The other routines are:
+<PRE>
+      Gan_Rot3D Rot; /* declare rotation structure */
+      Gan_Vector3 r; /* declare exponential rotation vector */
+      double angle; Gan_Vector3 axis; /* declare angle an axis */
+      Gan_Matrix33 R; /* declare rotation matrix */
+
+      /* ... fill vector r using e.g. gan_vec3_fill_q() ... */
+
+      /* fill rotation structure with quaternion equivalent to
+         exponential rotation vector r */
+      gan_rot3D_from_exponential_q ( &amp;Rot, &amp;r, GAN_ROT3D_QUATERNION ); /* OR */
+      Rot = gan_rot3D_from_exponential_s ( &amp;r, GAN_ROT3D_QUATERNION );
+
+      /* ... fill angle and axis ... */
+
+      /* fill rotation structure with rotation matrix equivalent to
+         angle and axis */
+      gan_rot3D_from_angle_axis_q ( &amp;Rot, angle, &amp;axis, GAN_ROT3D_QUATERNION ); /* OR */
+      Rot = gan_rot3D_from_angle_axis_s ( angle, &amp;axis, GAN_ROT3D_QUATERNION );
+
+      /* ... fill rotation matrix R ... */
+
+      /* fill rotation structure with angle and axis equivalent to
+         rotation matrix */
+      gan_rot3D_from_matrix_q ( &amp;Rot, &amp;R, GAN_ROT3D_QUATERNION ); /* OR */
+      Rot = gan_rot3D_from_matrix_s ( &amp;R, GAN_ROT3D_QUATERNION );
+</PRE>
+
+<P>
+Next are a pair of routines to set a rotation to zero:
+<PRE>
+      Gan_Rot3D Rot; /* declare rotation structure */
+
+      /* set a rotation structure to be a quaternion representation and
+         set it to a zero rotation */
+      gan_rot3D_ident_q ( &amp;Rot, GAN_ROT3D_QUATERNION ); /* OR */
+      Rot = gan_rot3D_ident_s ( GAN_ROT3D_QUATERNION );
+</PRE>
+
+<P>
+To apply a rotation to a 3D point use one of the routines
+<PRE>
+      Gan_Vector3 v3X, V3Xp; /* declare 3D points X &amp; Xp */
+
+      /* ... fill 3D point X with values ... */
+
+      /* apply rotation such as Xp = R*X */
+      gan_rot3D_apply_v3_q ( &amp;Rot, &amp;v3X, &amp;v3Xp ); /* OR */
+      v3Xp = gan_rot3D_apply_v3_s ( &amp;Rot, &amp;v3X );
+</PRE>
+
+<P>
+To combine two rotations use
+<PRE>
+      Gan_Rot3D Rot1, Rot2, Rot3; /* declare rotations R1, R2 &amp; R3 */
+
+      /* ... fill R1 and R2 with rotation parameters of the same type ... */
+
+      /* combine two rotations into a third: for matrices R3 = R1*R2 */
+      gan_rot3D_mult_q ( &amp;Rot1, &amp;Rot2, &amp;Rot3 ); /* OR */
+      Rot3 = gan_rot3D_mult_s ( &amp;Rot1, &amp;Rot2 );
+</PRE>
+The second rotation structure may also be implicitly inverted, yielding
+<PRE>
+      /* combine two rotations into a third: for matrices R3 = R1*R2^-1 */
+      gan_rot3D_multI_q ( &amp;Rot1, &amp;Rot2, &amp;Rot3 ); /* OR */
+      Rot3 = gan_rot3D_multI_s ( &amp;Rot1, &amp;Rot2 );
+</PRE>
+
+<P>
+There is also a set of arithmetical routines. For binary arithmetical
+operations, both structures  must have the same representation, and the
+operation is a pure parameter addition/subtraction etc.,
+without rescaling or otherwise
+adjusting the rotation parameters to conform to an actual rotation.
+This is often required when implementing optimisation involving rotation
+parameters, for instance computing derivatives numerically.
+Firstly there are routines for multiplying or dividing rotation
+parameters by a scalar:
+<PRE>
+      Gan_Rot3D Rot1, Rot2; /* declare rotations R1 &amp; R2 */
+
+      /* ... fill R1 with rotation parameters ... */
+
+      /* multiply the rotation parameters R1 by 3, writing them into R2 */
+      gan_rot3D_scale_q ( &amp;Rot1, 3.0, &amp;Rot2 ); /* R2 = 3*R1, OR */
+      R2 = gan_rot3D_scale_s ( &amp;Rot1, 3.0 ); /* R2 = 3*R1, OR */
+      gan_rot3D_scale_i ( &amp;Rot1, 3.0 ); /* replace R1 = 3*R1 */
+
+      /* divide the rotation parameters R1 by 3, writing them into R2 */
+      gan_rot3D_divide_q ( &amp;Rot1, 3.0, &amp;Rot2 ); /* R2 = R1/3, OR */
+      R2 = gan_rot3D_divide_s ( &amp;Rot1, 3.0 ); /* R2 = R1/3, OR */
+      gan_rot3D_divide_i ( &amp;Rot1, 3.0 ); /* replace R1 = R1/3 */
+</PRE>
+
+<P>
+Next a set of routines each for adding and subtracting rotation parameters:
+<PRE>
+      Gan_Rot3D Rot1, Rot2, Rot3; /* declare rotations R1, R2 &amp; R3 */
+
+      /* ... fill R1 and R2 with rotation parameters of the same type ... */
+
+      /* add the rotation parameters R1 and R2 */
+      gan_rot3D_add_q ( &amp;Rot1, &amp;Rot2, &amp;Rot3 ); /* R3 = R1 + R2, OR */
+      Rot3 = gan_rot3D_add_s ( &amp;Rot1, &amp;Rot2 ); /* R3 = R1 + R2, OR */
+      gan_rot3D_increment ( &amp;Rot1, &amp;Rot2 ); /* replace R1 = R1 + R2 in-place, OR */
+      gan_rot3D_add_i1 ( &amp;Rot1, &amp;Rot2 ); /* replace R1 = R1 + R2 in-place, OR */
+      gan_rot3D_add_i2 ( &amp;Rot1, &amp;Rot2 ); /* replace R2 = R1 + R2 in-place */
+
+      /* subtract the rotation parameters R1 and R2 */
+      gan_rot3D_sub_q ( &amp;Rot1, &amp;Rot2, &amp;Rot3 ); /* R3 = R1 - R2, OR */
+      Rot3 = gan_rot3D_sub_s ( &amp;Rot1, &amp;Rot2 ); /* R3 = R1 - R2, OR */
+      gan_rot3D_decrement ( &amp;Rot1, &amp;Rot2 ); /* replace R1 = R1 - R2 in-place, OR */
+      gan_rot3D_sub_i1 ( &amp;Rot1, &amp;Rot2 ); /* replace R1 = R1 - R2 in-place, OR */
+      gan_rot3D_sub_i2 ( &amp;Rot1, &amp;Rot2 ); /* replace R2 = R1 - R2 in-place */
+</PRE>
+
+<P>
+There are a couple of routines to convert a rotation structure from one
+representation to another:
+<PRE>
+      Gan_Rot3D Rot1, Rot2; /* declare rotations R1 &amp; R2 */
+
+      /* ... fill R1 with rotation parameters ... */
+
+      /* convert rotation R1 to matrix representation in R2 */
+      gan_rot3D_convert_q ( &amp;Rot1, GAN_ROT3D_MATRIX, &amp;Rot2 ); /* OR */
+      Rot2 = gan_rot3D_convert_s ( &amp;Rot1, GAN_ROT3D_MATRIX );
+</PRE>
+
+<P>
+Finally a utility routine to correct a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix to the ``nearest''
+orthogonal matrix, using SVD:
+<PRE>
+      Gan_Matrix33 m33R; /* declare matrix R */
+
+      /* ... set up R as "nearly" a rotation matrix */
+
+      /* adjust matrix R to be exactly a rotation matrix */
+      gan_rot3D_matrix_adjust ( &amp;m33R );
+</PRE>
+
+<P>
+For statistical optimisation purposes there is a structure designed to hold
+covariance information for rotation parameters, currently supporting
+only quaternion and exponential representations, they being the most likely
+representations to use for optimising rotation parameters:
+<PRE>
+      /* structure representing covariance of 3D rotation */
+      typedef struct Gan_Rot3D_Cov
+      {
+         Gan_Rot3D_Type type;
+         union
+         {
+            Gan_SquMatrix44 q; /* covariance of quaternion */
+            Gan_SquMatrix33 r; /* covariance of exponential rotation vector */
+         } data;
+      } Gan_Rot3D_Cov;
+</PRE>
+
+<P>
+<B>Error detection:</B> The <TT>gan_rot3D_build_...()</TT> and all the
+<TT>gan_rot3D_..._[qi]()</TT>, <TT>gan_rot3D_..._i1()</TT>,
+
+<BR><TT>gan_rot3D_..._i2()</TT>, <TT>gan_rot3D_..._increment()</TT> and
+<TT>gan_rot3D_..._decrement()</TT> routines return a boolean value,
+and return <TT>GAN_FALSE</TT> on error, invoking the Gandalf error handler.
+The main error modes are difference of the representations between two
+rotation structures for the arithmetic and combination routines,
+and illegal parameter values.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2026"
+  HREF="node129.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2022"
+  HREF="node126.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2018"
+  HREF="node127.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2024"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2027"
+  HREF="node129.html">Representing 3D Euclidean transformations</A>
+<B> Up:</B> <A NAME="tex2html2023"
+  HREF="node126.html">Representing 3D rotations</A>
+<B> Previous:</B> <A NAME="tex2html2019"
+  HREF="node127.html">Quaternion routines</A>
+ &nbsp; <B>  <A NAME="tex2html2025"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

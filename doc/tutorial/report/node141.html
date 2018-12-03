@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Calculating the Plane Parameters of a Child Cube</TITLE>
+<META NAME="description" CONTENT="Calculating the Plane Parameters of a Child Cube">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node142.html">
+<LINK REL="previous" HREF="node140.html">
+<LINK REL="up" HREF="node139.html">
+<LINK REL="next" HREF="node142.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2197"
+  HREF="node142.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2193"
+  HREF="node139.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2187"
+  HREF="node140.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2195"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2198"
+  HREF="node142.html">Formal Statement of the</A>
+<B> Up:</B> <A NAME="tex2html2194"
+  HREF="node139.html">Example: Plane Fitting</A>
+<B> Previous:</B> <A NAME="tex2html2188"
+  HREF="node140.html">Calculating the Intersection of</A>
+ &nbsp; <B>  <A NAME="tex2html2196"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006112200000000000000">
+Calculating the Plane Parameters of a Child Cube</A>
+</H3>
+  When a new ``best so far'' fit cube is found,
+  the cube needs to find out where it is in parameter space.
+  The FHT does not explicitly propagate information from parent to child
+  concerning the position of hypercubes in parameter space.
+  Of course it
+  would be trivial to do this, by, for instance, calculating the centre
+  of the child relative to the centre of the parent,
+  using equation&nbsp;<A HREF="node140.html#pc_centres">5.17</A>, and passing
+  the centre coordinates on to the child.
+  However, since centre coordinates are needed <EM>only</EM> when an
+  improved planar fit is found, this would involve quite a lot of wasted
+  multiplication and division.
+
+<P>
+The method used in Needles provides each cube with the part of its
+  ``family tree'' comprising the direct line of descent from the root
+  to itself. It therefore knows how it is related to its parent, how
+  its parent was related to its grandparent, and so on. A cube knows
+  only about its own ``branch'', which is passed down to it by its parent.
+
+<P>
+The relationship between parent and child cubes is contained in the
+  child indices <!-- MATH
+ $[b_1, b_2, b_3]$
+ -->
+<IMG
+ WIDTH="69" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img322.png"
+ ALT="$[b_1, b_2, b_3]$">.
+  Each cube therefore receives a list of such index triplets, detailing
+  the relationships between ancestors of different generations.
+  The list is linked <EM>backwards</EM>, i.e. from child to root. The formulae
+  to calculate a cube's centre coordinates are simpler when the list
+  is traversed in this direction. They are computational in nature,
+  involving iteration when traversing the list, so we have not included
+  them here, but they are given in the next section in procedure
+  <IMG
+ WIDTH="85" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img342.png"
+ ALT="$cube\_centre$">.
+ <HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2197"
+  HREF="node142.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2193"
+  HREF="node139.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2187"
+  HREF="node140.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2195"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2198"
+  HREF="node142.html">Formal Statement of the</A>
+<B> Up:</B> <A NAME="tex2html2194"
+  HREF="node139.html">Example: Plane Fitting</A>
+<B> Previous:</B> <A NAME="tex2html2188"
+  HREF="node140.html">Calculating the Intersection of</A>
+ &nbsp; <B>  <A NAME="tex2html2196"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

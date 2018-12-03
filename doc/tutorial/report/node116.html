@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Image feature coordinate frames</TITLE>
+<META NAME="description" CONTENT="Image feature coordinate frames">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node117.html">
+<LINK REL="previous" HREF="node115.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node117.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1884"
+  HREF="node117.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1880"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1874"
+  HREF="node115.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1882"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1885"
+  HREF="node117.html">Edge detection</A>
+<B> Up:</B> <A NAME="tex2html1881"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1875"
+  HREF="node115.html">Feature detection</A>
+ &nbsp; <B>  <A NAME="tex2html1883"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00671000000000000000"></A> <A NAME="feature-coord-sec"></A>
+<BR>
+Image feature coordinate frames
+</H2>
+Feature detectors are often applied to a rectangular sub-region of an image,
+and may be applied to a down-sampled version of the image for greater speed.
+The most natural coordinate frame to represent the coordinates of features
+is then the local coordinate frame of the feature map. On the other hand,
+when using the features for higher level computations such as computing
+homographies or structure from motion, it is most effecient to use the
+coordinate frame of the original image to represent the features, so that
+features detected in different regions can be easily combined in the same
+coordinate frame. In Gandalf the convention used is that the integer
+pixel positions are provided in the local coordinate frame of the feature
+map, while floating point positions are in a user-defined ``global''
+coordinate frame, specified as an affine transformation of the local
+coordinate frame. The situation is illustrated in Figure&nbsp;<A HREF="#local">5.3</A>.
+
+<DIV ALIGN="CENTER"><A NAME="local"></A><A NAME="5207"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5.3:</STRONG>
+Illustration of the local and global coordinate frames for feature
+	detection. The features are detected in the smaller rectangular
+	region described by the local coordinate frame, while for
+	many purposes it is more convenient to also represent the feature
+	positions in a user-defined ``global'' coordinate frame, which is
+	normally that of the original image.</CAPTION>
+<TR><TD><IMG
+ WIDTH="452" HEIGHT="322" BORDER="0"
+ SRC="img181.png"
+ ALT="\begin{figure}
+\centerline{\psfig{file=local.ps,width=100mm}}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Let the position of a feature in the local coordinate frame in homogeneous
+coordinates be <!-- MATH
+ ${\bf x}_l=(x_l\;y_l\;1)^{\top}$
+ -->
+<IMG
+ WIDTH="107" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="${\bf x}_l=(x_l\;y_l\;1)^{\top}$">. Then the global coordinates
+<!-- MATH
+ ${\bf x}_g = (x_g\;y_g\;1)^{\top}$
+ -->
+<IMG
+ WIDTH="114" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="${\bf x}_g = (x_g\;y_g\;1)^{\top}$"> in global coordinates are related to <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img184.png"
+ ALT="${\bf x}_l$"> as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf x}_l = A{\bf x}_g\;\;\;\;\mbox{or}\;\;\;\;
+   \left(\!\!\begin{array}{c} x_l \\y_l \\1 \end{array}\!\!\right)=
+   \left(\!\!\begin{array}{ccc} A_{xx} & A_{xy} & A_{xz} \\A_{yx} & A_{yy} & A_{yz} \\
+		0 & 0 & 1 \end{array}\!\!\right)
+   \left(\!\!\begin{array}{c} x_g \\y_g \\1 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="378" HEIGHT="64" BORDER="0"
+ SRC="img185.png"
+ ALT="\begin{displaymath}{\bf x}_l = A{\bf x}_g\;\;\;\;\mbox{or}\;\;\;\;
+\left(\!\!\...
+...t(\!\!\begin{array}{c} x_g \ y_g \ 1 \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is an 2D affine homography matrix. Normally <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> will represent
+a simple offset, with perhaps a scaling of coordinates, but this representation
+allows for more general coordinate transformations. The matrix is passed in
+by the user program to the feature detection algorithms, as is explained
+below.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1884"
+  HREF="node117.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1880"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1874"
+  HREF="node115.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1882"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1885"
+  HREF="node117.html">Edge detection</A>
+<B> Up:</B> <A NAME="tex2html1881"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1875"
+  HREF="node115.html">Feature detection</A>
+ &nbsp; <B>  <A NAME="tex2html1883"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

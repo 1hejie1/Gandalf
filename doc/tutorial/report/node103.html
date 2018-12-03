@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Building cameras</TITLE>
+<META NAME="description" CONTENT="Building cameras">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node104.html">
+<LINK REL="previous" HREF="node102.html">
+<LINK REL="up" HREF="node102.html">
+<LINK REL="next" HREF="node104.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1720"
+  HREF="node104.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1716"
+  HREF="node102.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1710"
+  HREF="node102.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1718"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1721"
+  HREF="node104.html">Projecting points and lines</A>
+<B> Up:</B> <A NAME="tex2html1717"
+  HREF="node102.html">Cameras</A>
+<B> Previous:</B> <A NAME="tex2html1711"
+  HREF="node102.html">Cameras</A>
+ &nbsp; <B>  <A NAME="tex2html1719"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00611000000000000000">
+Building cameras</A>
+</H2>
+To create a linear camera, you will need the header file
+<PRE>
+      #include &lt;gandalf/vision/camera_linear.h&gt;
+</PRE>
+for double precision or
+<PRE>
+      #include &lt;gandalf/vision/cameraf_linear.h&gt;
+</PRE>
+Then use the routine
+<PRE>
+      Gan_Camera CameraD;
+
+      /* build a linear camera in double precision */
+      gan_camera_build_linear ( &amp;CameraD,
+                             /* ZH     FY     FX     Y0     X0 */
+                                100.0, 700.0, 500.0, 150.0, 100.0 );
+</PRE>
+to create a double precision linear camera.
+There is a single-precision camera structure, called
+a <TT>Gan_Camera_f</TT>. The single precision version of the above function is
+<PRE>
+      Gan_Camera_f CameraF;
+
+      /* build a linear camera in double precision */
+      gan_cameraf_build_linear ( &amp;CameraF,
+                              /* ZH      FY      FX      Y0      X0 */
+                                 100.0F, 700.0F, 500.0F, 150.0F, 100.0F );
+</PRE>
+There are similar functions for creating cameras with a radial distortion
+model, for which you will need one or more of the following header files:
+<PRE>
+      #include &lt;gandalf/vision/camera_radial_dist1.h&gt;
+      #include &lt;gandalf/vision/camera_radial_dist2.h&gt;
+      #include &lt;gandalf/vision/camera_radial_dist3.h&gt;
+      #include &lt;gandalf/vision/cameraf_radial_dist1.h&gt;
+      #include &lt;gandalf/vision/cameraf_radial_dist2.h&gt;
+      #include &lt;gandalf/vision/cameraf_radial_dist3.h&gt;
+</PRE>
+
+<P>
+Then the functions are
+<PRE>
+      /* build a camera with one radial distortion parameter */
+      gan_camera_build_radial_distortion_1 ( &amp;CameraD,
+                                       /*    ZH     FY     FX     Y0     X0 */
+                                             100.0, 700.0, 500.0, 150.0, 100.0,
+                                       /*    K1 */
+                                             0.001 ); /* OR */
+      gan_cameraf_build_radial_distortion_1 ( &amp;CameraF,
+                                        /*    ZH      FY      FX      Y0      X0 */
+                                              100.0F, 700.0F, 500.0F, 150.0F, 100.0F,
+                                        /*    K1 */
+                                              0.001F );
+
+      /* build a camera with two radial distortion parameters */
+      gan_camera_build_radial_distortion_2 ( &amp;CameraD,
+                                       /*    ZH     FY     FX     Y0     X0 */
+                                             100.0, 700.0, 500.0, 150.0, 100.0,
+                                       /*    K1,    K2 */
+                                             0.001, 1.0e-7 ); /* OR */
+      gan_cameraf_build_radial_distortion_2 ( &amp;CameraF,
+                                        /*    ZH      FY      FX      Y0      X0 */
+                                              100.0F, 700.0F, 500.0F, 150.0F, 100.0F,
+                                        /*    K1,     K2 */
+                                              0.001F, 1.0e-7F );
+      /* build a camera with three radial distortion parameters */
+      gan_camera_build_radial_distortion_3 ( &amp;CameraD,
+                                       /*    ZH     FY     FX     Y0     X0 */
+                                             100.0, 700.0, 500.0, 150.0, 100.0,
+                                       /*    K1,    K2,     K3 */
+                                             0.001, 1.0e-7, -0.0001 ); /* OR */
+      gan_cameraf_build_radial_distortion_3 ( &amp;CameraF,
+                                        /*    ZH      FY      FX      Y0      X0 */
+                                              100.0F, 700.0F, 500.0F, 150.0F, 100.0F,
+                                        /*    K1,     K2,      K3 */
+                                              0.001F, 1.0e-7F, -0.0001F );
+</PRE>
+Note that <TT>Gan_Camera</TT>'s and <TT>Gan_Camera_f</TT>'s are simple structures
+with no internally allocated data, so there is no <TT>..._free</TT> function
+for them.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

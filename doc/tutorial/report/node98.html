@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Image pyramids</TITLE>
+<META NAME="description" CONTENT="Image pyramids">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node99.html">
+<LINK REL="previous" HREF="node97.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node99.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1612"
+  HREF="node99.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1608"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1602"
+  HREF="node97.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1610"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1613"
+  HREF="node99.html">Inverting an image</A>
+<B> Up:</B> <A NAME="tex2html1609"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1603"
+  HREF="node97.html">Displaying images</A>
+ &nbsp; <B>  <A NAME="tex2html1611"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00580000000000000000">
+Image pyramids</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/image/image_pyramid.h&gt;
+</PRE>
+A quite common construction in image processing is a ``pyramid'' of
+images, a multi-resolution representation of an image. We think in fact
+of an <EM>inverted</EM> pyramid, with the top level of the pyramid representing
+the image at the original resolution, and lower levels representing the
+image at lower resolutions (the inversion of the pyramid is to avoid
+changing the sense of ``high'' and ``low'' between describing the
+``resolution'' and the ``level''). The pyramid is constructed as an
+array of structures, one for each resolution level. The structure is
+defined as
+<PRE>
+      /* structure to hold image and mask at a single pyramid level */
+      typedef struct Gan_ImagePyramid
+      {
+         Gan_Image *img; /* image represented at a single resolution level */
+         Gan_Image *mask; /* mask at this level defining which pixels are set */
+      } Gan_ImagePyramid;
+</PRE>
+Intrinsic to the pyramid is the notion of a ``mask'' of pixels, a binary
+image defining which pixels are available in the image. The convention is
+that available pixels are marked in the mask as ones. Gandalf currently
+supports pyramids produced in the simplest way, by averaging four adjacent
+pixels to convert the image from a higher resolution image to a lower
+resolution image. An example code fragment to create an image pyramid is
+<PRE>
+      Gan_Image *pImage, *pMask; /* declare image and mask */
+      Gan_ImagePyramid *aPyramid;
+
+      /* ... create and fill pImage and pMask ... */
+
+      /* build image with four resolution levels */
+      gan_image_pyramid_build ( pImage, pMask, 4, &amp;aPyramid );
+</PRE>
+The image and mask pointer at the original (highest) resolution levels can
+be accessed as <TT>aPyramid[0].img</TT> and <TT>aPyramid[0].mask</TT> respectively.
+There are four levels here so the lowest resolution image and mask are
+<TT>aPyramid[3].img</TT> and <TT>aPyramid[3].mask</TT>. The mask can be passed
+into <TT>gan_image_pyramid_build()</TT> as <TT>NULL</TT>, indicating that
+all the pixels in the image are available. In this case the masks at all
+resolution levels will be set to <TT>NULL</TT>.
+
+<P>
+To free the pyramid, use
+<PRE>
+      gan_image_pyramid_free ( aPyramid, 4, GAN_FALSE );
+</PRE>
+The second argument here is the number of resolution levels of the pyramid.
+The last argument determines whether the image/mask at the top level of
+the pyramid are to freed. Here <TT>GAN_FALSE</TT> is passed, so the original
+image <TT>pImage</TT> and mask <TT>pMask</TT> will not be freed and are available
+for further processing.
+
+<P>
+Note that when transferring pixels to a lower resolution, a pixel is
+computed and a mask bit at the lower resolution only if all four corresponding
+pixels in the higher resolution image are set.
+
+<P>
+<B>Error detection:</B> <TT>gan_image_pyramid_build()</TT> returns a boolean
+value, which is <TT>GAN_FALSE</TT> on error, the Gandalf error handler being
+invoked.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1612"
+  HREF="node99.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1608"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1602"
+  HREF="node97.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1610"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1613"
+  HREF="node99.html">Inverting an image</A>
+<B> Up:</B> <A NAME="tex2html1609"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1603"
+  HREF="node97.html">Displaying images</A>
+ &nbsp; <B>  <A NAME="tex2html1611"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size matrices and vectors</TITLE>
+<META NAME="description" CONTENT="General size matrices and vectors">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node28.html">
+<LINK REL="up" HREF="node27.html">
+<LINK REL="next" HREF="node58.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1061"
+  HREF="node58.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1057"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1053"
+  HREF="node56.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1059"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1062"
+  HREF="node58.html">General size vectors</A>
+<B> Up:</B> <A NAME="tex2html1058"
+  HREF="node27.html">The Linear Algebra Package</A>
+<B> Previous:</B> <A NAME="tex2html1054"
+  HREF="node56.html">Single precision fixed size</A>
+ &nbsp; <B>  <A NAME="tex2html1060"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00420000000000000000"></A> <A NAME="general-size-sec"></A>
+<BR>
+General size matrices and vectors
+</H1>
+When the vector/matrix object to be represented can have variable size,
+or number of rows/columns greater than four, Gandalf provides the
+structures and functions through the general size matrix/vector package.
+With this package similar operations to the fixed size package are
+supported. The general size package has addition features designed
+to ease the burden of the programmer, while still maintaining efficient
+run-time operation.
+
+<P>
+General size square matrices are handled in a subtly different way
+to their fixed-size equivalents. For fixed size symmetric and triangular
+matrices, there are specific functions dealing with each type of square
+matrix, currently the two types, symmetric and lower triangular.
+A fixed size square matrix does not ``know'' what type of matrix it is.
+The <TT>type</TT> field in this case is an inessential field of the matrix,
+and is indeed <TT>#ifdef</TT>'d out when Gandalf is compiled with <TT>NDEBUG</TT>
+set. The only reason for using the same structure for both symmetric
+and lower triangular matrices is to allow the in-place operations that convert
+a symmetric matrix to a triangular matrix or vice versa. This arrangement
+is optimal for speed, because no type checking needs to be done at
+run time.
+
+<P>
+In contrast, the general size square matrix structure has a <TT>type</TT> field
+that is meaningful as the current matrix type. Many Gandalf functions are
+written for general square matrices. This simplifies the programming interface,
+in that one function can be used to implement an operation (e.g. square
+matrix add) for every type of square matrix, at the expense of some loss
+of speed, since the general function has to call different subroutines
+depending on the type of matrix. The overhead in implementing this
+arrangement is reduced to the minimum by including the routines to
+implement each operation for a given matrix type in the matrix structure
+itself. This object-oriented design feature is hidden from the
+programmer through the use of macros, so the package appears to the
+programmer as a normal set of functions.
+
+<P>
+Another difference between fixed and general vectors and matrices is that
+whereas in general fixed size vectors &amp; matrices should be declared as
+structures, avoiding the need for dynamic allocation,
+general size vectors &amp; matrices require dynamic allocation of their
+internal data. There is still an advantage in declaring structures rather
+than structure pointers, in that with pointer variables you require a
+call to <TT>malloc()</TT> to create the structure they point to.
+Gandalf lets the programmer decide which style to use. In the following
+description examples of both styles are presented.
+
+<P>
+Once again, both double precision and single precision routines are available,
+and once again a parallel set of header files, structures and functions is
+provided. We shall concentrate on the double precision package, and the
+equivalent structure and function name conversions for single precision are
+given in Section&nbsp;<A HREF="node83.html#single-gen-sec">3.2.3</A>.
+
+<P>
+Most of the routines return a pointer to the matrix/vector result structure.
+<TT>NULL</TT> is returned on failure, and the Gandalf error handler is invoked.
+This is reiterated in the text below, and exceptions are noted.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1063"
+  HREF="node58.html">General size vectors</A>
+<UL>
+<LI><A NAME="tex2html1064"
+  HREF="node59.html">Creating and freeing general size vectors</A>
+<LI><A NAME="tex2html1065"
+  HREF="node60.html">Adjusting the size of a general size vector</A>
+<LI><A NAME="tex2html1066"
+  HREF="node61.html">Filling a general size vector with values</A>
+<LI><A NAME="tex2html1067"
+  HREF="node62.html">Accessing the elements of a general size vector</A>
+<LI><A NAME="tex2html1068"
+  HREF="node63.html">Copying a general size vector</A>
+<LI><A NAME="tex2html1069"
+  HREF="node64.html">General size vector addition</A>
+<LI><A NAME="tex2html1070"
+  HREF="node65.html">General size vector subtraction</A>
+<LI><A NAME="tex2html1071"
+  HREF="node66.html">Rescaling a general size vector</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html1072"
+  HREF="node67.html">General size matrices</A>
+<UL>
+<LI><A NAME="tex2html1073"
+  HREF="node68.html">Creating and freeing general size matrices</A>
+<LI><A NAME="tex2html1074"
+  HREF="node69.html">Adjusting the size of a general size matrix</A>
+<LI><A NAME="tex2html1075"
+  HREF="node70.html">Filling a general size matrix with values</A>
+<LI><A NAME="tex2html1076"
+  HREF="node71.html">Accessing the elements of a general size matrix</A>
+<LI><A NAME="tex2html1077"
+  HREF="node72.html">Copying a general size matrix</A>
+<LI><A NAME="tex2html1078"
+  HREF="node73.html">Transposing a general size matrix</A>
+<LI><A NAME="tex2html1079"
+  HREF="node74.html">General size matrix addition</A>
+<LI><A NAME="tex2html1080"
+  HREF="node75.html">General size matrix subtraction</A>
+<LI><A NAME="tex2html1081"
+  HREF="node76.html">Rescaling a general size matrix</A>
+<LI><A NAME="tex2html1082"
+  HREF="node77.html">General size matrix/vector multiplication</A>
+<LI><A NAME="tex2html1083"
+  HREF="node78.html">General size matrix/matrix multiplication</A>
+<LI><A NAME="tex2html1084"
+  HREF="node79.html">Inverting a general size matrix</A>
+<LI><A NAME="tex2html1085"
+  HREF="node80.html">Cholesky factorising a general size symmetric matrix</A>
+<LI><A NAME="tex2html1086"
+  HREF="node81.html">Symmetric matrix eigendecomposition</A>
+<LI><A NAME="tex2html1087"
+  HREF="node82.html">Accumulated symmetric matrix eigendecomposition</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html1088"
+  HREF="node83.html">Single precision general size matrices &amp; vectors</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1061"
+  HREF="node58.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1057"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1053"
+  HREF="node56.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1059"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1062"
+  HREF="node58.html">General size vectors</A>
+<B> Up:</B> <A NAME="tex2html1058"
+  HREF="node27.html">The Linear Algebra Package</A>
+<B> Previous:</B> <A NAME="tex2html1054"
+  HREF="node56.html">Single precision fixed size</A>
+ &nbsp; <B>  <A NAME="tex2html1060"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

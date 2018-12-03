@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size vector subtraction</TITLE>
+<META NAME="description" CONTENT="Fixed size vector subtraction">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node33.html">
+<LINK REL="previous" HREF="node31.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node33.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html754"
+  HREF="node33.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html750"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html744"
+  HREF="node31.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html752"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html755"
+  HREF="node33.html">Rescaling a fixed size</A>
+<B> Up:</B> <A NAME="tex2html751"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html745"
+  HREF="node31.html">Fixed size vector addition</A>
+ &nbsp; <B>  <A NAME="tex2html753"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00411300000000000000">
+Fixed size vector subtraction</A>
+</H3>
+To subtract 3-vectors use the equivalent macros and functions
+<PRE>
+      gan_vec3_sub_q ( &amp;v3x, &amp;v3y, &amp;v3z ); /* macro */
+      v3z = gan_vec3_sub_s ( &amp;v3x, &amp;v3y ); /* function call */
+      gan_vec3_sub_i1 ( &amp;v3x, &amp;v3y ); /* result in-place in v3x */
+      gan_vec3_sub_i2 ( &amp;v3x, &amp;v3y ); /* result in-place in v3y */
+      gan_vec3_decrement ( &amp;v3x, &amp;v3y ); /* result in-place in v3x */
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

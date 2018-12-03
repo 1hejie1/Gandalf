@@ -1,0 +1,411 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Accessing single pixels</TITLE>
+<META NAME="description" CONTENT="Accessing single pixels">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node91.html">
+<LINK REL="previous" HREF="node89.html">
+<LINK REL="up" HREF="node88.html">
+<LINK REL="next" HREF="node91.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1519"
+  HREF="node91.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1515"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1509"
+  HREF="node89.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1517"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1520"
+  HREF="node91.html">Filling an image with</A>
+<B> Up:</B> <A NAME="tex2html1516"
+  HREF="node88.html">Image file I/O</A>
+<B> Previous:</B> <A NAME="tex2html1510"
+  HREF="node89.html">Setting an image to</A>
+ &nbsp; <B>  <A NAME="tex2html1518"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00532000000000000000">
+Accessing single pixels</A>
+</H2>
+To return the value of a single image pixel use
+<PRE>
+      Gan_Image *pImage;
+      short sPixel;
+
+      /* ... create and fill grey-level short integer image pImage ... */
+      sPixel = gan_image_get_pix_gl_s ( pImage, 33, 40 );
+</PRE>
+This returns the pixel value at row position 33 and column position 40
+(starting from zero). The RGB colour version would be
+<PRE>
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc rgbucPixel;
+
+      /* ... create and fill RGB colour unsigned character image pImage ... */
+      rgbucPixel = gan_image_get_pix_rgb_uc ( pImage, 33, 40 );
+</PRE>
+
+<P>
+An alternative is to return a pointer to a pixel. This operation is available
+for every type and format of image except binary images, which are stored
+packed with 32 or 64 pixels to a memory word. To return a pointer to the
+above pixels you would use
+<PRE>
+      Gan_Image *pImage;
+      short *psPixel;
+
+      /* ... create and fill grey-level short integer image pImage ... */
+      psPixel = gan_image_get_pixptr_gl_s ( pImage, 33, 40 );
+</PRE>
+for a grey-level image, or
+<PRE>
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc *prgbucPixel;
+
+      /* ... create and fill RGB colour unsigned character image pImage ... */
+      prgbucPixel = gan_image_get_pixptr_rgb_uc ( pImage, 33, 40 );
+</PRE>
+for an RGB colour image. This type of image access is useful when you want
+to read or set a lot of consecutive pixels on a row of an image, since you
+can use the returned pointer as a starting point. For instance the code
+fragment
+<PRE>
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc *prgbucPixel, rgbucZeroPixel = {0,0,0};
+      int iCount;
+
+      /* ... create and fill RGB colour unsigned character image pImage ... */
+      prgbucPixel = gan_image_get_pixptr_rgb_uc ( pImage, 33, 40 );
+      for ( iCount = 4; iCount &gt;= 0; iCount-- )
+         *prgbucPixel++ = rgbucZeroPixel;
+</PRE>
+sets the five RGB pixels at positions (33,40-44) to zero.
+
+<P>
+To set a pixel in a grey-level short integer image to a particular value, use
+the routine
+<PRE>
+      Gan_Image *pImage;
+
+      /* ... create grey-level short integer image pImage ... */
+      gan_image_set_pix_gl_s ( pImage, 33, 40, 123 );
+</PRE>
+This sets the pixel value at position 33, 40 to value 123. For an RGB unsigned
+character image you would use the code
+<PRE>
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc rgbucPixel = {12, 13, 14};
+
+      /* ... create RGB colour unsigned character image pImage ... */
+      gan_image_set_pix_rgb_uc ( pImage, 33, 40, &amp;rgbucPixel );
+</PRE>
+This builds a pixel with RGB values 12 (red), 13 (green), 14 (blue) and
+sets the pixel at position 33, 40 to that RGB value.
+
+<P>
+With <TT>NDEBUG</TT> set these routines evaluate to macros which implement
+direct memory access, so there is no efficiency advantage to be gained
+from using other methods of accessing individual image pixels.
+
+<P>
+The higher level routines for accessing single pixels use the <TT>Gan_Pixel</TT>
+structure, which can be used to store data for a single pixel of any format
+and type. The <TT>Gan_Pixel</TT> structure stores the format and type of the
+pixel internally, and is defined in <TT>&lt;gandalf/image/pixel.h&gt;</TT>:
+<PRE>
+      /* structure definition for image pixel of any format or type */
+      typedef struct Gan_Pixel
+      {
+         /// format of image: grey-level, RGB colour etc.
+         Gan_ImageFormat format;
+
+         /// type of pixel values: unsigned char, float etc.
+         Gan_Type type;
+
+         /// nested union defining pixel types
+         union
+         {
+            /// grey level
+            union
+            {
+               unsigned char  uc;
+               short          s;
+               unsigned short us;
+               int            i;
+               unsigned int   ui;
+               double         d;
+               float          f;
+               Gan_Bool       b;
+               void          *p;
+
+      #ifdef GAN_UINT8
+               gan_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               gan_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               gan_ui32 ui32;
+      #endif
+            } gl;
+
+            /// grey level with alpha channel
+            union
+            {
+               Gan_GLAPixel_uc uc;
+               Gan_GLAPixel_s  s;
+               Gan_GLAPixel_us us;
+               Gan_GLAPixel_i  i;
+               Gan_GLAPixel_ui ui;
+               Gan_GLAPixel_d  d;
+               Gan_GLAPixel_f  f;
+
+      #ifdef GAN_UINT8
+               Gan_GLAPixel_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               Gan_GLAPixel_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               Gan_GLAPixel_ui32 ui32;
+      #endif
+            } gla;
+
+            /// RGB colour
+            union
+            {
+               Gan_RGBPixel_uc uc;
+               Gan_RGBPixel_s  s;
+               Gan_RGBPixel_us us;
+               Gan_RGBPixel_i  i;
+               Gan_RGBPixel_ui ui;
+               Gan_RGBPixel_d  d;
+               Gan_RGBPixel_f  f;
+
+      #ifdef GAN_UINT8
+               Gan_RGBPixel_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               Gan_RGBPixel_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               Gan_RGBPixel_ui32 ui32;
+      #endif
+            } rgb;
+
+            /// RGB colour with alpha channel
+            union
+            {
+               Gan_RGBAPixel_uc uc;
+               Gan_RGBAPixel_s  s;
+               Gan_RGBAPixel_us us;
+               Gan_RGBAPixel_i  i;
+               Gan_RGBAPixel_ui ui;
+               Gan_RGBAPixel_d  d;
+               Gan_RGBAPixel_f  f;
+
+      #ifdef GAN_UINT8
+               Gan_RGBAPixel_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               Gan_RGBAPixel_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               Gan_RGBAPixel_ui32 ui32;
+      #endif
+            } rgba;
+
+            /// 2D vector field
+            union
+            {
+               Gan_Vector2_f f;
+               Gan_Vector2   d;
+               Gan_Vector2_s s;
+               Gan_Vector2_i i;
+            } vfield2D;
+
+            /// 3D vector field
+            union
+            {
+               Gan_Vector3_f f;
+               Gan_Vector3   d;
+               Gan_Vector3_s s;
+               Gan_Vector3_i i;
+            } vfield3D;
+         } data;
+      } Gan_Pixel;
+</PRE>
+The <TT>Gan_Pixel</TT> structure should be accessed directly. There are no
+Gandalf access routines for it. The doubly nested union contains a structure
+for each Gandalf image format and type. These structures are also defined
+in the <TT>pixel.h</TT> header file. We have seen the definition of the
+<TT>Gan_RGBPixel_uc</TT> structure above, and the other structures are
+defined similarly. For instance the pixel to represent a single-precision
+floating point RGB pixel with alpha channel is
+<PRE>
+      /**
+       * \brief Structure defining RGB single precision floating point pixel with alpha channel.
+       */
+      typedef struct Gan_RGBAPixel_f
+      {
+         float R, /**&lt; Red channel */
+               G, /**&lt; Green channel */
+               B, /**&lt; Blue channel */
+               A; /**&lt; Alpha channel */
+      } Gan_RGBAPixel_f;
+</PRE>
+Note that the vector field pixels use Gandalf fixed size vectors to hold
+the image data.
+
+<P>
+To set/get a pixel in an image using the higher level routines
+<TT>gan_image_set_pix()</TT> and <TT>gan_image_get_pix()</TT>,
+look at the following code fragment.
+<PRE>
+      Gan_Image *pImage;
+      int iRow, iCol;
+      Gan_Pixel Pixel;
+
+      /* create grey-level signed short image */
+      pImage = gan_image_alloc_gl_s ( 200, 100 );
+
+      /* set up pixel format and type */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_SHORT;
+
+      /* fill image with ramp data */
+      for ( iRow = (int)pImage-&gt;height-1; iRow &gt;= 0; iRow-- )
+         for ( iCol = (int)pImage-&gt;width-1; iCol &gt;= 0; iCol-- )
+         {
+            /* set pixel data */
+            Pixel.data.gl.s = iRow+iCol;
+
+            /* fill pixel in image. The format and type of the pixel should
+               be the same as that of the image */
+            gan_image_set_pix ( pImage, iRow, iCol, &amp;Pixel );
+         }
+
+      /* print pixel value, should be 27+35 = 62 */
+      Pixel = gan_image_get_pix ( pImage, 27, 35 );
+      printf ( "pixel value = %d\n", Pixel.data.gl.s );
+</PRE>
+Here we created an image, filled it with ``ramp'' data that linearly
+increases the grey-level value with the row and column coordinates of the
+image, and extract a single pixel. For an RGB image we could add the
+following code:
+<PRE>
+      /* convert the image to RGB format and unsigned character type */
+      gan_image_set_rgb_uc ( pImage, 100, 50 );
+
+      /* set up pixel format and type */
+      Pixel.format = GAN_RGB_COLOUR_IMAGE;
+      Pixel.type = GAN_UCHAR;
+
+      /* fill image with ramp data */
+      for ( iRow = (int)pImage-&gt;height-1; iRow &gt;= 0; iRow-- )
+         for ( iCol = (int)pImage-&gt;width-1; iCol &gt;= 0; iCol-- )
+         {
+            /* set pixel data */
+            Pixel.data.rgb.uc.R = iRow+iCol;
+            Pixel.data.rgb.uc.G = iRow;
+            Pixel.data.rgb.uc.B = iCol;
+
+            /* fill pixel in image. The format and type of the pixel should
+               be the same as that of the image */
+            gan_image_set_pix ( pImage, iRow, iCol, &amp;Pixel );
+         }
+
+      /* print pixel value, should be R=37+11=48, G=37, B=11 */
+      Pixel = gan_image_get_pix ( pImage, 37, 11 );
+      printf ( "pixel value R=%d G=%d B=%d\n",
+               Pixel.data.rgb.uc.R, Pixel.data.rgb.uc.G, Pixel.data.rgb.uc.B );
+</PRE>
+
+<P>
+If you have a <TT>Gan_Pixel</TT> structure in a different format/type to the
+image, use <TT>gan_image_convert_pixel_[qsi]()</TT> to convert
+it to the format &amp; type of the image before calling
+<TT>gan_image_set_pix()</TT>. See Section&nbsp;<A HREF="node92.html#convert-pixel-sec">4.3.4</A> for
+details.
+
+<P>
+<B>Error detection:</B> The <TT>.._get_pix...()</TT> routines cannot return
+an error condition. Instead they invoke
+<BR><TT>gan_assert()</TT>
+(see Section&nbsp;<A HREF="node16.html#debugging-tools-sec">2.1.3</A>) to check for errors, which aborts the
+program if an error is found. The
+<BR><TT>..._set_pix...()</TT> routines return
+a boolean value, returning <TT>GAN_TRUE</TT> on success, invoking the
+Gandalf error handler and returning <TT>GAN_FALSE</TT> on failure.
+The most likely failure modes are accessing a pixel outside the image
+(both <TT>..._get_pix...()</TT> and <TT>..._set_pix...()</TT>) and
+mismatch between image and pixel format/type (<TT>..._set_pix...()</TT> only).
+These errors are program bugs rather than data-dependent errors, so
+using <TT>gan_assert()</TT> to handle errors is fairly safe.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1519"
+  HREF="node91.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1515"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1509"
+  HREF="node89.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1517"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1520"
+  HREF="node91.html">Filling an image with</A>
+<B> Up:</B> <A NAME="tex2html1516"
+  HREF="node88.html">Image file I/O</A>
+<B> Previous:</B> <A NAME="tex2html1510"
+  HREF="node89.html">Setting an image to</A>
+ &nbsp; <B>  <A NAME="tex2html1518"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

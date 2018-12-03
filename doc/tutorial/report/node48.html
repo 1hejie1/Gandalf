@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size vector outer products</TITLE>
+<META NAME="description" CONTENT="Fixed size vector outer products">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node49.html">
+<LINK REL="previous" HREF="node47.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node49.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html957"
+  HREF="node49.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html953"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html947"
+  HREF="node47.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html955"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html958"
+  HREF="node49.html">Fixed size matrix/vector multiplication</A>
+<B> Up:</B> <A NAME="tex2html954"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html948"
+  HREF="node47.html">Transposing a fixed size</A>
+ &nbsp; <B>  <A NAME="tex2html956"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412700000000000000"></A> <A NAME="fixed-vector-outer-sec"></A>
+<BR>
+Fixed size vector outer products
+</H3>
+The outer product operation on two fixed size vectors <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$">
+is the matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+A = {\bf x}{\bf y}^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="62" HEIGHT="27" BORDER="0"
+ SRC="img30.png"
+ ALT="\begin{displaymath}A = {\bf x}{\bf y}^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+In Gandalf, any pair of vectors can be combined in this way<A NAME="tex2html1"
+  HREF="footnode.html#foot1653"><SUP>3.1</SUP></A>. The operation
+on a 3-vector and a 4-vector produces a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix, using either of
+the routines
+<PRE>
+      Gan_Vector3 v3x;
+      Gan_Vector4 v4y;
+      Gan_Matrix34 m34A;
+
+      /* ... set up v3x and v4y using e.g. gan_vec[34]_fill_q() ... */
+      gan_vec34_outer_q ( &amp;v3x, &amp;v4y, &amp;m34A ); /* macro, or */
+      m34A = gan_vec34_outer_s ( &amp;v3x, &amp;v4y ); /* function call */
+</PRE>
+Similar routines <TT>gan_vec33_outer_[qs]()</TT> enable the computation
+of the outer product of two 3-vectors, resulting in a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix.
+If <!-- MATH
+ ${\bf x}={\bf y}$
+ -->
+<IMG
+ WIDTH="45" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img33.png"
+ ALT="${\bf x}={\bf y}$">, the result of the outer product is a symmetric matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S = {\bf x}{\bf x}^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="60" HEIGHT="24" BORDER="0"
+ SRC="img34.png"
+ ALT="\begin{displaymath}S = {\bf x}{\bf x}^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Gandalf has special routines for this case:
+<PRE>
+      Gan_Vector3 v3x;
+      Gan_SquMatrix33 sm33S;
+
+      /* ... set up v3x using e.g. gan_vec3_fill_q() ... */
+      gan_vec33_outer_sym_q ( &amp;v3x, &amp;sm33S ); /* macro, or */
+      sm33S = gan_vec33_outer_sym_s ( &amp;v3x ); /* function call */
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

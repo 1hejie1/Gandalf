@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Creating and accessing fixed size vectors</TITLE>
+<META NAME="description" CONTENT="Creating and accessing fixed size vectors">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node31.html">
+<LINK REL="previous" HREF="node29.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node31.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html730"
+  HREF="node31.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html726"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html720"
+  HREF="node29.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html728"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html731"
+  HREF="node31.html">Fixed size vector addition</A>
+<B> Up:</B> <A NAME="tex2html727"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html721"
+  HREF="node29.html">Fixed size vectors</A>
+ &nbsp; <B>  <A NAME="tex2html729"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00411100000000000000">
+Creating and accessing fixed size vectors</A>
+</H3>
+Single fixed size vectors are such simple objects, it makes sense to
+normally use declare structure variables directly, rather than use pointers
+to structures created by <TT>malloc()</TT>. So to create a double precision
+3-vector, use the declaration
+<PRE>
+      Gan_Vector3 v3x;
+</PRE>
+From now on, we shall describe the functions for double precision vectors
+only. Single precision functions are very similar and will be explained below.
+Setting the coordinates of a 3-vector can be achieved by one of
+
+<OL>
+<LI>Initialising the 3-vector when it is created, as in
+<PRE>
+      Gan_Vector3 v3x = {1.0, 2.0, 3.0};
+</PRE>
+
+<P>
+</LI>
+<LI>Accessing the structure elements directly:
+<PRE>
+      v3x.x = 1.0; v3x.y = 2.0; v3x.z = 3.0;
+</PRE>
+</LI>
+<LI>Using the macro call
+<PRE>
+      gan_vec3_fill_q ( &amp;v3x, 1.0, 2.0, 3.0 );
+</PRE>
+Note that the Gnu C compiler prints a warning when the above call is compiled,
+and also for most other similar calls in the linear algebra package.
+This warning can be avoided by inserting an initial <TT>(void)</TT> cast:
+<PRE>
+      (void)gan_vec3_fill_q ( &amp;v3x, 1.0, 2.0, 3.0 );
+</PRE>
+We omit this cast in the following to keep the exposition simple.
+</LI>
+<LI>The equivalent function call
+<PRE>
+      v3x = gan_vec3_fill_s ( 1.0, 2.0, 3.0 );
+</PRE>
+</LI>
+</OL>
+Setting a 3-vector to zero can be accomplished using one of the calls
+<PRE>
+      gan_vec3_zero_q ( &amp;v3x ); /* macro, OR */
+      v3x = gan_vec3_zero_s(); /* function call */
+</PRE>
+
+<P>
+Copying 3-vectors can be accomplished either by direct assignment
+<PRE>
+      Gan_Vector3 v3y;
+
+      v3y = v3x;
+</PRE>
+or by use of the one of the routines
+<PRE>
+      gan_vec3_copy_q ( &amp;v3x, &amp;v3y ); /* macro, OR */
+      v3y = gan_vec3_copy_s ( &amp;v3x ); /* function call */
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html730"
+  HREF="node31.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html726"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html720"
+  HREF="node29.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html728"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html731"
+  HREF="node31.html">Fixed size vector addition</A>
+<B> Up:</B> <A NAME="tex2html727"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html721"
+  HREF="node29.html">Fixed size vectors</A>
+ &nbsp; <B>  <A NAME="tex2html729"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

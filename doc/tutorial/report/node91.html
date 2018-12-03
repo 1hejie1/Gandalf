@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Filling an image with a constant value</TITLE>
+<META NAME="description" CONTENT="Filling an image with a constant value">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node92.html">
+<LINK REL="previous" HREF="node90.html">
+<LINK REL="up" HREF="node88.html">
+<LINK REL="next" HREF="node92.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1531"
+  HREF="node92.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1527"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1521"
+  HREF="node90.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1529"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1532"
+  HREF="node92.html">Converting a pixel to</A>
+<B> Up:</B> <A NAME="tex2html1528"
+  HREF="node88.html">Image file I/O</A>
+<B> Previous:</B> <A NAME="tex2html1522"
+  HREF="node90.html">Accessing single pixels</A>
+ &nbsp; <B>  <A NAME="tex2html1530"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00533000000000000000">
+Filling an image with a constant value</A>
+</H2>
+To fill a grey-level image with a constant value use this routine:
+<PRE>
+      Gan_Image *pImage;
+
+      /* create grey-level signed short image */
+      pImage = gan_image_alloc_gl_s ( 200, 100 );
+
+      /* fill with constant */
+      gan_image_fill_const_gl_s ( pImage, 23 );
+</PRE>
+which fills each pixel with the value 23. For other formats of image
+you will need to build a structure of the relevant type, for instance
+<PRE>
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc rgbucPixel;
+
+      /* create RGB unsigned character image */
+      pImage = gan_image_alloc_rgb_uc ( 200, 100 );
+
+      /* set up pixel */
+      rgbucPixel.R = 34;
+      rgbucPixel.G =  2;
+      rgbucPixel.B = 65;
+
+      /* fill with constant RGB value */
+      gan_image_fill_const_rgb_uc ( pImage, &amp;rgbucPixel );
+</PRE>
+
+<P>
+Higher level routines are available using the <TT>Gan_Pixel</TT> structure:
+<PRE>
+      Gan_Image *pImage;
+      Gan_Pixel Pixel;
+
+      /* create RGBA single precision floating point image */
+      pImage = gan_image_alloc_rgba_f ( 200, 100 );
+
+      /* set up pixel */
+      Pixel.format = GAN_RGB_COLOUR_ALPHA_IMAGE;
+      Pixel.type = GAN_FLOAT;
+      Pixel.data.rgba.f.R = 0.1F;
+      Pixel.data.rgba.f.G = 0.2F;
+      Pixel.data.rgba.f.B = 0.3F;
+      Pixel.data.rgba.f.A = 0.4F;
+
+      /* fill with constant RGBA value. The format &amp; type of the pixel and
+         image should match */
+      gan_image_fill_const ( pImage, &amp;Pixel );
+</PRE>
+
+<P>
+If the <TT>Gan_Pixel</TT> structure has a different format/type to the
+image, use <TT>gan_image_convert_pixel_[qsi]()</TT> to convert
+it to the format &amp; type of the image before calling
+<TT>gan_image_fill_const()</TT>. See Section&nbsp;<A HREF="node92.html#convert-pixel-sec">4.3.4</A> for
+details.
+
+<P>
+There is a special function <TT>gan_image_fill_zero()</TT> to fill an image
+with zero, whatever format and type it has:
+<PRE>
+      Gan_Image *pImage;
+
+      /* create RGBA single precision floating point image */
+      pImage = gan_image_alloc_rgba_f ( 200, 100 );
+
+      /* set all image pixels to zero */
+      gan_image_fill_zero ( pImage );
+</PRE>
+
+<P>
+For boolean images (Section&nbsp;<A HREF="node93.html#binary-image-sec">4.4</A>), ``zero'' is interpreted
+as false (<TT>GAN_FALSE</TT>), and for pointer images
+(Section&nbsp;<A HREF="node94.html#pointer-image-sec">4.5</A>) ``zero'' means <TT>NULL</TT>.
+To fill a single pixel with zero, use
+<PRE>
+      /* set a single pixel at position row=10, column=21 to zero */
+      gan_image_set_pix_zero ( pImage, 10, 21 );
+</PRE>
+
+<P>
+There are also routines to fill a rectangular sub-region of an image,
+either with a constant value or zero:
+<PRE>
+      Gan_Image *pImage;
+      Gan_Pixel Pixel;
+
+      /* create grey-level signed short image */
+      pImage = gan_image_alloc_gl_s ( 200, 100 );
+
+      /* set pixels in 30x40 (heightxwidth) pixel region starting at position
+         100,30 (row,column) to constant value 125 */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_SHORT;
+      Pixel.data.gl.s = 125;
+      gan_image_fill_const_window ( pImage, 100, 30, 30, 40, &amp;Pixel );
+
+      /* reset image to RGB unsigned character */
+      gan_image_set_rgb_uc ( pImage, 100, 50 );
+
+      /* set pixels in 20x15 (heightxwidth) pixel region starting at position
+         10,35 (row,column) to zero */
+      gan_image_fill_zero_window ( pImage, 10, 35, 20, 15 );
+</PRE>
+
+<P>
+<B>Error detection:</B> The image filling routines return a boolean value,
+so a return value of <TT>GAN_FALSE</TT> indicates failure, with the Gandalf
+error handling module being invoked.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1531"
+  HREF="node92.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1527"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1521"
+  HREF="node90.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1529"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1532"
+  HREF="node92.html">Converting a pixel to</A>
+<B> Up:</B> <A NAME="tex2html1528"
+  HREF="node88.html">Image file I/O</A>
+<B> Previous:</B> <A NAME="tex2html1522"
+  HREF="node90.html">Accessing single pixels</A>
+ &nbsp; <B>  <A NAME="tex2html1530"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

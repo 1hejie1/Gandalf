@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size matrices</TITLE>
+<META NAME="description" CONTENT="General size matrices">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node83.html">
+<LINK REL="previous" HREF="node58.html">
+<LINK REL="up" HREF="node57.html">
+<LINK REL="next" HREF="node68.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1213"
+  HREF="node68.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1209"
+  HREF="node57.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1203"
+  HREF="node66.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1211"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1214"
+  HREF="node68.html">Creating and freeing general</A>
+<B> Up:</B> <A NAME="tex2html1210"
+  HREF="node57.html">General size matrices and</A>
+<B> Previous:</B> <A NAME="tex2html1204"
+  HREF="node66.html">Rescaling a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1212"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00422000000000000000"></A> <A NAME="general-size-mat-sec"></A>
+<BR>
+General size matrices
+</H2>
+The structure and functions for general size matrices are declared in the
+header file
+<PRE>
+      #include &lt;gandalf/linalg/mat_gen.h&gt;
+</PRE>
+The structure for general size matrices is the <TT>Gan_Matrix</TT>.
+For special types of square matrix the structure is the <TT>Gan_SquMatrix</TT>,
+and is declared in the header file
+<PRE>
+      #include &lt;gandalf/linalg/mat_square.h&gt;
+</PRE>
+The square matrix types are listed in <TT>linalg_defs.h</TT> (file not to be
+included explicitly in application programs):
+<PRE>
+      /* types of square matrix */
+      typedef enum { GAN_SYMMETRIC_MATRIX,     /* symmetric */
+                     GAN_DIAGONAL_MATRIX,      /* diagonal */
+                     GAN_SCALED_IDENT_MATRIX,  /* identity times scalar */
+                     GAN_LOWER_TRI_MATRIX,     /* lower triangular */
+                     GAN_UPPER_TRI_MATRIX,     /* upper triangular */
+                     GAN_ZERO_SQUARE_MATRIX }  /* square matrix filled with zeros */
+        Gan_SquMatrixType;
+</PRE>
+Use of the special matrix types producs savings both in memory and computation
+time, and should be exploited wherever appropriate.
+To use any functions specific to the above square matrix types
+(as opposed to general square matrix functions common to many types), you will
+need to include the header file for the specific type you need, for instance
+<PRE>
+      #include &lt;gandalf/linalg/mat_symmetric.h&gt;
+</PRE>
+for symmetric matrices, and
+<PRE>
+      #include &lt;gandalf/linalg/mat_triangular.h&gt;
+</PRE>
+for triangular matrices (covers lower and upper triangular matrices).
+The full list of header files for the specific square matrix types is
+<PRE>
+      #include &lt;gandalf/linalg/mat_symmetric.h&gt;  /* for symmetric matrices */
+      #include &lt;gandalf/linalg/mat_triangular.h&gt; /* lower/upper triangular matrices */
+      #include &lt;gandalf/linalg/mat_diagonal.h&gt;   /* diagonal matrices */
+      #include &lt;gandalf/linalg/mat_scaledI.h&gt;    /* scaled identity matrices */
+</PRE>
+The square matrix routines are organised so that once the matrix has been
+set at a specific type and size, and filled with values, the functions that
+operate on it are general functions. The computational overhead is that
+whenever an operation is performed (such at matrix/matrix multiplication)
+there is an indirection to take the program into the correct routine for
+the current square matrix type. This design allows the programmer to easily
+design algorithms that will work correctly and efficiently
+for any square matrix type.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1215"
+  HREF="node68.html">Creating and freeing general size matrices</A>
+<LI><A NAME="tex2html1216"
+  HREF="node69.html">Adjusting the size of a general size matrix</A>
+<LI><A NAME="tex2html1217"
+  HREF="node70.html">Filling a general size matrix with values</A>
+<LI><A NAME="tex2html1218"
+  HREF="node71.html">Accessing the elements of a general size matrix</A>
+<LI><A NAME="tex2html1219"
+  HREF="node72.html">Copying a general size matrix</A>
+<LI><A NAME="tex2html1220"
+  HREF="node73.html">Transposing a general size matrix</A>
+<LI><A NAME="tex2html1221"
+  HREF="node74.html">General size matrix addition</A>
+<LI><A NAME="tex2html1222"
+  HREF="node75.html">General size matrix subtraction</A>
+<LI><A NAME="tex2html1223"
+  HREF="node76.html">Rescaling a general size matrix</A>
+<LI><A NAME="tex2html1224"
+  HREF="node77.html">General size matrix/vector multiplication</A>
+<LI><A NAME="tex2html1225"
+  HREF="node78.html">General size matrix/matrix multiplication</A>
+<LI><A NAME="tex2html1226"
+  HREF="node79.html">Inverting a general size matrix</A>
+<LI><A NAME="tex2html1227"
+  HREF="node80.html">Cholesky factorising a general size symmetric matrix</A>
+<LI><A NAME="tex2html1228"
+  HREF="node81.html">Symmetric matrix eigendecomposition</A>
+<LI><A NAME="tex2html1229"
+  HREF="node82.html">Accumulated symmetric matrix eigendecomposition</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1213"
+  HREF="node68.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1209"
+  HREF="node57.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1203"
+  HREF="node66.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1211"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1214"
+  HREF="node68.html">Creating and freeing general</A>
+<B> Up:</B> <A NAME="tex2html1210"
+  HREF="node57.html">General size matrices and</A>
+<B> Previous:</B> <A NAME="tex2html1204"
+  HREF="node66.html">Rescaling a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1212"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

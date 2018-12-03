@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size vector addition</TITLE>
+<META NAME="description" CONTENT="General size vector addition">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node65.html">
+<LINK REL="previous" HREF="node63.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node65.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1179"
+  HREF="node65.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1175"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1169"
+  HREF="node63.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1177"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1180"
+  HREF="node65.html">General size vector subtraction</A>
+<B> Up:</B> <A NAME="tex2html1176"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1170"
+  HREF="node63.html">Copying a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1178"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00421600000000000000">
+General size vector addition</A>
+</H3>
+To add two vectors <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$"> together, obtaining the sum
+<!-- MATH
+ ${\bf z}= {\bf x}+ {\bf y}$
+ -->
+<IMG
+ WIDTH="73" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img55.png"
+ ALT="${\bf z}= {\bf x}+ {\bf y}$">, use the routine
+<PRE>
+      Gan_Vector vx, vy, vz; /* declare vectors x, y and z */
+
+      /* ... create and fill vx &amp; vy, create vz ... */
+      gan_vec_add_q ( &amp;vx, &amp;vy, &amp;vz ); /* compute z = x + y */
+</PRE>
+Again vector <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img56.png"
+ ALT="${\bf z}$"> is reallocated if necessary. Vectors <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> and
+<IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$"> must of course be the same size, or the error handler is invoked
+and <TT>NULL</TT> is returned. The sum vector <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img56.png"
+ ALT="${\bf z}$"> may be create from scratch
+using
+<PRE>
+      Gan_Vector *pvz; /* declare vector z as pointer */
+
+      /* ... create and fill vx &amp; vy ... */
+      pvz = gan_vec_add_s ( &amp;vx, &amp;vy ); /* compute z = x + y */
+</PRE>
+Another way of computing vector addition is to replace one of the input
+vector <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> or <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$"> with the result, using one of the in-place routines
+<PRE>
+      gan_vec_add_i1 ( &amp;vx, &amp;vy ); /* replace x = x + y */
+      gan_vec_add_i2 ( &amp;vx, &amp;vy ); /* replace y = x + y */
+</PRE>
+An alternative to <TT>gan_vec_add_i1()</TT> is the more explicit routine
+<PRE>
+      gan_vec_increment ( &amp;vx, &amp;vy ); /* replace x = x + y */
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>NULL</TT> is returned and the Gandalf error handler
+invoked if the vector addition fails.
+The most likely failure modes are failing to create/set the result vector,
+or size incompatibility between the input vectors.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

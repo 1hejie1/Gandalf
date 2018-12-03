@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Feature detection</TITLE>
+<META NAME="description" CONTENT="Feature detection">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node126.html">
+<LINK REL="previous" HREF="node114.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node116.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1862"
+  HREF="node116.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1858"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1852"
+  HREF="node114.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1860"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1863"
+  HREF="node116.html">Image feature coordinate frames</A>
+<B> Up:</B> <A NAME="tex2html1859"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1853"
+  HREF="node114.html">Smoothing an image using</A>
+ &nbsp; <B>  <A NAME="tex2html1861"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00670000000000000000">
+Feature detection</A>
+</H1>
+Gandalf currently has versions of the Canny edge detector, the Plessey
+corner detector and a line segment finder. The different feature detectors
+follow the same layered scheme, having a feature module which supports
+other feature detectors of the same type, below the specialised algorithm
+which implements a specific feature detector. Another important part of the
+Gandalf feature detectors is the <EM>local feature map</EM>. This encapsulates
+a local blocked representation of s feature map, allowing very fast search
+for features in regions of the image, and supporting the development of
+feature tracking/matching.
+
+<P>
+There is an important issue concerning coordinate frames for representing
+the feature positions, which is covered in Section&nbsp;<A HREF="node116.html#feature-coord-sec">5.7.1</A>
+We then describe the different feature detection
+modules. For each feature type, we explain the use of the lower level
+feature module, which can be used to build new feature detectors,
+followed by the built-in feature detector.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1864"
+  HREF="node116.html">Image feature coordinate frames</A>
+<LI><A NAME="tex2html1865"
+  HREF="node117.html">Edge detection</A>
+<LI><A NAME="tex2html1866"
+  HREF="node118.html">Displaying an edge map</A>
+<LI><A NAME="tex2html1867"
+  HREF="node119.html">The Canny edge detector</A>
+<LI><A NAME="tex2html1868"
+  HREF="node120.html">Corner detection</A>
+<LI><A NAME="tex2html1869"
+  HREF="node121.html">Displaying a corner map</A>
+<LI><A NAME="tex2html1870"
+  HREF="node122.html">The Harris corner detector</A>
+<LI><A NAME="tex2html1871"
+  HREF="node123.html">Line segment detection</A>
+<LI><A NAME="tex2html1872"
+  HREF="node124.html">Displaying a line map</A>
+<LI><A NAME="tex2html1873"
+  HREF="node125.html">The Gandalf line detector</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

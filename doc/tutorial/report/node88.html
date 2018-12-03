@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Image file I/O</TITLE>
+<META NAME="description" CONTENT="Image file I/O">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node93.html">
+<LINK REL="previous" HREF="node86.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node89.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1491"
+  HREF="node89.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1487"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1481"
+  HREF="node87.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1489"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1492"
+  HREF="node89.html">Setting an image to</A>
+<B> Up:</B> <A NAME="tex2html1488"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1482"
+  HREF="node87.html">Image creation/destruction</A>
+ &nbsp; <B>  <A NAME="tex2html1490"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00530000000000000000">
+Image file I/O</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/image/io/image_io.h&gt;
+</PRE>
+Currently Gandalf supports six image file formats: PNG, PBM, PGM, PPM, TIFF
+and JPEG. These are described by the
+<BR><TT>Gan_ImageFormat</TT> enumerated type:
+<PRE>
+      /* image file formats supported by Gandalf */
+      typedef enum
+      {
+         GAN_PNG_FORMAT,  /**&lt; PNG image format */
+         GAN_PBM_FORMAT,  /**&lt; Portable bitmap image format */
+         GAN_PGM_FORMAT,  /**&lt; Portable greymap image format */
+         GAN_PPM_FORMAT,  /**&lt; Portable pixmap image format */
+         GAN_TIFF_FORMAT, /**&lt; TIFF image format */
+         GAN_JPEG_FORMAT, /**&lt; JPEG image format */
+         GAN_UNKNOWN_FORMAT /**&lt; Unknown Image Format */
+      } Gan_ImageFileFormat;
+</PRE>
+PBM, PGM and PPM are very simple formats, for boolean, grey-level and
+RGB colour image formats respectively, and the code to implement I/O in those
+formats is built into Gandalf, although currently only binary file formats
+are supported. PNG, TIFF and JPEG formats are considerably
+more complex, and require specific libraries to be installed.
+The Gandalf <TT>configure</TT> script detects the presence of the PNG,
+TIFF and JPEG libraries, and only compiles
+in the I/O code for those formats when the relevant libraries
+are detected on the host system.
+
+<P>
+The <TT>image_io.h</TT> header file contains declaration of the basic
+image I/O functions. To read a image from a PNG image file, for instance,
+you can use the code
+<PRE>
+      Gan_Image *pImage;
+
+      /* read the image from a file in PNG format */
+      pImage = gan_image_read ( "image1.png", GAN_PNG_FORMAT, NULL );
+</PRE>
+The first argument is the file name, the second the file format (Gandalf
+doesn't currently support automatic file format determination via magic
+numbers. Who wants to volunteer?). The last argument is either a pointer
+to an already created image structure or <TT>NULL</TT>, as here. In the latter
+case the image is created inside the <TT>gan_image_read()</TT> function
+and returned.
+
+<P>
+To write an RGB unsigned character image to a PNG file you could write
+<PRE>
+      Gan_Image *pRGBImage;
+
+      /* ... create and fill RGB unsigned character image ... */
+
+      /* output the image to a file in PNG format */
+      gan_image_write ( "image1.png", GAN_PNG_FORMAT, pRGBImage, 0.0 );
+</PRE>
+We recommend that where possible you should use the PNG format. It is the
+most flexible of the formats supported by Gandalf, allowing alpha channels
+to be stored with the image, and also supporting binary images. PPM images
+are restricted to unsigned character type (<TT>GAN_UCHAR</TT>), while
+PGM format supports unsigned character and binary (<TT>GAN_BOOL</TT>) type.
+However the binary support in PGM files is very inefficient, storing
+one byte per pixel, so again PNG is the better format.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1493"
+  HREF="node89.html">Setting an image to a new format, type and dimensions</A>
+<LI><A NAME="tex2html1494"
+  HREF="node90.html">Accessing single pixels</A>
+<LI><A NAME="tex2html1495"
+  HREF="node91.html">Filling an image with a constant value</A>
+<LI><A NAME="tex2html1496"
+  HREF="node92.html">Converting a pixel to a given format/type</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1491"
+  HREF="node89.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1487"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1481"
+  HREF="node87.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1489"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1492"
+  HREF="node89.html">Setting an image to</A>
+<B> Up:</B> <A NAME="tex2html1488"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1482"
+  HREF="node87.html">Image creation/destruction</A>
+ &nbsp; <B>  <A NAME="tex2html1490"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

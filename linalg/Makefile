@@ -1,0 +1,95 @@
+CC = gcc
+CFLAGS = -g -Wall -I/usr/X11R6/include -Wall
+LIBS = -lX11 -lm -lX11 -lm 
+LDFLAGS =  -L/usr/local/lib 
+INSTALL = /usr/bin/install -c
+PNG_LIBS = -lpng -lz
+TIFF_LIB = -ltiff
+JPEG_LIB = -ljpeg
+GIF_LIB = @GIF_LIB@
+LAPACK_LIBS = -llapack -lblas -lf2c
+OPENGL_LIBS = -lGLU -lGL -lXmu -lXi -lX11 -lpthread
+X_LIBS = 
+prefix = /usr/local
+includedir = $(DESTDIR)/${prefix}/include
+
+include ../make.inc
+include ../config
+
+PACKAGE = linalg
+TOPLEVEL = ..
+OBJS = $(patsubst %.c,%$(OBJECT_SUFFIX).lo,$(CFILES))
+CFILES = mat_gen.c  mat_square.c  mat_symmetric.c  mat_diagonal.c  \
+	 matf_gen.c matf_square.c matf_symmetric.c matf_diagonal.c \
+	 mat_scaledI.c  mat_triangular.c  vec_gen.c  \
+	 matf_scaledI.c matf_triangular.c vecf_gen.c \
+	 matvec_blas.c  matvec_clapack.c  mat_svd.c  mat_qr.c  mat_lq.c  \
+	 matvecf_blas.c matvecf_clapack.c matf_svd.c matf_qr.c matf_lq.c \
+	 pseudo_inverse.c symmat_eigen.c \
+	 pseudo_inversef.c \
+	 2vector.c  3vector.c  4vector.c  \
+	 2vectorf.c 3vectorf.c 4vectorf.c \
+	 2x2matrix.c  3x3matrix.c  4x4matrix.c  \
+	 2x2matrixf.c 3x3matrixf.c 4x4matrixf.c \
+         2x3matrix.c  2x4matrix.c  3x4matrix.c  \
+         2x3matrixf.c 2x4matrixf.c 3x4matrixf.c \
+	 2x2matrix_eigsym.c \
+         3x3matrix_eigen.c 3x3matrix_eigsym.c 3x3matrix_svd.c \
+	 4x4matrix_eigsym.c 4x4matrix_svd.c \
+	 2x2matrixf_eigsym.c \
+         3x3matrixf_eigen.c 3x3matrixf_eigsym.c 3x3matrixf_svd.c \
+	 4x4matrixf_eigsym.c 4x4matrixf_svd.c \
+         2vector_norm.c 3vector_norm.c 4vector_norm.c \
+	 2x2matrix_norm.c 3x3matrix_norm.c 4x4matrix_norm.c \
+	 2x3matrix_norm.c 2x4matrix_norm.c 3x4matrix_norm.c
+HFILES = $(patsubst %.c,%.h,$(CFILES)) linalg_defs.h
+
+# header files not to be included by themselves
+EXTRA_HFILES = repeat1_noc.h repeat2_noc.h repeat3_noc.h repeat4_noc.h \
+	       repeat22_noc.h repeat33_noc.h repeat44_noc.h \
+	       repeat23_noc.h repeat24_noc.h repeat34_noc.h \
+	       matvecf_macros_noc.h matrixf_noc.h matrixf_undef_noc.h \
+	       squmatrixf_noc.h symmatrixf_noc.h \
+	       vectorf_noc.h vectorf_undef_noc.h \
+               2vec_noc.h 3vec_noc.h 4vec_noc.h \
+	       2x2mat_noc.h 2x2symmat_noc.h 2x2ltmat_noc.h 2x2ltmatT_noc.h \
+	       3x3mat_noc.h 3x3symmat_noc.h 3x3ltmat_noc.h 3x3ltmatT_noc.h \
+	       4x4mat_noc.h 4x4symmat_noc.h 4x4ltmat_noc.h 4x4ltmatT_noc.h \
+	       2x3mat_noc.h 2x4mat_noc.h 3x4mat_noc.h \
+               2vecf_noc.h 3vecf_noc.h 4vecf_noc.h \
+	       2x2matf_noc.h 2x2symmatf_noc.h 2x2ltmatf_noc.h 2x2ltmatTf_noc.h\
+	       3x3matf_noc.h 3x3symmatf_noc.h 3x3ltmatf_noc.h 3x3ltmatTf_noc.h\
+	       4x4matf_noc.h 4x4symmatf_noc.h 4x4ltmatf_noc.h 4x4ltmatTf_noc.h\
+	       2x3matf_noc.h 2x4matf_noc.h 3x4matf_noc.h \
+	       vec_norm_noc.h mat_norm_noc.h
+
+targets: $(OBJS)
+	(cd matrix; $(MAKE))
+	(cd cblas; $(MAKE))
+	(cd clapack; $(MAKE))
+
+all: test
+
+install: installh
+	(cd cblas; $(MAKE) install)
+	(cd clapack; $(MAKE) install)
+
+$(CFILES): ../$(PACKAGE).h
+
+test:
+	$(LIBTOOL) --mode=link $(CC) -I$(TOPLEVEL)/.. $(CFLAGS) -DLINALG_TEST_MAIN linalg_test.c $(PATH_BUILDER_C) -o linalg_test $(LDFLAGS) $(LIB) $(LIBS)
+
+matrixf-eigen-test:
+	$(LIBTOOL) --mode=link $(CC) -I$(TOPLEVEL)/.. $(CFLAGS) -DMATRIXF_EIGEN_TEST_MAIN matrixf_eigen_test.c $(PATH_BUILDER_C) -o matrixf_eigen_test $(LDFLAGS) $(LIB) $(LIBS)
+
+GARBAGE += linalg_test matrixf_eigen_test
+clean::
+	(cd matrix; $(MAKE) clean)
+	(cd cblas; $(MAKE) clean)
+	(cd clapack; $(MAKE) clean)
+
+depend::
+	(cd cblas; $(MAKE) depend)
+	(cd clapack; $(MAKE) depend)
+
+include ../make.targets

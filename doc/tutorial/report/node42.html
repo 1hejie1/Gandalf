@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Definitions of fixed size matrice</TITLE>
+<META NAME="description" CONTENT="Definitions of fixed size matrice">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node43.html">
+<LINK REL="previous" HREF="node41.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node43.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html885"
+  HREF="node43.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html881"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html875"
+  HREF="node41.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html883"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html886"
+  HREF="node43.html">Creating and accessing fixed</A>
+<B> Up:</B> <A NAME="tex2html882"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html876"
+  HREF="node41.html">Fixed size matrices</A>
+ &nbsp; <B>  <A NAME="tex2html884"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412100000000000000"></A><A NAME="fixed34-sec"></A>
+<BR>
+Definitions of fixed size matrice
+</H3>
+To use <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices or <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices
+include the header files
+<PRE>
+      #include &lt;gandalf/linalg/3x4matrix.h&gt; /* OR */
+      #include &lt;gandalf/linalg/3x3matrix.h&gt;
+</PRE>
+respectively. This is for double precision matrix elements.
+The files to include for single precision elements are
+<PRE>
+      #include &lt;gandalf/linalg/3x4matrixf.h&gt; /* OR */
+      #include &lt;gandalf/linalg/3x3matrixf.h&gt;
+</PRE>
+A double precision <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix is defined as
+<PRE>
+      typedef struct Gan_Matrix34
+      {
+         double xx, xy, xz, xw,
+                yx, yy, yz, yw,
+                zx, zy, zz, zw;
+      } Gan_Matrix34;
+</PRE>
+A <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix is similarly defined as
+<PRE>
+      typedef struct Gan_Matrix33
+      {
+         double xx, xy, xz,
+                yx, yy, yz,
+                zx, zy, zz;
+      } Gan_Matrix33;
+</PRE>
+For square matrices there is also a specific structure to handle symmetric
+and triangular matrix structures, as follows:
+<PRE>
+      #ifndef NDEBUG
+      /* square matrix type, for setting and checking in debug mode */
+      typedef enum { GAN_SYMMETRIC_MATRIX33, GAN_LOWER_TRI_MATRIX33 }
+       Gan_SquMatrix33Type;
+      #endif /* #ifndef NDEBUG */
+
+      /* structure definition for square 3x3 matrix */
+      typedef struct Gan_SquMatrix33
+      {
+      #ifndef NDEBUG
+         /* square matrix type, for setting and checking in debug mode */
+         Gan_SquMatrix33Type type;
+      #endif /* #ifndef NDEBUG */
+
+         /* matrix data */
+         double xx,
+                yx, yy,
+                zx, zy, zz;
+      } Gan_SquMatrix33;
+</PRE>
+Note that the matrix type field <TT>Gan_SquMatrix33</TT> is only used in
+debug compilation mode (<TT>NDEBUG</TT> not defined). The <TT>type</TT> field is
+actually invisible to the programmers' interface to the Gandalf functions,
+and is used merely for internal checking. Note also that Gandalf does not
+provide explicit support for <EM>upper</EM> triangular fixed size matrices
+(although it does for general size matrices;
+see Section&nbsp;<A HREF="node57.html#general-size-sec">3.2</A>). Any operations involving upper triangular
+matrices can be implemented using implicit transpose of a lower triangular
+matrix.
+
+<P>
+Single precision structures are defined similarly, with the names changed
+to <TT>Gan_Matrix34_f</TT>, <TT>Gan_SquMatrix33_f</TT> etc.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

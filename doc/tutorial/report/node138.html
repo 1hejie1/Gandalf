@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Example: Line Fitting</TITLE>
+<META NAME="description" CONTENT="Example: Line Fitting">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node137.html">
+<LINK REL="up" HREF="node135.html">
+<LINK REL="next" HREF="node139.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2158"
+  HREF="node139.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2154"
+  HREF="node135.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2150"
+  HREF="node137.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2156"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2159"
+  HREF="node139.html">Example: Plane Fitting</A>
+<B> Up:</B> <A NAME="tex2html2155"
+  HREF="node135.html">The Fast Hough Transform</A>
+<B> Previous:</B> <A NAME="tex2html2151"
+  HREF="node137.html">The FHT Algorithm</A>
+ &nbsp; <B>  <A NAME="tex2html2157"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006111300000000000000"></A> <A NAME="line_fitting"></A>
+<BR>
+Example: Line Fitting
+</H3>
+ Figure&nbsp;<A HREF="#hypercircle">5.5</A>
+shows how the FHT works for <IMG
+ WIDTH="42" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img301.png"
+ ALT="$k=2$">, when parameter space is a plane,
+ hyperplanes are straight lines and hypercubes are squares whose associated
+ hyperspheres are circles passing through the vertices of the squares
+ (figure&nbsp;<A HREF="#hypercircle">5.5</A>).
+ 
+<DIV ALIGN="CENTER">
+
+<P><A NAME="hypercircle"></A></P><IMG
+ WIDTH="556" HEIGHT="636" BORDER="0"
+ SRC="img302.png"
+ ALT="\begin{figure}
+% latex2html id marker 5670
+\centerline{\psfig{file=hyper.ps,w...
+...ame result for lines like $A$ and
+$B$, but not for line $C$}
+\end{figure}">
+</DIV>
+This is applicable to the
+ problem of finding a straight line through points on a plane. If the
+ plane has coordinates <IMG
+ WIDTH="41" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img303.png"
+ ALT="$(u,v)$"> the line can be written
+ <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+v=\alpha u + \beta
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="78" HEIGHT="27" BORDER="0"
+ SRC="img304.png"
+ ALT="\begin{displaymath}
+v=\alpha u + \beta
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img305.png"
+ ALT="$\alpha$"> and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> are constant. Each point
+ <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$"> votes for a line in parameter space:
+ <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\beta=v_j - \alpha u_j .
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="94" HEIGHT="29" BORDER="0"
+ SRC="img308.png"
+ ALT="\begin{displaymath}
+\beta=v_j - \alpha u_j .
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Let the initial ranges of <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img305.png"
+ ALT="$\alpha$"> and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$">, defining the root
+ hypercube, be <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img309.png"
+ ALT="$L_{\alpha}$"> and
+ <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img310.png"
+ ALT="$L_{\beta}$"> centred around <IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img311.png"
+ ALT="$\alpha_0$"> and <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img312.png"
+ ALT="$\beta_0$"> respectively.
+ Then the above equation can put in the form of
+ equation&nbsp;<A HREF="node136.html#hyperpln_eq">5.15</A> using the transformation
+ <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+X_1 = \frac{\alpha}{L_\alpha} ,\;
+     X_2 = \frac{\beta}{L_\beta} ,\;
+     a_{0j} = \frac{- v_j}{q} ,\;
+     a_{1j} = \frac{L_\alpha u_j}{q} ,\;
+     a_{2j} = \frac{L_\beta}{q}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="396" HEIGHT="44" BORDER="0"
+ SRC="img313.png"
+ ALT="\begin{displaymath}
+X_1 = \frac{\alpha}{L_\alpha} ,\;
+X_2 = \frac{\beta}{L_\...
+...j} = \frac{L_\alpha u_j}{q} ,\;
+a_{2j} = \frac{L_\beta}{q}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <!-- MATH
+ $q = \sqrt{L_\alpha^2 u_j^2 + L_\beta^2}$
+ -->
+<IMG
+ WIDTH="124" HEIGHT="45" ALIGN="MIDDLE" BORDER="0"
+ SRC="img314.png"
+ ALT="$q = \sqrt{L_\alpha^2 u_j^2 + L_\beta^2}$">.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

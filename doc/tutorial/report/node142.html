@@ -1,0 +1,1046 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Formal Statement of the FHT Plane Fitting Algorithm</TITLE>
+<META NAME="description" CONTENT="Formal Statement of the FHT Plane Fitting Algorithm">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node141.html">
+<LINK REL="up" HREF="node139.html">
+<LINK REL="next" HREF="node143.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2207"
+  HREF="node143.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2203"
+  HREF="node139.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2199"
+  HREF="node141.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2205"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2208"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Up:</B> <A NAME="tex2html2204"
+  HREF="node139.html">Example: Plane Fitting</A>
+<B> Previous:</B> <A NAME="tex2html2200"
+  HREF="node141.html">Calculating the Plane Parameters</A>
+ &nbsp; <B>  <A NAME="tex2html2206"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006112300000000000000"></A>
+  <A NAME="formal_FHT"></A>
+<BR>
+Formal Statement of the FHT Plane Fitting Algorithm
+</H3>
+  We have:
+
+<OL>
+<LI>A set of disparity points <!-- MATH
+ $(x_j , y_j , d_j )$
+ -->
+<IMG
+ WIDTH="76" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img343.png"
+ ALT="$(x_j , y_j , d_j )$">, <IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img344.png"
+ ALT="$j=1 \ldots n$">.
+
+<P>
+</LI>
+<LI>An array of weights <IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img345.png"
+ ALT="$W_j$">, <IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img344.png"
+ ALT="$j=1 \ldots n$">, one for each
+	   disparity point <!-- MATH
+ $(x_j , y_j , d_j )$
+ -->
+<IMG
+ WIDTH="76" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img343.png"
+ ALT="$(x_j , y_j , d_j )$">.
+
+<P>
+</LI>
+<LI>Parameter space <IMG
+ WIDTH="53" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img346.png"
+ ALT="$(a,b,c)$">, restricted to the box with centre
+	   <!-- MATH
+ $(0,0,d_{\rm centre})$
+ -->
+<IMG
+ WIDTH="89" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img347.png"
+ ALT="$(0,0,d_{\rm centre})$"> and side lengths <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img348.png"
+ ALT="$L_a$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img349.png"
+ ALT="$L_b$"> and <IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img350.png"
+ ALT="$L_c$">.
+	   <!-- MATH
+ $d_{\rm centre}$
+ -->
+<IMG
+ WIDTH="47" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img351.png"
+ ALT="$d_{\rm centre}$"> is the centre of the disparity search range.
+
+<P>
+</LI>
+<LI>A vote threshold <IMG
+ WIDTH="62" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img352.png"
+ ALT="$T= \theta W$">, <IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img49.png"
+ ALT="$W$"> being the total weight of
+	   the edges in the square patch.
+
+<P>
+</LI>
+<LI>A minimum level of subdivision <IMG
+ WIDTH="31" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img353.png"
+ ALT="$l_{\min}$"> (e.g. 3), and a
+	   maximum level <IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img354.png"
+ ALT="$l_{\max}$"> (e.g. 10).
+  
+</LI>
+</OL>
+  The algorithm is as follows:
+
+<P>
+<B>begin</B>
+  
+<DL COMPACT>
+<DT>
+<DD>Declare new variables:
+     
+<DL COMPACT>
+<DT>
+<DD>An array <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img207.png"
+ ALT="${\bf R}$"> of distances <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img355.png"
+ ALT="$R_j$">, <IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img344.png"
+ ALT="$j=1 \ldots n$">.
+
+<P>
+An array <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$"> of boolean flags <!-- MATH
+ $P_1, P_2,\ldots,P_n$
+ -->
+<IMG
+ WIDTH="100" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img357.png"
+ ALT="$P_1, P_2,\ldots,P_n$"> where each
+      <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img358.png"
+ ALT="$P_j$"> either takes the value <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> or <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+Integer variables <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$"> and <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$">, initialised to zero.
+
+<P>
+Variables <IMG
+ WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img363.png"
+ ALT="$a_{\rm best}$">, <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img364.png"
+ ALT="$b_{\rm best}$"> and <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img365.png"
+ ALT="$c_{\rm best}$">
+      making up a point in <IMG
+ WIDTH="53" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img346.png"
+ ALT="$(a,b,c)$"> space.
+
+<P>
+Another array of boolean flags <!-- MATH
+ ${\bf P}_{\rm best}$
+ -->
+<IMG
+ WIDTH="41" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img366.png"
+ ALT="${\bf P}_{\rm best}$">.
+     
+</DD>
+</DL>
+<P>
+The variables <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$">, <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$">, <IMG
+ WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img363.png"
+ ALT="$a_{\rm best}$">, <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img364.png"
+ ALT="$b_{\rm best}$">,
+     <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img365.png"
+ ALT="$c_{\rm best}$"> and array <!-- MATH
+ ${\bf P}_{\rm best}$
+ -->
+<IMG
+ WIDTH="41" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img366.png"
+ ALT="${\bf P}_{\rm best}$"> are used to keep track
+     of the best fit as the algorithm proceeds.
+
+<P>
+Set all the <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img358.png"
+ ALT="$P_j$"> to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+For each disparity point <!-- MATH
+ $(x_j , y_j , d_j )$
+ -->
+<IMG
+ WIDTH="76" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img343.png"
+ ALT="$(x_j , y_j , d_j )$">:
+
+<P>
+<B>begin</B>
+     
+<DL COMPACT>
+<DT>
+<DD>Calculate the plane parameters for <!-- MATH
+ $(X_1 , X_2 , X_3 )$
+ -->
+<IMG
+ WIDTH="92" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img367.png"
+ ALT="$(X_1 , X_2 , X_3 )$"> space:
+      <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+a_{0j} = \frac{-d_j}{Q} ,\;
+	   a_{1j} = \frac{L_a x_j}{Q} ,\;
+	   a_{2j} = \frac{L_b y_j}{Q} ,\;
+	   a_{3j} = \frac{L_c}{Q}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="329" HEIGHT="42" BORDER="0"
+ SRC="img368.png"
+ ALT="\begin{displaymath}
+a_{0j} = \frac{-d_j}{Q} ,\;
+a_{1j} = \frac{L_a x_j}{Q} ,\;
+a_{2j} = \frac{L_b y_j}{Q} ,\;
+a_{3j} = \frac{L_c}{Q}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <!-- MATH
+ $Q = \sqrt{L_a^2 x_j^2 + L_b^2 y_j^2 + L_c^2}$
+ -->
+<IMG
+ WIDTH="179" HEIGHT="47" ALIGN="MIDDLE" BORDER="0"
+ SRC="img369.png"
+ ALT="$Q = \sqrt{L_a^2 x_j^2 + L_b^2 y_j^2 + L_c^2}$">.
+
+<P>
+Calculate the normalised perpendicular distance <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img355.png"
+ ALT="$R_j$">
+      from the plane to the centre of the root cube:
+      <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+R_j = a_{0j} + \sum_{i=1}^3 a_{ij} C_i
+	   = a_{0j} + \frac{a_{3j} d_{\rm centre}}{Q L_c}.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="276" HEIGHT="55" BORDER="0"
+ SRC="img370.png"
+ ALT="\begin{displaymath}
+R_j = a_{0j} + \sum_{i=1}^3 a_{ij} C_i
+= a_{0j} + \frac{a_{3j} d_{\rm centre}}{Q L_c}.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+If <!-- MATH
+ $R_j < \frac{\sqrt{3}}{2}$
+ -->
+<IMG
+ WIDTH="65" HEIGHT="43" ALIGN="MIDDLE" BORDER="0"
+ SRC="img371.png"
+ ALT="$R_j &lt; \frac{\sqrt{3}}{2}$"> the plane passes through
+      the root cube's circumscribing sphere: set <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img358.png"
+ ALT="$P_j$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+     
+</DD>
+</DL>
+     <B>end</B>
+
+<P>
+Call the procedure <IMG
+ WIDTH="83" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img372.png"
+ ALT="$divide\_cube$"> with arguments as follows:
+
+<OL>
+<LI>Array of boolean flags <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$">.
+
+<P>
+</LI>
+<LI>Array <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img207.png"
+ ALT="${\bf R}$"> of normalised distances.
+
+<P>
+</LI>
+<LI>Initial level of subdivision 0.
+
+<P>
+</LI>
+<LI>Initial accumulator value 0.
+
+<P>
+</LI>
+<LI>Empty line of descent list.
+     
+</LI>
+</OL>
+</DD>
+</DL>
+  <B>end</B>
+
+<P>
+Procedure <IMG
+ WIDTH="83" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img372.png"
+ ALT="$divide\_cube$"> ( array of flags <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$">, array of normalised
+  distances <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img207.png"
+ ALT="${\bf R}$">, subdivision level <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img373.png"
+ ALT="$l$">,
+  accumulator value <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img374.png"
+ ALT="$v$">, line of descent list ):
+
+<P>
+<B>begin</B>
+  
+<DL COMPACT>
+<DT>
+<DD>Declare new variables:
+     
+<DL COMPACT>
+<DT>
+<DD>Eight boolean flags arrays <!-- MATH
+ ${\bf P}_{\bf b}$
+ -->
+<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img375.png"
+ ALT="${\bf P}_{\bf b}$">, one for
+      each <IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img220.png"
+ ALT="${\bf b}$">, where <IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img220.png"
+ ALT="${\bf b}$">
+      is a child cube index triplet <!-- MATH
+ $(b_1 , b_2 , b_3 )$
+ -->
+<IMG
+ WIDTH="73" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img376.png"
+ ALT="$(b_1 , b_2 , b_3 )$"> and each <IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img377.png"
+ ALT="$b_i$"> is
+      either -1 or 1. All the elements of the flag arrays are initialised
+      to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+Eight arrays <!-- MATH
+ ${\bf R}_{\bf b}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img378.png"
+ ALT="${\bf R}_{\bf b}$"> of normalised distances.
+
+<P>
+Accumulators <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img379.png"
+ ALT="$A_{\bf b}$"> for each <IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img220.png"
+ ALT="${\bf b}$">, initialised to zero.
+
+<P>
+Boolean flag <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$">, initialised to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+     
+</DD>
+</DL>
+     Sum the votes for the child cubes: for each <IMG
+ WIDTH="12" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img285.png"
+ ALT="$j$"> such that <IMG
+ WIDTH="72" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img380.png"
+ ALT="$P_j = true$">:
+
+<P>
+<B>begin</B>
+     
+<DL COMPACT>
+<DT>
+<DD>For each child cube with index <B>b</B>:
+
+<P>
+<B>begin</B>
+      
+<DL COMPACT>
+<DT>
+<DD>Calculate the normalised distance <IMG
+ WIDTH="31" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img381.png"
+ ALT="$R_{j {\bf b}}$"> from plane <IMG
+ WIDTH="12" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img285.png"
+ ALT="$j$">
+       to the centre of the child cube:
+       <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+R_{j {\bf b}} = 2R_j + \frac{1}{2}
+	(a_{1j} b_1 + a_{2j} b_2 + a_{3j} b_3).
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="266" HEIGHT="38" BORDER="0"
+ SRC="img382.png"
+ ALT="\begin{displaymath}
+R_{j {\bf b}} = 2R_j + \frac{1}{2}
+(a_{1j} b_1 + a_{2j} b_2 + a_{3j} b_3).
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+       (The <!-- MATH
+ $a_{1j} b_1 + a_{2j} b_2 + a_{3j} b_3$
+ -->
+<IMG
+ WIDTH="149" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img383.png"
+ ALT="$a_{1j} b_1 + a_{2j} b_2 + a_{3j} b_3$"> values can be
+	efficiently calculated by storing them in eight arrays, one for each
+	<IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img220.png"
+ ALT="${\bf b}$">.)
+
+<P>
+If <!-- MATH
+ $R_{j {\bf b}} < \frac{\sqrt{3}}{2}$
+ -->
+<IMG
+ WIDTH="73" HEIGHT="43" ALIGN="MIDDLE" BORDER="0"
+ SRC="img384.png"
+ ALT="$R_{j {\bf b}} &lt; \frac{\sqrt{3}}{2}$"> then
+
+<P>
+<B>begin</B>
+       
+<DL COMPACT>
+<DT>
+<DD>Add weight <IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img345.png"
+ ALT="$W_j$"> to <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img379.png"
+ ALT="$A_{\bf b}$">
+
+<P>
+Set flag <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img385.png"
+ ALT="$P_{j {\bf b}}$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+       
+</DD>
+</DL>
+       <B>end</B>
+       
+</DD>
+</DL>
+      <B>end</B>
+     
+</DD>
+</DL>
+     <B>end</B>
+
+<P>
+Subdivide child cubes receiving greater than or equal to <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img299.png"
+ ALT="$T$"> votes:
+     If <!-- MATH
+ $l < l_{\rm max}$
+ -->
+<IMG
+ WIDTH="60" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img386.png"
+ ALT="$l &lt; l_{\rm max}$">:
+
+<P>
+<B>begin</B>
+     
+<DL COMPACT>
+<DT>
+<DD>For each child cube with index <B>b</B>:
+
+<P>
+<B>begin</B>
+      
+<DL COMPACT>
+<DT>
+<DD>If <!-- MATH
+ $A_{\bf b} \geq T$
+ -->
+<IMG
+ WIDTH="58" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img387.png"
+ ALT="$A_{\bf b} \geq T$"> recursively subdivide child cube:
+
+<P>
+<B>begin</B>
+       
+<DL COMPACT>
+<DT>
+<DD>Add <IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img220.png"
+ ALT="${\bf b}$"> to original line of descent.
+
+<P>
+Call <IMG
+ WIDTH="83" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img372.png"
+ ALT="$divide\_cube$"> with arguments <!-- MATH
+ ${\bf P}_{\bf b}$
+ -->
+<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img375.png"
+ ALT="${\bf P}_{\bf b}$">,
+	<!-- MATH
+ ${\bf R}_{\bf b}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img378.png"
+ ALT="${\bf R}_{\bf b}$">, <IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img388.png"
+ ALT="$l+1$">, <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img379.png"
+ ALT="$A_{\bf b}$"> and extended line of descent.
+
+<P>
+Set flag <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+       
+</DD>
+</DL>
+       <B>end</B>
+      
+</DD>
+</DL>
+      <B>end</B>
+     
+</DD>
+</DL>
+     <B>end</B>
+
+<P>
+If <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$"> is still <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$"> (i.e. no further
+     subdivision of this cube), test for best fit so far:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>If <!-- MATH
+ $l > max\_level$
+ -->
+<IMG
+ WIDTH="101" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img389.png"
+ ALT="$l &gt; max\_level$"> or if <!-- MATH
+ $l = max\_level$
+ -->
+<IMG
+ WIDTH="101" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img390.png"
+ ALT="$l = max\_level$"> and <!-- MATH
+ $v > max\_value$
+ -->
+<IMG
+ WIDTH="109" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img391.png"
+ ALT="$v &gt; max\_value$">:
+
+<P>
+<B>begin</B>
+      
+<DL COMPACT>
+<DT>
+<DD>Set <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$"> to <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img373.png"
+ ALT="$l$">.
+
+<P>
+Set <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$"> to <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img374.png"
+ ALT="$v$">.
+
+<P>
+Calculate centre of cube in <IMG
+ WIDTH="53" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img346.png"
+ ALT="$(a,b,c)$"> space by calling procedure
+       <IMG
+ WIDTH="85" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img342.png"
+ ALT="$cube\_centre$"> with the line of descent as argument. The results are
+       copied into <IMG
+ WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img363.png"
+ ALT="$a_{\rm best}$">, <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img364.png"
+ ALT="$b_{\rm best}$"> and <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img365.png"
+ ALT="$c_{\rm best}$">.
+
+<P>
+Copy array of flags <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$"> into array <!-- MATH
+ ${\bf P}_{\rm best}$
+ -->
+<IMG
+ WIDTH="41" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img366.png"
+ ALT="${\bf P}_{\rm best}$">.
+      
+</DD>
+</DL>
+      <B>end</B>
+     
+</DD>
+</DL>
+</DD>
+</DL>
+    <B>end</B> (procedure <IMG
+ WIDTH="83" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img372.png"
+ ALT="$divide\_cube$">)
+
+<P>
+Procedure <IMG
+ WIDTH="85" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img342.png"
+ ALT="$cube\_centre$"> ( line of descent list ):
+    <B>begin</B>
+    
+<DL COMPACT>
+<DT>
+<DD>Declare new variables:
+     
+<DL COMPACT>
+<DT>
+<DD>Three arrays <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img392.png"
+ ALT="${\bf r}_a$">, <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img393.png"
+ ALT="${\bf r}_b$"> and <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img394.png"
+ ALT="${\bf r}_c$">, each of three
+      elements with indices -1, 0 and 1, so that
+      <!-- MATH
+ ${\bf r}_a = [r_a(-1),r_a(0),r_a(1)]$
+ -->
+<IMG
+ WIDTH="182" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img395.png"
+ ALT="${\bf r}_a = [r_a(-1),r_a(0),r_a(1)]$"> and similarly for <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img393.png"
+ ALT="${\bf r}_b$">
+      and <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img394.png"
+ ALT="${\bf r}_c$">. The zero (middle) elements of each array are not used.
+     
+</DD>
+</DL>
+     Set arrays <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img392.png"
+ ALT="${\bf r}_a$">, <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img393.png"
+ ALT="${\bf r}_b$"> and <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img394.png"
+ ALT="${\bf r}_c$"> as follows:
+     <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\begin{array}{ccc}
+	  r_a(-1) = \frac{-L_a}{4}, & r_b(-1) = \frac{-L_b}{4}, &
+	  r_c(-1) = \frac{-L_c}{4}, \\
+	  r_a(1) = \frac{L_a}{4}, & r_b(1) = \frac{L_b}{4}, &
+	  r_c(1) = \frac{L_c}{4}. \\
+	 \end{array}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="335" HEIGHT="46" BORDER="0"
+ SRC="img396.png"
+ ALT="\begin{displaymath}
+\begin{array}{ccc}
+r_a(-1) = \frac{-L_a}{4}, &amp; r_b(-1) =...
+...\frac{L_b}{4}, &amp;
+r_c(1) = \frac{L_c}{4}. \\
+\end{array}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+Set <IMG
+ WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img363.png"
+ ALT="$a_{\rm best}$">, <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img364.png"
+ ALT="$b_{\rm best}$"> and <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img365.png"
+ ALT="$c_{\rm best}$"> to zero.
+
+<P>
+While line of descent not traversed (i.e. root cube not yet reached):
+
+<P>
+<B>begin</B>
+     
+<DL COMPACT>
+<DT>
+<DD>Take next triplet of indices <IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img220.png"
+ ALT="${\bf b}$"> on line of descent.
+
+<P>
+Replace old values of <IMG
+ WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img363.png"
+ ALT="$a_{\rm best}$">, <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img364.png"
+ ALT="$b_{\rm best}$"> and <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img365.png"
+ ALT="$c_{\rm best}$">:
+      <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\begin{array}{c}
+	   a_{\rm best} \leftarrow \frac{a_{\rm best}}{2} + r_a(b_1) \\
+	   b_{\rm best} \leftarrow \frac{b_{\rm best}}{2} + r_b(b_2) \\
+	   c_{\rm best} \leftarrow \frac{c_{\rm best}}{2} + r_c(b_3) \\
+	  \end{array}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="147" HEIGHT="65" BORDER="0"
+ SRC="img397.png"
+ ALT="\begin{displaymath}
+\begin{array}{c}
+a_{\rm best} \leftarrow \frac{a_{\rm be...
+...eftarrow \frac{c_{\rm best}}{2} + r_c(b_3) \\
+\end{array}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+</DD>
+</DL>
+     <B>end</B>
+
+<P>
+Add centre <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img289.png"
+ ALT="$c$">-coordinate of root cube to <IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img365.png"
+ ALT="$c_{\rm best}$"> (<IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img200.png"
+ ALT="$a$"> and <IMG
+ WIDTH="11" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img288.png"
+ ALT="$b$">
+     coordinates of root are zero):
+     <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+c_{\rm best} \leftarrow c_{\rm best} + d_{\rm centre}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="146" HEIGHT="26" BORDER="0"
+ SRC="img398.png"
+ ALT="\begin{displaymath}c_{\rm best} \leftarrow c_{\rm best} + d_{\rm centre} \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+</DD>
+</DL>
+  <B>end</B> (procedure <IMG
+ WIDTH="85" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img342.png"
+ ALT="$cube\_centre$">)
+
+<P>
+At the end of the algorithm <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$"> is the highest level
+  of subdivision
+  reached. This must be greater than or equal to <IMG
+ WIDTH="31" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img353.png"
+ ALT="$l_{\min}$"> for the fit
+  to be used. <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$"> is the highest accumulator value of a
+  cube at subdivision level <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$">, the cube has centre
+  <!-- MATH
+ $(a_{\rm best} , b_{\rm best} , c_{\rm best} )$
+ -->
+<IMG
+ WIDTH="124" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img399.png"
+ ALT="$(a_{\rm best} , b_{\rm best} , c_{\rm best} )$">
+  and these are the best fit plane parameters.
+  The flags <!-- MATH
+ ${\bf P}_{j \rm best}$
+ -->
+<IMG
+ WIDTH="46" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img400.png"
+ ALT="${\bf P}_{j \rm best}$"> are <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> if the <IMG
+ WIDTH="12" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img285.png"
+ ALT="$j$">'th disparity
+  point voted for the winning cube,
+  and those disparity points constitute the subset of all the points which
+  best fit a plane, given that the total weight of the points must
+  exceed <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img299.png"
+ ALT="$T$">. They and the values of <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$"> and <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$"> can
+  stored for use. More precise estimates of the plane
+  parameters can be calculated using orthogonal regression.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2207"
+  HREF="node143.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2203"
+  HREF="node139.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2199"
+  HREF="node141.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2205"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2208"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Up:</B> <A NAME="tex2html2204"
+  HREF="node139.html">Example: Plane Fitting</A>
+<B> Previous:</B> <A NAME="tex2html2200"
+  HREF="node141.html">Calculating the Plane Parameters</A>
+ &nbsp; <B>  <A NAME="tex2html2206"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

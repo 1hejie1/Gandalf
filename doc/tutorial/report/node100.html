@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Image sequence I/O</TITLE>
+<META NAME="description" CONTENT="Image sequence I/O">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node99.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node101.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1634"
+  HREF="node101.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1630"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1626"
+  HREF="node99.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1632"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1635"
+  HREF="node101.html">The Vision Package</A>
+<B> Up:</B> <A NAME="tex2html1631"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1627"
+  HREF="node99.html">Inverting an image</A>
+ &nbsp; <B>  <A NAME="tex2html1633"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005100000000000000000">
+Image sequence I/O</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/image/io/movie.h&gt;
+</PRE>
+Gandalf has a module for reading and writing image sequences.
+These are accessed one image at a time. The <TT>Gan_MovieStruct</TT>
+structure defines an image sequence.
+A movie structure is created using the <TT>gan_movie_new()</TT> function.
+An example call is
+<PRE>
+      Gan_MovieStruct *pMovie;
+
+      pMovie = gan_movie_new ( "/tmp", "movie.", 3, ".png", 1, 20,
+                               GAN_PNG_FORMAT );
+</PRE>
+The arguments to the function define the image sequence attributes,
+in the following order:
+
+<OL>
+<LI>The directory in which to find the images;
+</LI>
+<LI>the base name of the image file names;
+</LI>
+<LI>the number of digits in the number part of the image file name;
+</LI>
+<LI>the suffix of each image, usually related to the image file format;
+</LI>
+<LI>the number of the first image in the sequence;
+</LI>
+<LI>the image file format;
+</LI>
+</OL>
+The above example defines a sequence of PNG format image files
+<PRE>
+      /tmp/movie.001.png
+      /tmp/movie.002.png
+              .
+              .
+              .
+      /tmp/movie.020.png
+</PRE>
+
+<P>
+Other parameters of a movie structure have defaults which can be set using
+functions before the movie images are accessed. These functions are
+<PRE>
+      gan_movie_set_step ( pMovie, 2 );
+</PRE>
+to set the step in numbers between images. The default is one, and the above
+call would set the frame numbers to 1, 3, 5 etc.
+<PRE>
+      gan_movie_set_crop_window ( pMovie, 5, 10, 8, 12 );
+</PRE>
+sets the values of any crop parameters, i.e. the widths of areas at the edge
+of each image which should be ignored by image processing operations.
+The widths are give for the left, right, top and bottom edges respectively.
+
+<P>
+The movie structure is used both for reading and writing images in a
+sequence. The number of digits indicates the amount of zero-padding of
+the file number. A value of zero indicates that no padding is done.
+To read a single image from the sequence, use the function
+<TT>gan_movie_image_read()</TT>, for example
+<PRE>
+      Gan_Image *pImage;
+
+      pImage = gan_movie_image_read ( pMovie, 8, NULL );
+</PRE>
+The second argument indicates which image in the sequence is to be read,
+from 0 to 19 in this case. The value 8 indicates the file
+<TT>/tmp/movie.009.png</TT>. This reads the image file into a new image.
+If <TT>pImage</TT> is already created, you can use
+<PRE>
+      gan_movie_image_read ( pMovie, 8, pImage );
+</PRE>
+
+<P>
+To write an image in a sequence use
+<PRE>
+      gan_movie_image_write ( pMovie, 10, pImage );
+</PRE>
+This will write the file <TT>/tmp/movie.011.png</TT>.
+
+<P>
+Sometimes it is desirable to build the full name of a movie image file,
+for instance when generating error messages to say that a given file
+cannot be read or written. To write an image file name into a string,
+use the function
+<PRE>
+      char acString[300];
+
+      gan_movie_image_name ( pMovie, 0, acString, 300 );
+</PRE>
+This writes the name of the first image of the sequence into the provided
+string, up to the 300 character total size of the <TT>acString</TT> array.
+For the movie created in the above example this will fill the string
+<TT>acString</TT> with the value <TT>"/tmp/movie.001.png"</TT>. The second
+argument is the number of the image in the sequence, so passing 5 would
+give the string <TT>"/tmp/movie.006.png"</TT>.
+
+<P>
+Finally, to free a movie structure use
+<PRE>
+      gan_movie_free ( pMovie );
+</PRE>
+
+<P>
+<TT>Error detection:</TT> <TT>gan_movie_new()</TT> returns a pointer to the
+allocated movie structure, and <TT>NULL</TT> is returned in case of error.
+<TT>gan_movie_image_read()</TT> and <TT>gan_movie_image_name()</TT> also return
+<TT>NULL</TT> on error.
+<BR><TT>gan_movie_image_write()</TT> returns a boolean
+value, so <TT>GAN_FALSE</TT> is returned on error. In all cases the Gandalf
+error handler is invoked.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1634"
+  HREF="node101.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1630"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1626"
+  HREF="node99.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1632"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1635"
+  HREF="node101.html">The Vision Package</A>
+<B> Up:</B> <A NAME="tex2html1631"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1627"
+  HREF="node99.html">Inverting an image</A>
+ &nbsp; <B>  <A NAME="tex2html1633"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

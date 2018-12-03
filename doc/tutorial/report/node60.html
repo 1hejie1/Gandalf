@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Adjusting the size of a general size vector</TITLE>
+<META NAME="description" CONTENT="Adjusting the size of a general size vector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node61.html">
+<LINK REL="previous" HREF="node59.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node61.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1131"
+  HREF="node61.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1127"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1121"
+  HREF="node59.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1129"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1132"
+  HREF="node61.html">Filling a general size</A>
+<B> Up:</B> <A NAME="tex2html1128"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1122"
+  HREF="node59.html">Creating and freeing general</A>
+ &nbsp; <B>  <A NAME="tex2html1130"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00421200000000000000"></A>
+<A NAME="set-size-vec-sec"></A>
+<BR>
+Adjusting the size of a general size vector
+</H3>
+Once a vector has been created, its size may be adjusted dynamically
+as needs arise. Gandalf stores the currently allocated maximum size of
+a vector in the vector structure, so it can determine when the size of
+the result of a computation will exceed the current size, and reallocate
+accordingly. This happens automatically when a vector is the result
+of a calculation, but sometimes it is necessary to explicitly set the
+size of a vector. This is done using the following routine.
+<PRE>
+      gan_vec_set_size ( &amp;vx, 3 );
+</PRE>
+This resets the size of the vector <TT>vx</TT> to 3.
+If the size of a vector created
+by <TT>gan_vec_alloc()</TT> or <TT>gan_vec_form()</TT> is increased in size
+in this way beyond its originally allocated size, <TT>gan_vec_set_size()</TT>
+will automatically reallocate the vector to the new size.
+On the other hand, if <TT>gan_vec_form_data()</TT> was used to create the
+vector, it cannot be increased in size beyond the size of the array
+passed as the last argument into <TT>gan_vec_form_data()</TT>.
+
+<P>
+<B>Error detection:</B> <TT>NULL</TT> is returned and the error handler is
+invoked on failure. The most likely failure mode is failing to reallocate
+the vector data, i.e. failure of a call to <TT>realloc()</TT>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1131"
+  HREF="node61.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1127"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1121"
+  HREF="node59.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1129"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1132"
+  HREF="node61.html">Filling a general size</A>
+<B> Up:</B> <A NAME="tex2html1128"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1122"
+  HREF="node59.html">Creating and freeing general</A>
+ &nbsp; <B>  <A NAME="tex2html1130"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

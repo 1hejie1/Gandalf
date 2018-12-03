@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Simple image/pixel routines</TITLE>
+<META NAME="description" CONTENT="Simple image/pixel routines">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node88.html">
+<LINK REL="previous" HREF="node85.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node87.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1468"
+  HREF="node87.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1464"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1458"
+  HREF="node85.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1466"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1469"
+  HREF="node87.html">Image creation/destruction</A>
+<B> Up:</B> <A NAME="tex2html1465"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1459"
+  HREF="node85.html">Image formats and types</A>
+ &nbsp; <B>  <A NAME="tex2html1467"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00520000000000000000"></A> <A NAME="simple-image-sec"></A>
+<BR>
+Simple image/pixel routines
+</H1>
+To minimise computational overheads, Gandalf provides a common set
+of low level image and pixel handling routines specific to each
+supported format and type of image. We will illustrate the routines with
+reference to two representative examples:
+
+<OL>
+<LI>Grey-level signed short integer images. The format here is
+	<TT>GAN_GREY_LEVEL_IMAGE</TT>, and the type is <TT>GAN_SHORT</TT>.
+	To use the routines specific to this format and type use the
+	header file
+	<PRE>
+      #include &lt;gandalf/image/image_gl_short.h&gt;
+</PRE>
+</LI>
+<LI>RGB colour unsigned character images. The format here is
+	<TT>GAN_RGB_COLOUR_IMAGE</TT>, and the type is <TT>GAN_UCHAR</TT>.
+	To use the routines specific to this format and type use the
+	header file
+	<PRE>
+      #include &lt;gandalf/image/image_rgb_uchar.h&gt;
+</PRE>
+</LI>
+</OL>
+We need to use two examples because the way that pixels are handled for
+simple grey-level images is different to RGB colour and other image formats,
+since in the latter and related formats (every format except grey-level)
+a pixel is represented as a structure rather than a simple C object.
+
+<P>
+There are also higher level routines that work with all the formats and
+types, accessible through the header file.
+<PRE>
+      #include &lt;gandalf/image/image_rgb_uchar.h&gt;
+</PRE>
+Examples of these are also provided in the following sections.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1470"
+  HREF="node87.html">Image creation/destruction</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1468"
+  HREF="node87.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1464"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1458"
+  HREF="node85.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1466"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1469"
+  HREF="node87.html">Image creation/destruction</A>
+<B> Up:</B> <A NAME="tex2html1465"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1459"
+  HREF="node85.html">Image formats and types</A>
+ &nbsp; <B>  <A NAME="tex2html1467"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

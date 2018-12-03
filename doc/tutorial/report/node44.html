@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size matrix addition</TITLE>
+<META NAME="description" CONTENT="Fixed size matrix addition">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node45.html">
+<LINK REL="previous" HREF="node43.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node45.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html909"
+  HREF="node45.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html905"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html899"
+  HREF="node43.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html907"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html910"
+  HREF="node45.html">Fixed size matrix subtraction</A>
+<B> Up:</B> <A NAME="tex2html906"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html900"
+  HREF="node43.html">Creating and accessing fixed</A>
+ &nbsp; <B>  <A NAME="tex2html908"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412300000000000000">
+Fixed size matrix addition</A>
+</H3>
+To add two <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices use either the macro
+<PRE>
+      Gan_Matrix34 m34C;
+
+      /* ... set up m34A, m34B using e.g. gan_mat34_fill_q() ... */
+      gan_mat34_add_q ( &amp;m34A, &amp;m34B, &amp;m34C ); /* macro */
+</PRE>
+or the function
+<PRE>
+      m34C = gan_mat34_add_s ( &amp;m34A, &amp;m34B ); /* function call */
+</PRE>
+See the discussion of ``quick'' and ``slow'' versions of the same operation,
+identified by the <TT>..._q</TT> and <TT>..._s</TT> suffices,
+in Section&nbsp;<A HREF="node3.html#conventions-sec">1.1</A>. In this case, the ``slow'' version
+<TT>gan_mat34_add_s()</TT> has the overhead of a function call relative
+to the ``quick'' version <TT>gan_mat34_add_q()</TT>, so the latter should
+be used unless the input matrices are not simple variables (i.e. they might
+be elements of arrays), in which case the repeated evaluation required
+by the macro version might be slower.
+
+<P>
+There are also in-place versions of the add operation, which overwrite one
+of the input matrices with the result. The macro operations
+<PRE>
+      gan_mat34_add_i1 ( &amp;m34A, &amp;m34B ); /* result in-place in m34A */
+</PRE>
+and
+<PRE>
+      gan_mat34_add_i2 ( &amp;m34A, &amp;m34B ); /* result in-place in m34B */
+</PRE>
+produce the same result but overwrite respectively the first <TT>m34A</TT>
+and the second <TT>m34B</TT> argument with the result. There is also a
+more explicit macro
+<PRE>
+      gan_mat34_increment ( &amp;m34A, &amp;m34B ); /* result in-place in m34A */
+</PRE>
+which increments <TT>m34A</TT> by <TT>m34B</TT>, i.e. identical to
+<TT>gan_mat34_add_i1()</TT>. Note that if one of the input arguments is
+a non-trivial expression, and the result is being overwritten on the other,
+use the function <TT>gan_mat34_add_s()</TT>, as in
+<PRE>
+      Gan_Matrix34 am34A[100];
+
+      /* ... fill am34A array ... */
+      m34A = gan_mat34_add_s ( &amp;m34A, &amp;am34A[33] );
+</PRE>
+
+<P>
+For general, symmetric and lower triangular <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices the
+addition routines follow those for <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices. So for general
+<IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices we have the options
+<PRE>
+      Gan_Matrix33 m33A, m33B, m33C;
+
+      /* ... set up m33A, m33B using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_add_q ( &amp;m33A, &amp;m33B, &amp;m33C ); /* macro, OR */
+      m33C = gan_mat33_add_s ( &amp;m33A, &amp;m33B ); /* function call */
+      gan_mat33_add_i1 ( &amp;m33A, &amp;m33B ); /* macro, result in-place in m33A */
+      gan_mat33_add_i2 ( &amp;m33A, &amp;m33B ); /* macro, result in-place in m33B */
+      gan_mat33_increment ( &amp;m33A, &amp;m33B ); /* equivalent to gan_mat33_add_i1() */
+</PRE>
+For symmetric <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices we have
+<PRE>
+      Gan_SquMatrix33 sm33Sa, sm33Sb, sm33Sc;
+
+      /* ... set up sm33Sa, sm33Sb using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_add_q ( &amp;sm33Sa, &amp;sm33Sb, &amp;sm33Sc ); /* macro, OR */
+      sm33Sc = gan_symmat33_add_s ( &amp;sm33Sa, &amp;sm33Sb ); /* function call */
+      gan_symmat33_add_i1 ( &amp;sm33Sa, &amp;sm33Sb ); /* macro, result in-place in sm33Sa */
+      gan_symmat33_add_i2 ( &amp;sm33Sa, &amp;sm33Sb ); /* macro, result in-place in sm33Sb */
+      gan_symmat33_increment ( &amp;sm33Sa, &amp;sm33Sb ); /* equivalent to gan_symmat33_add_i1() */
+</PRE>
+Finally for lower triangular <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices we have
+<PRE>
+      Gan_SquMatrix33 sm33La, sm33Lb, sm33Lc;
+
+      /* ... set up sm33La, sm33Lb using e.g. gan_ltmat33_fill_q() ... */
+      gan_ltmat33_add_q ( &amp;sm33La, &amp;sm33Lb, &amp;sm33Lc ); /* macro, OR */
+      sm33Lc = gan_ltmat33_add_s ( &amp;sm33La, &amp;sm33Lb ); /* function call */
+      gan_ltmat33_add_i1 ( &amp;sm33La, &amp;sm33Lb ); /* macro, result in-place in sm33La */
+      gan_ltmat33_add_i2 ( &amp;sm33La, &amp;sm33Lb ); /* macro, result in-place in sm33Lb */
+      gan_ltmat33_increment ( &amp;sm33La, &amp;sm33Lb ); /* equivalent to gan_ltmat33_add_i1() */
+</PRE>
+
+<P>
+For general square matrices there are routines to implement the operation
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S = A+A^{\top},
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="90" HEIGHT="27" BORDER="0"
+ SRC="img27.png"
+ ALT="\begin{displaymath}S = A+A^{\top},
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+obtaining a symmetric matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"> by adding together a general square matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">
+and its transpose. The routines for <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices are
+<PRE>
+      Gan_Matrix33 m33A;
+      Gan_SquMatrix33 sm33S;
+
+      /* set up m33A using e.g. gan_mat33_fill_q() */
+      gan_mat33_saddT_q ( &amp;m33A, &amp;sm33S ); /* S = A+A^T, macro */
+      sm33S = gan_mat33_saddT_s ( &amp;m33A ); /* S = A+A^T, function call */
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html909"
+  HREF="node45.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html905"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html899"
+  HREF="node43.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html907"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html910"
+  HREF="node45.html">Fixed size matrix subtraction</A>
+<B> Up:</B> <A NAME="tex2html906"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html900"
+  HREF="node43.html">Creating and accessing fixed</A>
+ &nbsp; <B>  <A NAME="tex2html908"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

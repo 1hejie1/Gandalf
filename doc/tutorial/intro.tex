@@ -1,0 +1,120 @@
+\chapter{Introduction} \label{introduction-chapter}
+Gandalf is a C library designed to support the development of computer
+vision applications. For installation instructions see the INSTALL file
+provided with the distribution. Gandalf is divided into the following
+packages:--
+\begin{itemize}
+  \item The {\bf Common} package contains general purpose tools used by other
+	packages. It includes routines for memory allocation, linked lists,
+	various numerical functions, array manipulations and error handling.
+  \item The {\bf Linear algebra} package includes vector/matrix manipulation
+	routines both for small objects (sizes 2,3,4) and general size vectors
+	\& matrices. The latter optionally employs LAPACK for certain
+	operations, where a fast implementation of LAPACK is available.
+  \item The {\bf Image} package contains low-level image creation and
+	manipulation functions, supporting grey-level, RGB colour images with
+	or without alpha channels, with various different pixel depths.
+	2D and 3D vector field images are also supported.
+  \item The {\bf Vision} package contains some useful vision utility modules,
+	including edge/line/corner feature detection, and geometrical
+	fitting routines.
+\end{itemize}
+In the following chapters we introduce each package in turn, describing
+the scope and applications of the package, followed by tutorial examples
+showing how to build a user application using Gandalf. This is followed
+by chapter~\ref{testing-chapter} describing the testing framework used by
+Gandalf. Firstly we describe the conventions and style of Gandalf.
+
+\section{Conventions and style} \label{conventions-sec}
+\subsection{Function/name prefixes and case}
+All Gandalf functions begin with the {\tt gan\_...} prefix, to minimise the
+possibility of name conflicts. Function names are written in lower case, with
+a few exceptions where upper case is used for single letters
+in a function name. Defined constants
+and enum values are written in upper case, for instance {\tt GAN\_TRUE} and
+{\tt GAN\_FALSE} for the boolean type {\tt Gan\_Bool}. Structure, union
+and enum type names are capitalised, for instance {\tt Gan\_List},
+{\tt Gan\_Vector} and {\tt Gan\_Image}, the names of the Gandalf linked list,
+vector and image structures.
+
+\subsection{``Quick'', ``slow'' and ``in-place'' Gandalf routines}
+A convention used extensively in the linear algebra and image packages is
+to provide ``quick'' and ``slow'' versions of the same operation,
+indicating the difference using the suffices {\tt ...\_q} and {\tt ...\_s}
+respectively. The meanings of the suffices vary, but are one of:
+\begin{enumerate}
+  \item The ``slow'' version dynamically allocates the memory to hold the
+	result, whereas the ``quick'' version uses a pre-allocated result
+	passed in to the function, avoiding repetitively allocating and
+	freeing memory when the function is called several times.
+	This is the convention used in the image package and for general size
+	matrix and vector functions in the linear algebra package.
+  \item The ``slow'' version returns a structure as its result, and the
+	``quick'' version expects a pointer to the result structure to be
+	passed in. This is the convention used for fixed-size matrices and
+	vectors in the linear algebra package.
+\end{enumerate}
+There is also a conventional {\tt ...\_i} suffix for operations that overwrite
+one of the input arguments with the result.
+
+\subsection{Variable argument list functions}
+Variable argument lists have been avoided where possible, because of the
+lack of argument type and number checking. All functions with a variable
+argument list have a {\tt ...\_va} suffix.
+
+\subsection{Dynamic self-modification}
+Another important design feature of Gandalf is the ability of many Gandalf
+objects to dynamically modify themselves. Thus Gandalf matrices, vectors and
+images can be redefined at any time to a new type and/or size.
+This feature has many benefits, among which are:
+\begin{enumerate}
+  \item Results of computations may be overwritten in-place on the input
+	arguments, in many cases without any memory or computational overhead.
+	For instance, the Cholesky factorisation of a positive-definite
+	symmetric matrix is a lower triangular matrix factor. In Gandalf
+	the operation can be performed in-place on the symmetric matrix
+	input argument, producing a lower triangular matrix.
+	See the function {\tt gan\_squmat\_cholesky\_i()}.
+
+  \item The same structure can be used to store the results of several
+	computations, whether or not the sizes and types of the output
+	results vary. This saves many calls to {\tt malloc()} and {\tt free()}.
+\end{enumerate}
+
+\subsection{Coordinate pair ordering}
+A large number of Gandalf routines require horizontal and vertical sizes
+or coordinates to be passed as arguments, whether representing the dimensions
+of a matrix or coordinates of a pixel in an image. The ordering of the
+arguments in such cases is problematic. For specifying a matrix element
+the most natural ordering is to have the row coordinate first, corresponding
+to the coordinate order $i,j$ for matrix element $A_{ij}$.
+On the contrary, for image coordinates there is no obvious convention.
+In Gandalf a universal convention is applied that in all such cases the
+{\em vertical} or row coordinate is the first argument.
+
+\subsection{Pixel values}
+Gandalf uses the convention that image pixels represented in floating point
+are always in the range [0,1]. In integer formats the range is the whole
+range of the type, whether character, short integer, integer or long integer.
+This convention is applied for all conversions between pixels, as well as
+the image processing and display routines. When programming with Gandalf
+you should where possible stick to this convention.
+
+\subsection{Image orientation}
+The normal convention is that the first (zero) row of an image is at the top,
+and Gandalf uses this convention. It is only relevant in certain image
+processing and vision algorithms where the image orientation affects
+the results. OpenGL assumes the opposite convention, which Gandalf gets
+around by displaying images using a negative vertical scaling of image
+coordinates. Currently the only image processing algorithm which assumes
+an image orientation is the Canny edge detector.
+
+\subsection{Error checking}
+Gandalf is written with a large amount of automatic error checking, for
+instance testing for accesses to illegal matrix or image data.
+When {\tt NDEBUG} is defined, most of these tests are switched off,
+using a similar mechanism to {\tt assert()}. It is up to the programmer
+to decide which tests are for bugs in the code, and can therefore be
+turned off when code is compiled for release by defining {\tt NDEBUG}, and
+which are data-dependent errors and should therefore remain.
+

@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Creating and freeing general size matrices</TITLE>
+<META NAME="description" CONTENT="Creating and freeing general size matrices">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node69.html">
+<LINK REL="previous" HREF="node67.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node69.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1240"
+  HREF="node69.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1236"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1230"
+  HREF="node67.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1238"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1241"
+  HREF="node69.html">Adjusting the size of</A>
+<B> Up:</B> <A NAME="tex2html1237"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1231"
+  HREF="node67.html">General size matrices</A>
+ &nbsp; <B>  <A NAME="tex2html1239"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422100000000000000">
+Creating and freeing general size matrices</A>
+</H3>
+To create a general size rectangular matrix use one of the routines
+<PRE>
+      Gan_Matrix *pmA;
+
+      pmA = gan_mat_alloc ( 3, 5 );
+</PRE>
+or
+<PRE>
+      Gan_Matrix mA;
+
+      gan_mat_form ( &amp;mA, 3, 5 );
+</PRE>
+Both these examples create a matrix with three rows and five columns.
+The former allocates
+a structure and passes back a pointer to it, whereas the latter builds the
+matrix using the provided structure <TT>mA</TT>. Whichever routine is used,
+the two matrices are equivalent in every way and can be used in all the
+Gandalf general size matrix routines.
+
+<P>
+In the above calls Gandalf will invoke <TT>malloc()</TT> to create the data
+block to hold the matrix elements. Sometimes you will want to provide the
+data block yourself, avoiding the <TT>malloc()</TT> call, if you know the size,
+or at least the maximum size, of the matrix. Then you can use the
+following routine.
+<PRE>
+      Gan_Matrix mA;
+      double adAData[30];
+
+      gan_mat_form_data ( &amp;mA, 3, 5, adXData, 10 );
+</PRE>
+The last argument is the size of the array <TT>adXData</TT> passed in.
+This means that although the matrix <TT>mA</TT> is created with size five,
+the size of the data block, 10, is also stored, and this allows the
+size of <TT>mA</TT> to change (see <TT>gan_mat_set_size()</TT> below) up to
+size 10.
+
+<P>
+Once you have finished with a matrix, use the routine
+<PRE>
+      gan_mat_free ( pmA ); /* for a pointer variable, OR */
+      gan_mat_free ( &amp;mA ); /* for a structure variable */
+</PRE>
+The <TT>gan_mat_free()</TT> routine applies without modification to all
+the methods of creating the matrix. The matrix structure maintains
+knowledge of which parts of it (the structure, the data block) were
+dynamically allocated, and only frees the bits that were allocated.
+To free several rectangular matrices at once use the variable argument
+list routine
+<PRE>
+      gan_mat_free_va ( pmA, pmB, pmC, NULL ); /* free matrices A, B &amp; C */
+</PRE>
+which must be terminated by <TT>NULL</TT> to indicate the end of the list.
+
+<P>
+From now on, we use the convention that a ``square'' matrix refers to a
+square matrix with one of the special types listed above. A square general
+matrix falls into the category of rectangular matrices, for the purpose of
+the Gandalf linear algebra package.
+To create a square matrix with one of the special types use a function
+from one of the families
+<PRE>
+      Gan_SquMatrix *psmS, *psmL, *psmU, *psmD, *psmsI;
+
+      psmS = gan_symmat_alloc ( 3 ); /* create a 3x3 symmetric matrix */
+      psmL = gan_ltmat_alloc ( 3 ); /* create a 3x3 lower triangular matrix */
+      psmU = gan_utmat_alloc ( 3 ); /* create a 3x3 upper triangular matrix */
+      psmD = gan_diagmat_alloc ( 3 ); /* create a 3x3 diagonal matrix */
+      psmD = gan_scalImat_alloc ( 3 ); /* create a 3x3 scaled Identity matrix */
+</PRE>
+or
+<PRE>
+      Gan_SquMatrix smS, smL, smU, smD, smsI;
+
+      gan_symmat_form ( &amp;smS, 3 ); /* create a 3x3 symmetric matrix */
+      gan_ltmat_form ( &amp;smL, 3 ); /* create a 3x3 lower triangular matrix */
+      gan_utmat_form ( &amp;smU, 3 ); /* create a 3x3 upper triangular matrix */
+      gan_diagmat_form ( &amp;smD, 3 ); /* create a 3x3 diagonal matrix */
+      gan_scalImat_form ( &amp;smsI, 3 ); /* create a 3x3 scaled Identity matrix */
+</PRE>
+There are also <TT>..._form_data()</TT> functions available for the case that
+an array to hold the matrix data is already available. The size of the data
+array depends on the type of matrix; for instance a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$4\times 4$"> symmetric
+and triangular matrix has ten independent elements, while a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$4\times 4$">
+diagonal matrix has only four, and a scaled identity matrix only one.
+The general formula for the number of independent elements in a triangular
+or symmetric matrix is
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\mbox{\# independent elements} = \frac{n(n+1)}{2}
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="symtri-els"></A><IMG
+ WIDTH="250" HEIGHT="40" BORDER="0"
+ SRC="img59.png"
+ ALT="\begin{displaymath}
+\mbox{\char93  independent elements} = \frac{n(n+1)}{2}
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(3.1)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+for an <IMG
+ WIDTH="43" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img60.png"
+ ALT="$n\times n$"> matrix, compared with <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img61.png"
+ ALT="$n$"> for a diagonal matrix and <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img62.png"
+ ALT="$1$"> for
+a scaled identity matrix. So these are appropriate function calls.
+<PRE>
+      Gan_SquMatrix smS, smL, smU, smD, smsI;
+      double adSdata[10], adLdata[10], adUdata[10], adDdata[4], dsIdata;
+
+      gan_symmat_form_data ( &amp;smS, 4, adSdata, 10 ); /* create 4x4 symmetric matrix */
+      gan_ltmat_form_data ( &amp;smL, 4, adLdata, 10 ); /* create 4x4 lower triangular matrix */
+      gan_utmat_form_data ( &amp;smU, 4, adUdata, 10 ); /* create 4x4 upper triangular matrix */
+      gan_diagmat_form_data ( &amp;smD, 4, adDdata, 4 ); /* create 4x4 diagonal matrix */
+      gan_scalImat_form_data ( &amp;smsI, 4, &amp;dsIdata, 1 ); /* create 4x4 scaled Ident. mat. */
+</PRE>
+The final way of creating a square matrix should be used only when the
+matrix type is a variable:
+<PRE>
+      Gan_SquMatrixType type;
+      Gan_SquMatrix *psmA, smA;
+      double adAdata[10];
+
+      /* ... set matrix type e.g. GAN_SYMMETRIC_MATRIX ... */
+      psmA = gan_squmat_alloc ( type, 4 ); /* create 4x4 square matrix, pointer version, OR */
+      gan_squmat_form ( &amp;smA, type, 4 ); /* create 4x4 square matrix, structure version, OR */
+      gan_squmat_form_data ( &amp;smA, type, 4, adAdata, 10 ); /* create 4x4 square matrix */
+</PRE>
+These routines call the lower level routine specific to the provided
+<TT>type</TT>. Whichever type of matrix is created, use the function
+<PRE>
+      gan_squmat_free ( psmA );
+</PRE>
+to free the memory associated with it.
+The <TT>gan_squmat_free()</TT> routine applies to all the square matrix types
+and all methods (<TT>..._alloc()</TT>, <TT>..._form()</TT> and
+<TT>..._form_data()</TT>) of creating the matrix. The matrix structure maintains
+knowledge of which parts of it (the structure, the data block) were
+dynamically allocated, and only frees the bits that were allocated.
+To free several square matrices at once use the variable argument
+list routine
+<PRE>
+      gan_squmat_free_va ( &amp;smsI, &amp;smD, &amp;smU, &amp;smL, &amp;smS, NULL ); /* free square matrices */
+</PRE>
+which must be terminated by <TT>NULL</TT> to indicate the end of the list.
+
+<P>
+From now on the example code fragments we provide will use the convention
+that matrices are declared as structures rather than pointers, but bear in
+mind that either style may be used.
+
+<P>
+<B>Error detection:</B> All the above matrix creation routines
+return a pointer to the created matrix. If an error occurs,
+the Gandalf error handler is invoked and <TT>NULL</TT>
+is returned. The most likely error modes are failing
+to allocate the data required (i.e. internal <TT>malloc()</TT> or <TT>realloc()</TT>
+calls failing), or passing too small an array into the
+<TT>..._form_data()</TT> routines.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1240"
+  HREF="node69.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1236"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1230"
+  HREF="node67.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1238"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1241"
+  HREF="node69.html">Adjusting the size of</A>
+<B> Up:</B> <A NAME="tex2html1237"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1231"
+  HREF="node67.html">General size matrices</A>
+ &nbsp; <B>  <A NAME="tex2html1239"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

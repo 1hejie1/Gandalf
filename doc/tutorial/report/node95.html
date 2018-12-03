@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Copying/converting the whole or part of an image</TITLE>
+<META NAME="description" CONTENT="Copying/converting the whole or part of an image">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node97.html">
+<LINK REL="previous" HREF="node94.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node96.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1577"
+  HREF="node96.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1573"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1567"
+  HREF="node94.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1575"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1578"
+  HREF="node96.html">Accessing channels of an</A>
+<B> Up:</B> <A NAME="tex2html1574"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1568"
+  HREF="node94.html">Pointer images</A>
+ &nbsp; <B>  <A NAME="tex2html1576"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00560000000000000000">
+Copying/converting the whole or part of an image</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/image/image_defs.h&gt;
+</PRE>
+To copy a whole image of any format or type, use one of the following
+routines:
+<PRE>
+      Gan_Image *pImage1, *pImage2, *pImage3; /* declare images 1, 2 &amp; 3 */
+
+      /* ... create images 1 &amp; 2, fill image 1 ... */
+      gan_image_copy_q ( pImage1, pImage2 ); /* copy image 1 to image 2, OR */
+      pImage3 = gan_image_copy_s ( pImage1 ); /* copy image 1 as new image */
+</PRE>
+Image 2 here may have been created with any format, type or dimensions.
+Gandalf will reset the attributes of image 2 to those of image 1 before
+copying the image data. These routines make copies of the image data,
+so image 1 may be destroyed after it is copied.
+
+<P>
+To copy parts of an image, you will need to include the header file
+<PRE>
+      #include &lt;gandalf/image/image_extract.h&gt;
+</PRE>
+The routines to extract sub-parts of an image are
+<TT>gan_image_extract_q()</TT> and <TT>gan_image_extract_s()</TT>.
+They have the following extra features over a simple routine to
+copy image sub-regions:
+
+<OL>
+<LI>You can convert the image sub-region to any desired format and type,
+        avoiding the need to perform the two steps of extracting and
+        converting sequentially, and thus saving computation and memory.
+</LI>
+<LI>There is an option to make the resulting sub-image point into the
+        source image, rather than copy the pixel data from it.
+        This saves computation time, and the sub-image produced can be
+        manipulated in the same way as other Gandalf images.
+        Obviously use of this feature precludes use of feature 1.
+</LI>
+</OL>
+Here are a couple of examples using the sub-region extraction routines.
+Firstly a code fragment showing showing the simplest form, where the
+region is copied from the source image and the format/type remain the same.
+<PRE>
+      Gan_Image *pImage1, *pImage2; /* declare images 1 &amp; 2 */
+      Gan_RGBPixel_uc rgbucPixel;
+
+      /* create RGB unsigned character image 1 and fill with constant */
+      pImage1 = gan_image_alloc_rgb_uc ( 200, 100 );
+      rgbucPixel.R = 128; rgbucPixel.R = 80; rgbucPixel.R = 200;
+      gan_image_fill_const_rgb_uc ( pImage1, &amp;rgbucPixel );
+
+      /* create image 2 in an arbitrary way */
+      pImage2 = gan_image_alloc_gl_uc(0,0);
+
+      /* extract sub-region in image 1 into image 2, with height 60, width 50,
+         starting as position 30,40 (y,x), leaving the format/type the same.
+         The pixel data is copied */
+      gan_image_extract_q ( pImage1, 30, 40, 60, 50,
+                            pImage1-&gt;format, pImage1-&gt;type, GAN_TRUE,
+                            pImage2 );
+</PRE>
+Now an example continuing from the above, and showing how to make the result
+image point into the source image.
+<PRE>
+      /* extract sub-region in image 1 into image 2, with height 60, width 50,
+         starting as position 30,40 (y,x), leaving the format/type the same.
+         Here the pixel data is not copied; instead the result image points
+         into the source image */
+      gan_image_extract_q ( pImage1, 30, 40, 60, 50,
+                            pImage1-&gt;format, pImage1-&gt;type, GAN_FALSE,
+                            pImage2 );
+</PRE>
+Finally an example showing how to convert the sub-region to a different
+format and type.
+<PRE>
+      {
+         Gan_Image *pImage3; /* declare image 3 */
+
+         /* extract sub-region in image 1 into image 2, with height 60, width 50,
+            starting as position 30,40 (y,x), converting the format to grey-level
+            and the type to unsigned short. Here the format and type are modified
+*           as the pixels are extracted from the source image */
+         pImage3 = gan_image_extract_s ( pImage1, 30, 40, 60, 50,
+                                         GAN_GREY_LEVEL_IMAGE, GAN_USHORT,
+                                         GAN_TRUE );
+      }
+</PRE>
+
+<P>
+There are also routines to convert the whole of an image to a different
+format or type (or both). These are simpler macro versions of
+<TT>gan_image_extract_[qs]()</TT>, and can be illustrated as follows:
+<PRE>
+      Gan_Image *pImage1, *pImage2, *pImage3; /* declare images 1, 2 &amp; 3 */
+
+      /* ... create RGB unsigned character image 1 and fill with constant,
+             and create image 2 in an arbitrary way ... */
+
+      /* convert image 1 to grey-level format and unsigned short type */
+      gan_image_convert_q ( pImage1, GAN_GREY_LEVEL_IMAGE, GAN_USHORT,
+                            pImage2 ); /* convert image 1 to image 2, OR */
+      pImage3 = gan_image_convert_s ( pImage1, GAN_GREY_LEVEL_IMAGE, GAN_USHORT );
+</PRE>
+
+<P>
+<B>Error detection:</B> These routines return the result image pointer,
+and return <TT>NULL</TT> on error.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1579"
+  HREF="node96.html">Accessing channels of an image</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1577"
+  HREF="node96.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1573"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1567"
+  HREF="node94.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1575"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1578"
+  HREF="node96.html">Accessing channels of an</A>
+<B> Up:</B> <A NAME="tex2html1574"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1568"
+  HREF="node94.html">Pointer images</A>
+ &nbsp; <B>  <A NAME="tex2html1576"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

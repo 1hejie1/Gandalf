@@ -1,0 +1,1675 @@
+\section{General size matrices and vectors} \label{general-size-sec}
+When the vector/matrix object to be represented can have variable size,
+or number of rows/columns greater than four, Gandalf provides the
+structures and functions through the general size matrix/vector package.
+With this package similar operations to the fixed size package are
+supported. The general size package has addition features designed
+to ease the burden of the programmer, while still maintaining efficient
+run-time operation.
+
+General size square matrices are handled in a subtly different way
+to their fixed-size equivalents. For fixed size symmetric and triangular
+matrices, there are specific functions dealing with each type of square
+matrix, currently the two types, symmetric and lower triangular.
+A fixed size square matrix does not ``know'' what type of matrix it is.
+The {\tt type} field in this case is an inessential field of the matrix,
+and is indeed {\tt \#ifdef}'d out when Gandalf is compiled with {\tt NDEBUG}
+set. The only reason for using the same structure for both symmetric
+and lower triangular matrices is to allow the in-place operations that convert
+a symmetric matrix to a triangular matrix or vice versa. This arrangement
+is optimal for speed, because no type checking needs to be done at
+run time.
+
+In contrast, the general size square matrix structure has a {\tt type} field
+that is meaningful as the current matrix type. Many Gandalf functions are
+written for general square matrices. This simplifies the programming interface,
+in that one function can be used to implement an operation (e.g. square
+matrix add) for every type of square matrix, at the expense of some loss
+of speed, since the general function has to call different subroutines
+depending on the type of matrix. The overhead in implementing this
+arrangement is reduced to the minimum by including the routines to
+implement each operation for a given matrix type in the matrix structure
+itself. This object-oriented design feature is hidden from the
+programmer through the use of macros, so the package appears to the
+programmer as a normal set of functions.
+
+Another difference between fixed and general vectors and matrices is that
+whereas in general fixed size vectors \& matrices should be declared as
+structures, avoiding the need for dynamic allocation,
+general size vectors \& matrices require dynamic allocation of their
+internal data. There is still an advantage in declaring structures rather
+than structure pointers, in that with pointer variables you require a
+call to {\tt malloc()} to create the structure they point to.
+Gandalf lets the programmer decide which style to use. In the following
+description examples of both styles are presented.
+
+Once again, both double precision and single precision routines are available,
+and once again a parallel set of header files, structures and functions is
+provided. We shall concentrate on the double precision package, and the
+equivalent structure and function name conversions for single precision are
+given in Section~\ref{single-gen-sec}.
+
+Most of the routines return a pointer to the matrix/vector result structure.
+{\tt NULL} is returned on failure, and the Gandalf error handler is invoked.
+This is reiterated in the text below, and exceptions are noted.
+
+\subsection{General size vectors} \label{general-size-vec-sec}
+The structure and functions for general size vectors are declared in the
+header file
+\begin{verbatim}
+      #include <gandalf/linalg/vec_gen.h>
+\end{verbatim}
+The structure for general size vectors is the {\tt Gan\_Vector}.
+
+\subsubsection{Creating and freeing general size vectors}
+To create a general size vector use one of the routines
+\begin{verbatim}
+      Gan_Vector *pvx;
+
+      pvx = gan_vec_alloc(5);
+\end{verbatim}
+or
+\begin{verbatim}
+      Gan_Vector vx;
+
+      gan_vec_form ( &vx, 5 );
+\end{verbatim}
+Both these examples create a vector with five elements. The former allocates
+a structure and passes back a pointer to it, whereas the latter builds the
+vector using the provided structure {\tt vx}. Whichever routine is used,
+the two vectors are equivalent in every way and can be used in all the
+Gandalf general size vector routines.
+
+In the above calls Gandalf will invoke {\tt malloc()} to create the data
+block to hold the vector elements. Sometimes you will want to provide the
+data block yourself, avoiding the {\tt malloc()} call, if you know the size,
+or at least the maximum size, of the vector. Then you can use the
+following routine.
+\begin{verbatim}
+      Gan_Vector vx;
+      double adXData[10];
+
+      gan_vec_form_data ( &vx, 5, adXData, 10 );
+\end{verbatim}
+The last argument is the size of the array {\tt adXData} passed in.
+This means that although the vector {\tt vx} is created with size five,
+the size of the data block, 10, is also stored, and this allows the
+size of {\tt vx} to change (see {\tt gan\_vec\_set\_size()} below) up to
+size 10.
+
+Once you have finished with a vector use the routine
+\begin{verbatim}
+      gan_vec_free ( pvx ); /* for a pointer variable, OR */
+      gan_vec_free ( &vx ); /* for a structure variable */
+\end{verbatim}
+The {\tt gan\_vec\_free()} routine applies without modification to all
+the methods of creating the vector. The vector structure maintains
+knowledge of which parts of it (the structure, the data block) were
+dynamically allocated, and only frees the bits that were allocated.
+
+From now on the example code fragments we provide will use the convention
+that vectors are declared as structures rather than pointers, but bear in
+mind that either style may be used.
+
+{\bf Error detection:} All the above vector creation routines return a
+pointer to the created vector.
+If an error occurs, the Gandalf error handler is invoked and {\tt NULL}
+is returned. The most likely error modes are failing
+to allocate the data required (i.e. internal {\tt malloc()} or {\tt realloc()}
+calls failing), or passing too small an array into the
+{\tt gan\_vec\_form\_data()} routine.
+
+\subsubsection{Adjusting the size of a general size vector}
+\label{set-size-vec-sec}
+Once a vector has been created, its size may be adjusted dynamically
+as needs arise. Gandalf stores the currently allocated maximum size of
+a vector in the vector structure, so it can determine when the size of
+the result of a computation will exceed the current size, and reallocate
+accordingly. This happens automatically when a vector is the result
+of a calculation, but sometimes it is necessary to explicitly set the
+size of a vector. This is done using the following routine.
+\begin{verbatim}
+      gan_vec_set_size ( &vx, 3 );
+\end{verbatim}
+This resets the size of the vector {\tt vx} to 3.
+If the size of a vector created
+by {\tt gan\_vec\_alloc()} or {\tt gan\_vec\_form()} is increased in size
+in this way beyond its originally allocated size, {\tt gan\_vec\_set\_size()}
+will automatically reallocate the vector to the new size.
+On the other hand, if {\tt gan\_vec\_form\_data()} was used to create the
+vector, it cannot be increased in size beyond the size of the array
+passed as the last argument into {\tt gan\_vec\_form\_data()}.
+
+{\bf Error detection:} {\tt NULL} is returned and the error handler is
+invoked on failure. The most likely failure mode is failing to reallocate
+the vector data, i.e. failure of a call to {\tt realloc()}.
+
+\subsubsection{Filling a general size vector with values}
+   \label{fill-vec-gen-sec}
+To fill a vector with values, create the vector and then use the routine
+{\tt gan\_vec\_fill\_va()}. An example is
+\begin{verbatim}
+      gan_vec_fill_va ( &vx, 6, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 );
+\end{verbatim}
+which sets vector {\tt vx} to have size 6, and sets the six elements to
+the values one to six.
+
+To fill a vector with a constant value, you can use
+\begin{verbatim}
+      gan_vec_fill_const_q ( &vx, 4, 3.0 );
+\end{verbatim}
+which sets the size of {\tt vx} to four elements, all of which are set to
+three. This function is also available in a form which allocates and fills a
+vector from scratch:
+\begin{verbatim}
+      Gan_Vector *pvx;
+
+      pvx = gan_vec_fill_const_s ( 4, 3.0 );
+\end{verbatim}
+There are special macro routines for setting a vector to zero:
+\begin{verbatim}
+      gan_vec_fill_zero_q ( &vx, 4 ); /* OR */
+      pvx = gan_vec_fill_zero_s(4);
+\end{verbatim}
+
+{\bf Error detection:} {\tt NULL} is returned and the error handler is
+invoked on failure. The most likely failure mode is failing to reallocate
+the vector data when the size of the vector is changed,
+i.e. failure of a call to {\tt realloc()}.
+
+\subsubsection{Accessing the elements of a general size vector}
+To read the value of a specific element of a vector use
+\begin{verbatim}
+      double dEl;
+
+      dEl = gan_vec_get_el ( pvx, 1 ); /* returns x[1], x = (x[0] x[1] ... )^T */
+\end{verbatim}
+This sets {\tt dEl} to the second element of vector {\tt pvx}
+(zero is the first). To set an element to a specific value use
+\begin{verbatim}
+      gan_vec_set_el ( pvx, 2, 3.0 ); /* set x[2] to 3, x = (x[0] x[1] ... )^T */
+\end{verbatim}
+This sets the third element of vector {\tt pvx} to 3.
+There are also routines to increment or decrement an element of a vector:
+\begin{verbatim}
+      gan_vec_inc_el ( pvx, 0, 2.5 ); /* x_0 += 2.5, x = (x[0] x[1] ... )^T */
+      gan_vec_dec_el ( pvx, 4, 5.0 ); /* x_4 -= 5.0, x = (x[0] x[1] ... )^T */
+\end{verbatim}
+which respectively increment the first element by 2.5 and subtract 5 from
+the fifth element of {\tt pvx}.
+
+{\bf Error detection:} {\tt gan\_vec\_set\_el()}, {\tt gan\_vec\_inc\_el()}
+and {\tt gan\_vec\_dec\_el()} all return boolean values, with {\tt GAN\_FALSE}
+returned on failure, in which case the Gandalf error handler is invoked.
+The most likely failure mode is accessing an element outside the bounds of
+the vector. If {\tt NDEBUG} is set then no error checking is done.
+{\tt gan\_vec\_get\_el()} operates similarly, but returns
+{\tt DBL\_MAX} on error.
+
+\subsubsection{Copying a general size vector}
+To copy a vector $\xvec$ to another vector $\yvec$, both vectors must have
+been created, and $\xvec$ should be filled with values. $\yvec$ can be
+created with arbitrary initial size (for instance zero), since Gandalf will
+if necessary reallocate $\yvec$ to the same size as $\xvec$ if necessary.
+So for instance the following code is perfectly valid:
+\begin{verbatim}
+      Gan_Vector vx, vy; /* declare vectors x & y */
+
+      gan_vec_form ( &vx, 0 ); /* create vector x */
+      gan_vec_form ( &vy, 0 ); /* create vector y */
+      gan_vec_fill_va ( &vx, 5, 11.0, 9.0, 7.0, 5.0, 3.0 ); /* reallocate & initialise x */
+      gan_vec_copy_q ( &vx, &vy ); /* set y = x, reallocating y */
+\end{verbatim}
+The last two lines reallocate first $\xvec$ and then $\yvec$, because both
+were created with zero size. Note that $\yvec$ may have previously been
+filled with other values, which are now lost.
+
+There is also a version that creates a copy of a vector from scratch:
+\begin{verbatim}
+      Gan_Vector *pvy; /* declare vector y */
+
+      pvy = gan_vec_copy_s ( &vx ); /* create y and set y = x */
+\end{verbatim}
+
+{\bf Error detection:} The vector copy routines return {\tt NULL} and
+invoke the Gandalf error handler upon failure.
+
+\subsubsection{General size vector addition}
+To add two vectors $\xvec$ and $\yvec$ together, obtaining the sum
+$\zvec = \xvec + \yvec$, use the routine
+\begin{verbatim}
+      Gan_Vector vx, vy, vz; /* declare vectors x, y and z */
+
+      /* ... create and fill vx & vy, create vz ... */
+      gan_vec_add_q ( &vx, &vy, &vz ); /* compute z = x + y */
+\end{verbatim}
+Again vector $\zvec$ is reallocated if necessary. Vectors $\xvec$ and
+$\yvec$ must of course be the same size, or the error handler is invoked
+and {\tt NULL} is returned. The sum vector $\zvec$ may be create from scratch
+using
+\begin{verbatim}
+      Gan_Vector *pvz; /* declare vector z as pointer */
+
+      /* ... create and fill vx & vy ... */
+      pvz = gan_vec_add_s ( &vx, &vy ); /* compute z = x + y */
+\end{verbatim}
+Another way of computing vector addition is to replace one of the input
+vector $\xvec$ or $\yvec$ with the result, using one of the in-place routines
+\begin{verbatim}
+      gan_vec_add_i1 ( &vx, &vy ); /* replace x = x + y */
+      gan_vec_add_i2 ( &vx, &vy ); /* replace y = x + y */
+\end{verbatim}
+An alternative to {\tt gan\_vec\_add\_i1()} is the more explicit routine
+\begin{verbatim}
+      gan_vec_increment ( &vx, &vy ); /* replace x = x + y */
+\end{verbatim}
+
+{\bf Error detection:} {\tt NULL} is returned and the Gandalf error handler
+invoked if the vector addition fails.
+The most likely failure modes are failing to create/set the result vector,
+or size incompatibility between the input vectors.
+
+\subsubsection{General size vector subtraction}
+The routines for vector subtraction follow the scheme of those for
+vector addition, leading to the options
+\begin{verbatim}
+      Gan_Vector vx, vy, vz; /* declare vectors x, y and z */
+      Gan_Vector *pvz; /* declare vector z alternatively as pointer */
+
+      /* ... create and fill vx & vy, create vz ... */
+      gan_vec_sub_q ( &vx, &vy, &vz ); /* compute z = x - y */
+      pvz = gan_vec_sub_s ( &vx, &vy ); /* compute z = x - y */
+      gan_vec_sub_i1 ( &vx, &vy ); /* replace x = x - y */
+      gan_vec_sub_i2 ( &vx, &vy ); /* replace y = x - y */
+      gan_vec_decrement ( &vx, &vy ); /* replace x = x - y */
+\end{verbatim}
+
+{\bf Error detection:} {\tt NULL} is returned and the Gandalf error handler
+invoked if the vector subtraction fails.
+The most likely failure modes are failing to create/set the result vector,
+or size incompatibility between the input vectors.
+
+\subsubsection{Rescaling a general size vector}
+Multiplying or dividing a vector by a scalar value follows the scheme of the
+above copy, addition and subtraction operations. To multiply a vector $\xvec$
+by a scalar $s$, $\yvec=s\xvec$, use for example
+\begin{verbatim}
+      Gan_Vector vx, vy; /* declare vectors x & y */
+
+      /* ... create & fill vx, create (& optionally fill) vy ... */
+      gan_vec_scale_q ( &vx, 5.0, &vy ); /* y = 5*x */
+\end{verbatim}
+to multiply all the elements in vector $\xvec$ by five, writing the result
+into vector $\yvec$.
+Alternatively you can create the rescaled vector from scratch as in
+\begin{verbatim}
+      Gan_Vector *pvy; /* declare vector y */
+
+      /* ... create & fill vx ... */
+      pvy = gan_vec_scale_s ( &vx, 5.0 ); /* y = 5*x */
+\end{verbatim}
+or overwrite $\xvec$ with the result
+\begin{verbatim}
+      gan_vec_scale_i ( &vx, 5.0 ); /* replace x = 5*x */
+\end{verbatim}
+
+There are similar routines for dividing a general size vector by a scalar
+value:
+\begin{verbatim}
+      gan_vec_divide_q ( &vx, 5.0, &vy ); /* y = x/5 */
+      pvy = gan_vec_divide_s ( &vx, 5.0 ); /* y = x/5 */
+      gan_vec_divide_i ( &vx, 5.0 ); /* replace x = x/5 */
+\end{verbatim}
+Passing zero as the scalar value in this case invokes the error handler,
+with a division by zero error
+(error code {\tt GAN\_ERROR\_DIVISION\_BY\_ZERO}),
+and {\tt NULL} is returned.
+
+There are specific routines to negate a vector, i.e. multiply it by -1,
+as follows:
+\begin{verbatim}
+      gan_vec_negate_q ( &vx, &vy ); /* y = -x */
+      pvy = gan_vec_negate_s ( &vx ); /* y = -x */
+      gan_vec_negate_i ( &vx ); /* replace x = -x */
+\end{verbatim}
+
+{\tt Error detection:} The Gandalf error handler is invoked and {\tt NULL}
+is returned if an error occurs. The most likely failure modes are
+(i) failing to create the result vector; (ii) division by zero.
+
+\subsection{General size matrices} \label{general-size-mat-sec}
+The structure and functions for general size matrices are declared in the
+header file
+\begin{verbatim}
+      #include <gandalf/linalg/mat_gen.h>
+\end{verbatim}
+The structure for general size matrices is the {\tt Gan\_Matrix}.
+For special types of square matrix the structure is the {\tt Gan\_SquMatrix},
+and is declared in the header file
+\begin{verbatim}
+      #include <gandalf/linalg/mat_square.h>
+\end{verbatim}
+The square matrix types are listed in {\tt linalg\_defs.h} (file not to be
+included explicitly in application programs):
+\begin{verbatim}
+      /* types of square matrix */
+      typedef enum { GAN_SYMMETRIC_MATRIX,     /* symmetric */
+                     GAN_DIAGONAL_MATRIX,      /* diagonal */
+                     GAN_SCALED_IDENT_MATRIX,  /* identity times scalar */
+                     GAN_LOWER_TRI_MATRIX,     /* lower triangular */
+                     GAN_UPPER_TRI_MATRIX,     /* upper triangular */
+                     GAN_ZERO_SQUARE_MATRIX }  /* square matrix filled with zeros */
+        Gan_SquMatrixType;
+\end{verbatim}
+Use of the special matrix types producs savings both in memory and computation
+time, and should be exploited wherever appropriate.
+To use any functions specific to the above square matrix types
+(as opposed to general square matrix functions common to many types), you will
+need to include the header file for the specific type you need, for instance
+\begin{verbatim}
+      #include <gandalf/linalg/mat_symmetric.h>
+\end{verbatim}
+for symmetric matrices, and
+\begin{verbatim}
+      #include <gandalf/linalg/mat_triangular.h>
+\end{verbatim}
+for triangular matrices (covers lower and upper triangular matrices).
+The full list of header files for the specific square matrix types is
+\begin{verbatim}
+      #include <gandalf/linalg/mat_symmetric.h>  /* for symmetric matrices */
+      #include <gandalf/linalg/mat_triangular.h> /* lower/upper triangular matrices */
+      #include <gandalf/linalg/mat_diagonal.h>   /* diagonal matrices */
+      #include <gandalf/linalg/mat_scaledI.h>    /* scaled identity matrices */
+\end{verbatim}
+The square matrix routines are organised so that once the matrix has been
+set at a specific type and size, and filled with values, the functions that
+operate on it are general functions. The computational overhead is that
+whenever an operation is performed (such at matrix/matrix multiplication)
+there is an indirection to take the program into the correct routine for
+the current square matrix type. This design allows the programmer to easily
+design algorithms that will work correctly and efficiently
+for any square matrix type.
+
+\subsubsection{Creating and freeing general size matrices}
+To create a general size rectangular matrix use one of the routines
+\begin{verbatim}
+      Gan_Matrix *pmA;
+
+      pmA = gan_mat_alloc ( 3, 5 );
+\end{verbatim}
+or
+\begin{verbatim}
+      Gan_Matrix mA;
+
+      gan_mat_form ( &mA, 3, 5 );
+\end{verbatim}
+Both these examples create a matrix with three rows and five columns.
+The former allocates
+a structure and passes back a pointer to it, whereas the latter builds the
+matrix using the provided structure {\tt mA}. Whichever routine is used,
+the two matrices are equivalent in every way and can be used in all the
+Gandalf general size matrix routines.
+
+In the above calls Gandalf will invoke {\tt malloc()} to create the data
+block to hold the matrix elements. Sometimes you will want to provide the
+data block yourself, avoiding the {\tt malloc()} call, if you know the size,
+or at least the maximum size, of the matrix. Then you can use the
+following routine.
+\begin{verbatim}
+      Gan_Matrix mA;
+      double adAData[30];
+
+      gan_mat_form_data ( &mA, 3, 5, adXData, 10 );
+\end{verbatim}
+The last argument is the size of the array {\tt adXData} passed in.
+This means that although the matrix {\tt mA} is created with size five,
+the size of the data block, 10, is also stored, and this allows the
+size of {\tt mA} to change (see {\tt gan\_mat\_set\_size()} below) up to
+size 10.
+
+Once you have finished with a matrix, use the routine
+\begin{verbatim}
+      gan_mat_free ( pmA ); /* for a pointer variable, OR */
+      gan_mat_free ( &mA ); /* for a structure variable */
+\end{verbatim}
+The {\tt gan\_mat\_free()} routine applies without modification to all
+the methods of creating the matrix. The matrix structure maintains
+knowledge of which parts of it (the structure, the data block) were
+dynamically allocated, and only frees the bits that were allocated.
+To free several rectangular matrices at once use the variable argument
+list routine
+\begin{verbatim}
+      gan_mat_free_va ( pmA, pmB, pmC, NULL ); /* free matrices A, B & C */
+\end{verbatim}
+which must be terminated by {\tt NULL} to indicate the end of the list.
+
+From now on, we use the convention that a ``square'' matrix refers to a
+square matrix with one of the special types listed above. A square general
+matrix falls into the category of rectangular matrices, for the purpose of
+the Gandalf linear algebra package.
+To create a square matrix with one of the special types use a function
+from one of the families
+\begin{verbatim}
+      Gan_SquMatrix *psmS, *psmL, *psmU, *psmD, *psmsI;
+
+      psmS = gan_symmat_alloc ( 3 ); /* create a 3x3 symmetric matrix */
+      psmL = gan_ltmat_alloc ( 3 ); /* create a 3x3 lower triangular matrix */
+      psmU = gan_utmat_alloc ( 3 ); /* create a 3x3 upper triangular matrix */
+      psmD = gan_diagmat_alloc ( 3 ); /* create a 3x3 diagonal matrix */
+      psmD = gan_scalImat_alloc ( 3 ); /* create a 3x3 scaled Identity matrix */
+\end{verbatim}
+or
+\begin{verbatim}
+      Gan_SquMatrix smS, smL, smU, smD, smsI;
+
+      gan_symmat_form ( &smS, 3 ); /* create a 3x3 symmetric matrix */
+      gan_ltmat_form ( &smL, 3 ); /* create a 3x3 lower triangular matrix */
+      gan_utmat_form ( &smU, 3 ); /* create a 3x3 upper triangular matrix */
+      gan_diagmat_form ( &smD, 3 ); /* create a 3x3 diagonal matrix */
+      gan_scalImat_form ( &smsI, 3 ); /* create a 3x3 scaled Identity matrix */
+\end{verbatim}
+There are also {\tt ...\_form\_data()} functions available for the case that
+an array to hold the matrix data is already available. The size of the data
+array depends on the type of matrix; for instance a $4\times 4$ symmetric
+and triangular matrix has ten independent elements, while a $4\times 4$
+diagonal matrix has only four, and a scaled identity matrix only one.
+The general formula for the number of independent elements in a triangular
+or symmetric matrix is
+\begin{equation}
+ \mbox{\# independent elements} = \frac{n(n+1)}{2} \label{symtri-els}
+\end{equation}
+for an $n\times n$ matrix, compared with $n$ for a diagonal matrix and $1$ for
+a scaled identity matrix. So these are appropriate function calls.
+\begin{verbatim}
+      Gan_SquMatrix smS, smL, smU, smD, smsI;
+      double adSdata[10], adLdata[10], adUdata[10], adDdata[4], dsIdata;
+
+      gan_symmat_form_data ( &smS, 4, adSdata, 10 ); /* create 4x4 symmetric matrix */
+      gan_ltmat_form_data ( &smL, 4, adLdata, 10 ); /* create 4x4 lower triangular matrix */
+      gan_utmat_form_data ( &smU, 4, adUdata, 10 ); /* create 4x4 upper triangular matrix */
+      gan_diagmat_form_data ( &smD, 4, adDdata, 4 ); /* create 4x4 diagonal matrix */
+      gan_scalImat_form_data ( &smsI, 4, &dsIdata, 1 ); /* create 4x4 scaled Ident. mat. */
+\end{verbatim}
+The final way of creating a square matrix should be used only when the
+matrix type is a variable:
+\begin{verbatim}
+      Gan_SquMatrixType type;
+      Gan_SquMatrix *psmA, smA;
+      double adAdata[10];
+
+      /* ... set matrix type e.g. GAN_SYMMETRIC_MATRIX ... */
+      psmA = gan_squmat_alloc ( type, 4 ); /* create 4x4 square matrix, pointer version, OR */
+      gan_squmat_form ( &smA, type, 4 ); /* create 4x4 square matrix, structure version, OR */
+      gan_squmat_form_data ( &smA, type, 4, adAdata, 10 ); /* create 4x4 square matrix */
+\end{verbatim}
+These routines call the lower level routine specific to the provided
+{\tt type}. Whichever type of matrix is created, use the function
+\begin{verbatim}
+      gan_squmat_free ( psmA );
+\end{verbatim}
+to free the memory associated with it.
+The {\tt gan\_squmat\_free()} routine applies to all the square matrix types
+and all methods ({\tt ...\_alloc()}, {\tt ...\_form()} and
+{\tt ...\_form\_data()}) of creating the matrix. The matrix structure maintains
+knowledge of which parts of it (the structure, the data block) were
+dynamically allocated, and only frees the bits that were allocated.
+To free several square matrices at once use the variable argument
+list routine
+\begin{verbatim}
+      gan_squmat_free_va ( &smsI, &smD, &smU, &smL, &smS, NULL ); /* free square matrices */
+\end{verbatim}
+which must be terminated by {\tt NULL} to indicate the end of the list.
+
+From now on the example code fragments we provide will use the convention
+that matrices are declared as structures rather than pointers, but bear in
+mind that either style may be used.
+
+{\bf Error detection:} All the above matrix creation routines
+return a pointer to the created matrix. If an error occurs,
+the Gandalf error handler is invoked and {\tt NULL}
+is returned. The most likely error modes are failing
+to allocate the data required (i.e. internal {\tt malloc()} or {\tt realloc()}
+calls failing), or passing too small an array into the
+{\tt ...\_form\_data()} routines.
+
+\subsubsection{Adjusting the size of a general size matrix}
+Once a matrix has been created, its size may be adjusted dynamically
+as needs arise. Gandalf stores the currently allocated maximum size of
+a matrix in the matrix structure, so it can determine when the size of
+the result of a computation will exceed the current size, and reallocate
+accordingly. This happens automatically when a matrix is the result
+of a calculation, but sometimes it is necessary to explicitly set the
+size of a matrix. This is done using the following routine.
+\begin{verbatim}
+      Gan_Marix mA;
+
+      /* create matrix A using e.g. gan_mat_form() */
+      gan_mat_set_size ( &mA, 3 );
+\end{verbatim}
+This resets the size of the matrix {\tt mA} to 3.
+If the size of a matrix created
+by {\tt gan\_mat\_alloc()} or {\tt gan\_mat\_form()} is increased in size
+in this way beyond its originally allocated size, {\tt gan\_mat\_set\_size()}
+will automatically reallocate the matrix to the new size.
+On the other hand, if {\tt gan\_mat\_form\_data()} was used to create the
+matrix, it cannot be increased in size beyond the size of the array
+passed as the last argument into {\tt gan\_mat\_form\_data()}.
+
+For square matrices there are similar routines for specific matrix types,
+for instance
+\begin{verbatim}
+      Gan_SquMarix smA;
+
+      /* create matrix A using e.g. gan_squmat_form() */
+      gan_symmat_set_size ( &mA, 3 ); /* set A to be a symmetric matrix with size 3 */
+\end{verbatim}
+An important feature here is that Gandalf allows both the size and type of
+the matrix to be changed. For instance, the following code is valid:
+\begin{verbatim}
+      Gan_SquMarix smA;
+
+      gan_diagmat_form ( &smA, 2 ); /* create matrix A as diagonal with size 2 */
+      gan_symmat_set_size ( &mA, 3 ); /* set A to be a symmetric matrix with size 3 */
+\end{verbatim}
+Gandalf will reallocate the matrix internally if necessary. The main proviso
+here is that if the matrix was created using a {\tt ...\_form\_data()} routine,
+setting it to a type and size which requires more independent elements than
+the size of the data array passed in is an error, so for instance
+\begin{verbatim}
+      Gan_SquMarix smA;
+      double adAdata[10];
+
+      /* create matrix A as diagonal with size 2 */
+      gan_diagmat_form_data ( &smA, 2, adAdata, 10 );
+
+      /* set A to be a symmetric matrix with size 4 */
+      gan_symmat_set_size ( &mA, 4 );
+\end{verbatim}
+is OK, because a $4\times 4$ symmetric matrix has ten independent elements,
+but an additional line
+\begin{verbatim}
+      gan_ltmat_set_size ( &smA, 5 ); /* set A to be a lower triangular matrix with size 5 */
+\end{verbatim}
+will fail (return {\tt NULL}), because a $5\times 5$ triangular matrix
+has fifteen independent elements (see Equation~\ref{symtri-els}), and the
+array {\tt adAdata} passed into the matrix originally has only ten elements.
+
+The complete list of routines for setting a square matrix to a specific size
+(here 5) and type is
+\begin{verbatim}
+      gan_symmat_set_size ( &smA, 5 ); /* set A to be a 5x5 symmetric matrix */
+      gan_ltmat_set_size ( &smA, 5 ); /* set A to be a 5x5 lower triangular matrix */
+      gan_utmat_set_size ( &smA, 5 ); /* set A to be a 5x5 upper triangular matrix */
+      gan_diagmat_set_size ( &smA, 5 ); /* set A to be a 5x5 diagonal matrix */
+      gan_scalImat_set_size ( &smA, 5 ); /* set A to be a 5x5 scaled identity matrix */
+\end{verbatim}
+and there is also a function for setting a matrix with a variable type:
+\begin{verbatim}
+      /* set A to be a symmetric matrix with size 5 */
+      gan_squmat_set_type_size ( &smA, GAN_SYMMETRIC_MATRIX, 5 );
+\end{verbatim}
+and routines to set only the type, or only the size, of the matrix:
+\begin{verbatim}
+      /* set A to be a symmetric matrix, size unchanged */
+      gan_squmat_set_type ( &smA, GAN_SYMMETRIC_MATRIX );
+
+      /* set A to be size 4, type unchanged */
+      gan_squmat_set_size ( &smA, 4 );
+\end{verbatim}
+
+{\bf Error detection:} {\tt NULL} is returned and the error handler is
+invoked on failure. The most likely failure mode is failing to reallocate
+the matrix data, i.e. failure of a call to {\tt realloc()}.
+
+\subsubsection{Filling a general size matrix with values}
+   \label{fill-mat-gen-sec}
+
+To fill a matrix with values, create the matrix and then use the routine
+{\tt gan\_mat\_fill\_va()}. An example is
+\begin{verbatim}
+      Gan_Matrix mA;
+
+      /* ... create mA using e.g. gan_mat_form() ... */
+      gan_mat_fill_va ( &mA, 2, 3, 1.0, 2.0, 3.0,
+                                   4.0, 5.0, 6.0 );
+\end{verbatim}
+which sets matrix {\tt mA} to have dimensions 2 rows by 3 columns,
+and sets the value to
+\[ A = \beginm{ccc} 1 & 2 & 3 \\ 4 & 5 & 6 \endm
+\]
+To fill a matrix with a constant value, you can use
+\begin{verbatim}
+      gan_mat_fill_const_q ( &mA, 4, 2, 3.0 );
+\end{verbatim}
+which sets the dimensions of {\tt mA} to four rows by two columns,
+and sets all the elements to three. This gives rise to the matrix
+\[ A = \beginm{cccc} 3 & 3 & 3 & 3 \\ 3 & 3 & 3 & 3 \endm
+\]
+This function is also available in a form which allocates and fills a
+matrix from scratch:
+\begin{verbatim}
+      Gan_Matrix *pmA;
+
+      pmA = gan_mat_fill_const_s ( 4, 2, 3.0 );
+\end{verbatim}
+There are special macro routines for setting a matrix to zero:
+\begin{verbatim}
+      gan_mat_fill_zero_q ( &mA, 4, 2 ); /* OR */
+      pmA = gan_mat_fill_zero_s ( 4, 2 );
+\end{verbatim}
+
+For square matrices there are specific routines for each square matrix
+type. The order in which the elements are passed in the variable argument
+list corresponds to the matrix type. For symmetric matrice, only the
+{\em lower} triangle is passed (including the diagonal). So for instance
+to create a symmetric matrix
+\[ S = \beginm{ccc} 1 & 2 & 4 \\ 2 & 3 & 5 \\ 4 & 5 & 6 \endm
+\]
+use the code     
+\begin{verbatim}
+      Gan_SquMatrix smS;
+
+      /* ... create smS using e.g. gan_symmat_form() ... */
+      gan_symmat_fill_va ( &smS, 3, 1.0,
+                                    2.0, 3.0,
+                                    4.0, 5.0, 6.0 );
+\end{verbatim}
+For lower and upper triangular matrices pass the elements in the relevant order
+for the corresponding triangle. So for instance
+\begin{verbatim}
+      Gan_SquMatrix smL;
+
+      /* ... create smL using e.g. gan_ltmat_form() ... */
+      gan_ltmat_fill_va ( &smL, 3, 1.0,
+                                   2.0, 3.0,
+                                   4.0, 5.0, 6.0 );
+\end{verbatim}
+creates the lower triangular  matrix
+\[ L = \beginm{ccc} 1 & 0 & 0 \\ 2 & 3 & 0 \\ 4 & 5 & 6 \endm
+\]
+while
+\begin{verbatim}
+      Gan_SquMatrix smU;
+
+      /* ... create smU using e.g. gan_utmat_form() ... */
+      gan_utmat_fill_va ( &smU, 3, 1.0, 2.0, 4.0,
+                                        3.0, 5.0,
+                                             6.0 );
+\end{verbatim}
+creates the upper triangular  matrix
+\[ U = \beginm{ccc} 1 & 2 & 4 \\ 0 & 3 & 5 \\ 0 & 0 & 6 \endm
+\]
+The routines for diagonal and scaled identity matrices follow a similar
+pattern, so you can use
+\begin{verbatim}
+      Gan_SquMatrix smD;
+
+      /* ... create smD using e.g. gan_diagmat_form() ... */
+      gan_diagmat_fill_va ( &smD, 4, 1.0, 2.0, 3.0, 4.0 );
+\end{verbatim}
+to create the diagonal matrix
+\[ D = \beginm{cccc} 1 & 0 & 0 & 0 \\ 0 & 2 & 0 & 0 \\ 0 & 0 & 3 & 0 \\ 0 & 0 & 0 & 4 \endm
+\]
+or
+\begin{verbatim}
+      Gan_SquMatrix smsI;
+
+      /* ... create smsI using e.g. gan_scalImat_form() ... */
+      gan_scalImat_fill_va ( &msI, 4, 2.0 );
+\end{verbatim}
+to create the scaled identity matrix
+\[ D = \beginm{cccc} 2 & 0 & 0 & 0 \\ 0 & 2 & 0 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 2 \endm
+\]
+
+There are also routines to fill square matrices with a constant value, with
+a special routine for filling with zero:
+\begin{verbatim}
+      Gan_SquMatrix smA;
+
+      /* ... create smA using e.g. gan_squmat_form() ... */
+      gan_symmat_fill_const_q ( &smA, 4, 3.0 ); /* set A as symmetric(4x4), each element 3 */
+      gan_ltmat_fill_const_q ( &smA, 4, 3.0 ); /* set A as l. triang.(4x4), each element 3 */
+      gan_utmat_fill_const_q ( &smA, 4, 3.0 ); /* set A as u. triang.(4x4), each element 3 */
+      gan_diagmat_fill_const_q ( &smA, 4, 3.0 ); /* set A as diagonal(4x4), each element 3 */
+      gan_scalImat_fill_const_q ( &smA, 4, 3.0 ); /* set A as scaled I(4x4), each element 3 */
+      gan_symmat_fill_zero_q ( &smA, 4 ); /* set A as symmetric(4x4), each element zero */
+      gan_ltmat_fill_zero_q ( &smA, 4 ); /* set A as l. triang.(4x4), each element zero */
+      gan_utmat_fill_zero_q ( &smA, 4 ); /* set A as u. triang.(4x4), each element zero */
+      gan_diagmat_fill_zero_q ( &smA, 4 ); /* set A as diagonal(4x4), each element zero */
+      gan_scalImat_fill_zero_q ( &smA, 4 ); /* set A as scaled I(4x4), each element zero */
+\end{verbatim}
+set the type and size of an existing square matrix, and sets all its elements
+to the same value,
+\begin{verbatim}
+      Gan_SquMatrix *psmS, *psmL, *psmU, *psmD, *psmsI;
+
+      psmS = gan_symmat_fill_const_s ( 4, 3.0 ); /* create 4x4 symmetric mat., each el. 3 */
+      psmL = gan_ltmat_fill_const_s ( 4, 3.0 ); /* create 4x4 u. tri. mat., each el. 3 */
+      psmU = gan_utmat_fill_const_s ( 4, 3.0 ); /* create 4x4 l. tri. mat., each el. 3 */
+      psmD = gan_diagmat_fill_const_s ( 4, 3.0 ); /* create 4x4 diagonal mat., each el. 3 */
+      psmsI = gan_scalImat_fill_const_s ( 4, 3.0 ); /* create 4x4 scaled I mat., each el. 3 */
+      psmS = gan_symmat_fill_zero_s ( 4 ); /* create 4x4 symmetric mat., each el. zero */
+      psmL = gan_ltmat_fill_zero_s ( 4 ); /* create 4x4 u. tri. mat., each el. zero */
+      psmU = gan_utmat_fill_zero_s ( 4 ); /* create 4x4 l. tri. mat., each el. zero */
+      psmD = gan_diagmat_fill_zero_s ( 4 ); /* create 4x4 diagonal mat., each el. zero */
+      psmsI = gan_scalImat_fill_zero_s ( 4 ); /* create 4x4 scaled I mat., each el. zero */
+\end{verbatim}
+create new matrices with the given type and size, and set all the elements to
+the same value,
+
+There are also equivalent routines that work with a variable square
+matrix type:
+\begin{verbatim}
+      Gan_SquMatrix smA, *psmA;
+      Gan_SquMatrixType type;
+
+      /* ... create smA using e.g. gan_squmat_form() and set type to
+             desired square matrix type, e.g. GAN_SYMMETRIC_MATRIX ...*/
+
+      /* set up an existing matrix, fill it with a constant value */
+      gan_squmat_fill_const_q ( &smA, type, 4, 3.0 ); /* constant element value 3 */
+      gan_squmat_fill_zero_q ( &smA, type, 4 ); /* fill with zero */
+
+      /* create a matrix from scratch */
+      psmA = gan_squmat_fill_const_s ( type, 4, 3.0 ); /* constant element value 3 */
+      psmA = gan_squmat_fill_const_s ( type, 4, 3.0 ); /* fill with zero */
+\end{verbatim}
+
+Note that the dynamic reconfiguration feature of square matrices means again
+that the {\tt ...\_fill\_va()},\\ {\tt ..\_fill\_const\_q()} and
+{\tt ...\_fill\_zero\_q()} square matrix
+routines do not require the matrix to be set up initially with either
+the same type or size.
+
+{\bf Error detection:} {\tt NULL} is returned and the error handler is
+invoked on failure. The most likely failure mode is failing to reallocate
+the matrix data when the size of the matrix is changed,
+i.e. failure of a call to {\tt realloc()}.
+
+\subsubsection{Accessing the elements of a general size matrix}
+To read the value of a specific element of a matrix $A$ use
+\begin{verbatim}
+      Gan_Matrix mA; /* matrix A */
+      double dEl;
+
+      /* ... create and fill matrix A ... */
+      dEl = gan_mat_get_el ( &mA, 1, 2 ); /* returns A[1][2], A = (A[0][0] A[0][1] ... )
+                                                                  (A[1][0] A[1][1] ... )
+                                                                  (   :       :    ... ) */
+\end{verbatim}
+This sets {\tt dEl} to the third element of the second row of matrix $A$.
+To set an element to a specific value use
+\begin{verbatim}
+      gan_mat_set_el ( &mA, 0, 3, 3.0 ); /* sets A[0][3] to 3.0 */
+\end{verbatim}
+This sets the fourth element of the first row of $A$ to 3.
+There are also routines to increment or decrement an element of a matrix:
+\begin{verbatim}
+      gan_mat_inc_el ( &mA, 0, 1, 2.5 ); /* A[0][1] += 2.5 */
+      gan_mat_dec_el ( &mA, 3, 2, 5.0 ); /* A[3][2] -= 5.0 */
+\end{verbatim}
+which respectively increment the second element of the first row of $A$
+by 2.5 and subtract 5 from the third element of the fourth row of $A$.
+
+For special square matrices there are equivalent routines which can be
+illustrated by the following code fragment.
+\begin{verbatim}
+      Gan_SquMatrix smA; /* matrix A */
+      double dEl;
+
+      /* ... create and fill matrix A ... */
+      dEl = gan_squmat_get_el ( &smA, 1, 2 ); /* returns A[1][2] */
+      gan_squmat_set_el ( &smA, 0, 3, 3.0 ); /* sets A[0][3] to 3.0 */
+      gan_squmat_inc_el ( &smA, 0, 1, 2.5 ); /* A[0][1] += 2.5 */
+      gan_squmat_dec_el ( &smA, 3, 2, 5.0 ); /* A[3][2] -= 5.0 */
+\end{verbatim}
+
+{\bf Error detection:} {\tt gan\_\{squ\}mat\_set\_el()},
+{\tt gan\_\{squ\}mat\_inc\_el()} and {\tt gan\_\{squ\}mat\_dec\_el()}
+all return boolean values, with {\tt GAN\_FALSE}
+returned on failure, in which case the Gandalf error handler is invoked.
+The most likely failure modes is accessing an element outside the bounds of
+the matrix, or seting an illegal element of a square matrix
+(e.g. an off-diagonal element of a diagonal matrix).
+If {\tt NDEBUG} is set then no error checking is done.
+{\tt gan\_\{squ\}mat\_get\_el()} operate similarly, but return
+{\tt DBL\_MAX} on error.
+
+\subsubsection{Copying a general size matrix}
+To copy a matrix $A$ to another matrix $B$, both matrices must have
+been created, and $A$ should be filled with values. $B$ can be
+created with arbitrary initial dimensions (for instance zero),
+since Gandalf will
+if necessary reallocate $B$ to the same size as $A$.
+So for instance the following code is perfectly valid:
+\begin{verbatim}
+      Gan_Matrix mA, mB; /* declare matrices A & B */
+
+      gan_mat_form ( &mA, 0, 0 ); /* create matrix A */
+      gan_mat_form ( &mB, 0, 0 ); /* create matrix B */
+
+      /* reallocate & initialise A */
+      gan_mat_fill_va ( &mA, 2, 3, 11.0, 9.0, 7.0,
+                                    5.0, 3.0, 1.0 );
+      gan_mat_copy_q ( &mA, &mB ); /* set B = A, reallocating B */
+\end{verbatim}
+The last two lines reallocate first $A$ and then $B$, because both
+were created with zero size. Note that $B$ may have previosly been
+filled with other values, which are now lost.
+
+There is also a version that creates a copy of a matrix from scratch:
+\begin{verbatim}
+      Gan_Matrix *pmB; /* declare matrix B */
+
+      pmB = gan_mat_copy_s ( &mA ); /* create B and set B = A */
+\end{verbatim}
+
+For special square matrices, use one of the functions
+\begin{verbatim}
+      Gan_SquMatrix smA, smB, *psmB; /* declare matrices A & B */
+
+      /* ... create A & B using e.g. gan_diagmat_form(), and initialise A using
+             e.g. gan_diagmat_fill_va() ...  */
+      gan_squmat_copy_q ( &smA, &smB ); /* set B = A, reallocating B if necessary, OR */
+      psmB = gan_squmat_copy_s(&smA); /* set B = A, creating B */
+\end{verbatim}
+
+{\bf Error detection:} The matrix copy routines return {\tt NULL} and
+invoke the Gandalf error handler upon failure.
+
+\subsubsection{Transposing a general size matrix}
+Gandalf supports implicit matrix transpose across all relevant routines,
+so it is not often necessary to explicitly transpose a matrix.
+Nonetheless, like matrix inverse it sometimes cannot be avoided.
+To transpose a matrix $A$ into another matrix $B$, both matrices must have
+been created, and $A$ should be filled with values. $B$ can be
+created with arbitrary initial dimensions (for instance zero),
+since Gandalf will
+if necessary reallocate $B$ to the same size as $A$.
+So for instance the following code is perfectly valid:
+\begin{verbatim}
+      Gan_Matrix mA, mB; /* declare matrices A & B */
+
+      gan_mat_form ( &mA, 0, 0 ); /* create matrix A */
+      gan_mat_form ( &mB, 0, 0 ); /* create matrix B */
+
+      /* reallocate & initialise A */
+      gan_mat_fill_va ( &mA, 2, 3, 11.0, 9.0, 7.0,
+                                    5.0, 3.0, 1.0 );
+      gan_mat_tpose_q ( &mA, &mB ); /* set B = A^T, reallocating B */
+\end{verbatim}
+The last two lines reallocate first $A$ and then $B$, because both
+were created with zero size. Note that $B$ may have previosly been
+filled with other values, which are now lost.
+
+There is also a version that creates the transpose of a matrix from scratch:
+\begin{verbatim}
+      Gan_Matrix *pmB; /* declare matrix B */
+
+      pmB = gan_mat_tpose_s ( &mA ); /* create B and set B = A */
+\end{verbatim}
+If in this case matrix $A$ happens to be square, Gandalf supports in-place
+transpose:
+\begin{verbatim}
+      /* A have the same number of rows and columns */
+      gan_mat_tpose_i ( &mA ); /* replace A = A^T */
+\end{verbatim}
+
+There is no explicit transpose implemented in Gandalf for special square
+matrices. With the current matrix types supported by Gandalf, it would only
+be relevant anyway for triangular matrices. Implicit transpose can handle
+every practical situation.
+
+{\bf Error detection:} The matrix transpose routines return {\tt NULL} and
+invoke the Gandalf error handler upon failure.
+
+\subsubsection{General size matrix addition}
+To add two matrices $A$ and $B$ together, obtaining the sum
+$C = A + B$, use the routine
+\begin{verbatim}
+      Gan_Matrix mA, mB, mC; /* declare matrices A, B and C */
+
+      /* ... create and fill mA & mB, create mC ... */
+      gan_mat_add_q ( &mA, &mB, &mC ); /* compute C = A + B */
+\end{verbatim}
+Again matrix $C$ is reallocated if necessary. Matrices $A$ and
+$B$ must of course be the same size, or the error handler is invoked
+and {\tt NULL} is returned. The sum matrix $C$ may be create from scratch
+using
+\begin{verbatim}
+      Gan_Matrix *pmC; /* declare matrix C as pointer */
+
+      /* ... create and fill mA & mB ... */
+      pmC = gan_mat_add_s ( &mA, &mB ); /* compute C = A + B */
+\end{verbatim}
+Another way of computing matrix addition is to replace one of the input
+matrix $A$ or $B$ with the result, using one of the in-place routines
+\begin{verbatim}
+      gan_mat_add_i1 ( &mA, &mB ); /* replace A = A + B */
+      gan_mat_add_i2 ( &mA, &mB ); /* replace B = A + B */
+\end{verbatim}
+An alternative to {\tt gan\_mat\_add\_i1()} is the more explicit routine
+\begin{verbatim}
+      gan_mat_increment ( &mA, &mB ); /* replace A = A + B */
+\end{verbatim}
+
+There is also a set of routines for adding a general size matrix to the
+transpose of another:
+\begin{verbatim}
+      Gan_Matrix mA, mB, mC, *pmC; /* declare matrices A, B and C */
+
+      /* ... create and fill A & B, create C ... */
+
+      /* B must have the same number of columns as A has rows, and vice versa */
+      gan_mat_addT_q ( &mA, &mB, &mC ); /* compute C = A + B^T, OR */
+      pmC = gan_mat_addT_s ( &mA, &mB ); /* compute C = A + B^T, OR */
+      gan_mat_incrementT ( &mA, &mB ); /* replace A = A + B^T */
+\end{verbatim}
+
+Another set of routines allows you to add two matrices and generate a
+symmetric matrix, on the assumption that the result is indeed symmetric.
+Either matrix may be implicitly transposed for the purpose of the operation:
+\begin{verbatim}
+      Gan_Matrix mA, mB; /* declare matrices A, B */
+      Gan_SquMatrix smS, *psmS; /* declare result matrix S */
+
+      /* ... create and fill A & B, create S ... */
+
+      /* for these functions, B must have the same number of columns and rows as A */
+      gan_mat_add_sym_q ( &mA, &mB, &smS ); /* S = A + B, OR */
+      psmS = gan_mat_add_sym_s ( &mA, &mB ); /* S = A + B */
+      gan_matT_addT_sym_q ( &mA, &mB, &smS ); /* S = A^T + B^T, OR */
+      psmS = gan_matT_addT_sym_s ( &mA, &mB ); /* S = A^T + B^T */
+
+      /* here B must have the same number of columns as A has rows, and vice versa */
+      gan_mat_addT_sym_q ( &mA, &mB, &smS ); /* S = A + B^T, OR */
+      psmS = gan_mat_addT_sym_s ( &mA, &mB ); /* S = A + B^T */
+      gan_matT_add_sym_q ( &mA, &mB, &smS ); /* S = A^T + B, OR */
+      psmS = gan_matT_add_sym_s ( &mA, &mB ); /* S = A^T + B */
+\end{verbatim}
+
+Finally we have some routines for adding a matrix to its own transpose,
+producing a symmetric matrix:
+\begin{verbatim}
+      Gan_Matrix mA; /* declare matrix A */
+      Gan_SquMatrix smS, *psmS; /* declare result matrix S */
+
+      /* ... create and fill A, create S ... */
+
+      gan_mat_saddT_sym_q ( &mA, &smS ); /* S = A + A^T, OR */
+      psmS = gan_mat_saddT_sym_s ( &mA ); /* S = A + A^T */
+\end{verbatim}
+
+There are equivalent functions for square matrices. Firstly the simple
+routines for adding two matrices:
+\begin{verbatim}
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B & C */
+
+      /* ... create and fill smA & smB, create smC ... */
+      gan_squmat_add_q ( &smA, &smB, &smC ); /* compute C = A + B, OR */
+      gan_squmat_add_i1 ( &smA, &smB ); /* replace A = A + B, OR */
+      gan_squmat_add_i2 ( &smA, &smB ); /* replace B = A + B, OR */
+      gan_squmat_increment ( &smA, &smB ); /* replace A = A + B, OR */
+      psmC = gan_squmat_add_s ( &smA, &smB ); /* compute C = A + B as new matrix */
+\end{verbatim}
+Other routines implicitly transpose one of the input matrices:
+\begin{verbatim}
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B & C */
+
+      /* ... create and fill smA & smB, create smC ... */
+      gan_squmat_addT_q ( &smA, &smB, &smC ); /* compute C = A + B^T, OR */
+      gan_squmat_incrementT ( &smA, &smB ); /* replace A = A + B^T, OR */
+      psmC = gan_squmat_addT_s ( &smA, &smB ); /* compute C = A + B^T as new matrix */
+\end{verbatim}
+
+{\bf Error detection:} {\tt NULL} is returned and the Gandalf error handler
+invoked if the matrix addition fails.
+The most likely failure modes are failing to create/set the result matrix,
+or size/type incompatibility between the input matrices.
+
+\subsubsection{General size matrix subtraction}
+The routines for matrix subtraction follow the scheme of those for
+matrix addition, leading to the options
+\begin{verbatim}
+      Gan_Matrix mA, mB, mC; /* declare matrices x, y and z */
+      Gan_Matrix *pmC; /* declare matrix z alternatively as pointer */
+
+      /* ... create and fill mA & mB, create mC ... */
+      gan_mat_sub_q ( &mA, &mB, &mC ); /* compute C = A - B */
+      pmC = gan_mat_sub_s ( &mA, &mB ); /* compute C = A - B */
+      gan_mat_sub_i1 ( &mA, &mB ); /* replace A = A - B */
+      gan_mat_sub_i2 ( &mA, &mB ); /* replace B = A - B */
+      gan_mat_decrement ( &mA, &mB ); /* replace A = A - B */
+\end{verbatim}
+If one of the input matrices is to be implicitly transposed, use instead
+\begin{verbatim}
+      Gan_Matrix mA, mB, mC; /* declare matrices x, y and z */
+      Gan_Matrix *pmC; /* declare matrix z alternatively as pointer */
+
+      /* ... create and fill mA & mB, create mC ... */
+
+      /* here B must have the same number of columns as A has rows, and vice versa */
+      gan_mat_subT_q ( &mA, &mB, &mC ); /* compute C = A - B^T */
+      pmC = gan_mat_subT_s ( &mA, &mB ); /* compute C = A - B^T */
+      gan_mat_decrementT ( &mA, &mB ); /* replace A = A - B^T */
+\end{verbatim}
+
+There are equivalent functions for square matrices. Firstly the simple
+routines for subtracting two matrices:
+\begin{verbatim}
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B & C */
+
+      /* ... create and fill smA & smB, create smC ... */
+      gan_squmat_sub_q ( &smA, &smB, &smC ); /* compute C = A - B, OR */
+      gan_squmat_sub_i1 ( &smA, &smB ); /* replace A = A - B, OR */
+      gan_squmat_sub_i2 ( &smA, &smB ); /* replace B = A - B, OR */
+      gan_squmat_decrement ( &smA, &smB ); /* replace A = A - B, OR */
+      psmC = gan_squmat_sub_s ( &smA, &smB ); /* compute C = A - B as new matrix */
+\end{verbatim}
+Other routines implicitly transpose one of the input matrices:
+\begin{verbatim}
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B & C */
+
+      /* ... create and fill smA & smB, create smC ... */
+      gan_squmat_subT_q ( &smA, &smB, &smC ); /* compute C = A - B^T, OR */
+      gan_squmat_decrementT ( &smA, &smB ); /* replace A = A - B^T, OR */
+      psmC = gan_squmat_subT_s ( &smA, &smB ); /* compute C = A - B^T as new matrix */
+\end{verbatim}
+
+{\bf Error detection:} {\tt NULL} is returned and the Gandalf error handler
+invoked if the matrix addition fails.
+The most likely failure modes are failing to create/set the result matrix,
+or size/type incompatibility between the input matrices.
+
+\subsubsection{Rescaling a general size matrix}
+Multiplying or dividing a matrix by a scalar value follows the scheme of the
+above copy, addition and subtraction operations. To multiply a matrix $A$
+by a scalar $s$, $B=sA$, use for example
+\begin{verbatim}
+      Gan_Matrix mA, mB; /* declare matrices A & B */
+
+      /* ... create & fill mA, create (& optionally fill) mB ... */
+      gan_mat_scale_q ( &mA, 5.0, &mB ); /* B = 5*A */
+\end{verbatim}
+to multiply all the elements in matrix $A$ by five, writing the result
+into matrix $B$.
+Alternatively you can create the rescaled matrix from scratch as in
+\begin{verbatim}
+      Gan_Matrix *pmB; /* declare matrix B */
+
+      /* ... create & fill mA ... */
+      pmB = gan_mat_scale_s ( &mA, 5.0 ); /* B = 5*A */
+\end{verbatim}
+or overwrite $A$ with the result
+\begin{verbatim}
+      gan_mat_scale_i ( &mA, 5.0 ); /* replace A = 5*A */
+\end{verbatim}
+
+There are similar routines for dividing a general size matrix by a scalar
+value:
+\begin{verbatim}
+      gan_mat_divide_q ( &mA, 5.0, &mB ); /* B = A/5 */
+      pmB = gan_mat_divide_s ( &mA, 5.0 ); /* B = A/5 */
+      gan_mat_divide_i ( &mA, 5.0 ); /* replace A = A/5 */
+\end{verbatim}
+
+There are specific routines to negate a matrix, i.e. multiply it by -1,
+as follows:
+\begin{verbatim}
+      gan_mat_negate_q ( &mA, &mB ); /* B = -A */
+      pmB = gan_mat_negate_s ( &mA ); /* B = -A */
+      gan_mat_negate_i ( &mA ); /* replace A = -A */
+\end{verbatim}
+
+The equivalent routines for square matrices are
+\begin{verbatim}
+      Gan_SquMatrix smA, smB, *psmB; /* declare matrices A & B */
+
+      /* ... create & fill smA, create (& optionally fill) smB ... */
+
+      /* scale a square matrix */
+      gan_squmat_scale_q ( &smA, 5.0, &smB ); /* B = 5*A, B an existing matrixOR */
+      psmB = gan_squmat_scale_s ( &smA, 5.0 ); /* B = 5*A, B a new matrix, OR */
+      gan_squmat_scale_i ( &smA, 5.0 ); /* replace A = 5*A */
+
+      /* divide a square matrix by a scalar */
+      gan_squmat_divide_q ( &smA, 5.0, &smB ); /* B = A/5, B an existing matrix, OR */
+      psmB = gan_squmat_divide_s ( &smA, 5.0 ); /* B = A/5, B a new matrix, OR */
+      gan_squmat_divide_i ( &smA, 5.0 ); /* replace A = A/5 */
+
+      /* negate a square matrix */
+      gan_squmat_negate_q ( &smA, &smB ); /* B = -A, B an existing matrix, OR */
+      psmB = gan_squmat_negate_s ( &smA ); /* B = -A, B a new matrix, OR */
+      gan_squmat_negate_i ( &smA ); /* replace A = -A */
+\end{verbatim}
+Passing zero as the scalar value to the {\tt gan\_mat\_divide\_[qsi]()}
+or {\tt gan\_squmat\_divide\_[qsi]()} routines invokes the error handler,
+with a division by zero error
+(error code {\tt GAN\_ERROR\_DIVISION\_BY\_ZERO}),
+and {\tt NULL} is returned.
+
+{\tt Error detection:} The Gandalf error handler is invoked and {\tt NULL}
+is returned if an error occurs. The most likely failure modes are
+(i) failing to create the result matrix; (ii) division by zero.
+
+\subsubsection{General size matrix/vector multiplication}
+The general size matrix/vector multiplication, with optional implicit
+transpose of the matrix, computes one of the operations
+\[ \yvec = A\xvec\;\;\;\;\mbox{OR} \;\;\;\;\yvec = A\tr\xvec
+\]
+for vectors $\xvec$, $\yvec$ and matrix $A$. They are implemented in Gandalf
+as follows.
+\begin{verbatim}
+      Gan_Matrix mA; /* matrix A */
+      Gan_Vector vx, vy; /* vectors x & y */
+
+      /* ... create and fill matrix A and vector x, create (and optionally
+             fill) vector y ... */
+      gan_mat_multv_q ( &mA, &vx, &vy ); /* set y = A*x, OR */
+      gan_matT_multv_q ( &mA, &vx, &vy ); /* set y = A^T*x */
+\end{verbatim}
+with the alternative forms
+\begin{verbatim}
+      Gan_Matrix mA; /* matrix A */
+      Gan_Vector vx, *pvy; /* vectors x & y */
+
+      /* ... create and fill matrix A and vector x ... */
+      pvy = gan_mat_multv_s ( &mA, &vx ); /* set y = A*x, y a new vector, OR */
+      pvy = gan_matT_multv_s ( &mA, &vx ); /* set y = A^T*x, y a new vector */
+\end{verbatim}
+
+If $A$ is a special square matrix, more options are available. If $A$ is
+a triangular matrix, multiplication with a vector can be implemented as
+an in-place operation, whether or not $A$ is (implicitly) inverted or
+transposed, in any combination. This gives rise to the following Gandalf
+routines.
+\begin{verbatim}
+      Gan_SquMatrix smA; /* matrix A */
+      Gan_Vector vx, vy; /* vectors x & y */
+
+      /* ... create and fill matrix A and vector x, create (and optionally
+             fill) vector y ... */
+      gan_squmat_multv_q ( &smA, &vx, &vy ); /* set y = A*x, OR */
+      gan_squmatT_multv_q ( &smA, &vx, &vy ); /* set y = A^T*x, OR */
+      gan_squmatI_multv_q ( &smA, &vx, &vy ); /* set y = A^-1*x, OR */
+      gan_squmatIT_multv_q ( &smA, &vx, &vy ); /* set y = A^-T*x */
+\end{verbatim}
+with in-place versions
+\begin{verbatim}
+      Gan_SquMatrix smA; /* matrix A */
+      Gan_Vector vx; /* vector x */
+
+      /* ... create and fill matrix A and vector x ... */
+      gan_squmat_multv_i ( &smA, &vxy ); /* replace x = A*x, OR */
+      gan_squmatT_multv_i ( &smA, &vx ); /* replace x = A^T*x, OR */
+      gan_squmatI_multv_i ( &smA, &vx ); /* replace x = A^-1*x, OR */
+      gan_squmatIT_multv_i ( &smA, &vx ); /* replace x = A^-T*x */
+\end{verbatim}
+and also the routines to create the result vector from scratch:
+\begin{verbatim}
+      Gan_SquMatrix smA; /* matrix A */
+      Gan_Vector vx, *pvy; /* vectors x & y */
+
+      /* ... create and fill matrix A and vector x ... */
+      pvy = gan_squmat_multv_s ( &smA, &vxy ); /* set y = A*x, OR */
+      pvy = gan_squmatT_multv_s ( &smA, &vx ); /* set y = A^T*x, OR */
+      pvy = gan_squmatI_multv_s ( &smA, &vx ); /* set y = A^-1*x, OR */
+      pvy = gan_squmatIT_multv_s ( &smA, &vx ); /* set y = A^-T*x */
+\end{verbatim}
+Note that the implicit inverse and in-place features are not available when
+$A$ is of symmetric type; Gandalf will invoke the error handler and return
+an error condition {\tt NULL} if {\tt mA} has type
+{\tt GAN\_SYMMETRIC\_MATRIX}.
+
+{\bf Error detection:} If implicit inverse is used (the
+{\tt gan\_squmatI\_multv\_[qsi]()} or {\tt gan\_squmatIT\_multv\_[qsi]()}
+routines), the matrix must be non-singular. If the matrix is singular
+then {\tt NULL} is returned and the Gandalf error handler is invoked.
+Other failure modes are failing to create the result vector and incompatibility
+between the sizes of the input matrix and vector.
+
+\subsubsection{General size matrix/matrix multiplication}
+Similar options are available to matrix/matrix multiplication as with
+matrix/vector multiplication, with the added complication that either or
+both if the matrices may have an implicit transpose or (for square matrices)
+inverse applied to them. Firstly we list the routines available when
+both input matrices are general rectangular matrices. In this case only
+implicit transpose is of relevance to us, and we can write the operations
+we need to implement as
+\[ C = A B,\;\;\;\;\;C = A\tr B,\;\;\;\;C = A B\tr,\;\;\;\;C = A\tr B\tr
+\]
+To right-multiply a matrix $A$ by another matrix $B$, with all the above
+transpose combinations, the Gandalf routines are
+\begin{verbatim}
+      Gan_Matrix mA, mB, mC; /* matrices A, B & C */
+
+      /* ... create and fill matrices A, B, create matrix C ... */
+      gan_mat_rmult_q ( &mA, &mB, &mC ); /* C = A*B, OR */
+      gan_mat_rmultT_q ( &mA, &mB, &mC ); /* C = A*B^T, OR */
+      gan_matT_rmult_q ( &mA, &mB, &mC ); /* C = A^T*B, OR */
+      gan_matT_rmultT_q ( &mA, &mB, &mC ); /* C = A^T*B^T, OR */
+\end{verbatim}
+with similar routines to create the result matrix $C$ from scratch:
+\begin{verbatim}
+      Gan_Matrix mA, mB, *pmC; /* matrices A, B & C */
+
+      /* ... create and fill matrices A, B ... */
+      pmC = gan_mat_rmult_s ( &mA, &mB ); /* C = A*B, OR */
+      pmC = gan_mat_rmultT_s ( &mA, &mB ); /* C = A*B^T, OR */
+      pmC = gan_matT_rmult_s ( &mA, &mB ); /* C = A^T*B, OR */
+      pmC = gan_matT_rmultT_s ( &mA, &mB ); /* C = A^T*B^T, OR */
+\end{verbatim}
+The next set of routines deals with the case where it is known that the
+result of multiplying matrices $A$ and $B$ is symmetric. In that case we
+can use the routines
+\begin{verbatim}
+      Gan_Matrix mA, mB; /* matrices A & B */
+      Gan_SquMatrix smC; /* matrix C */
+
+      /* ... create and fill matrices A, B, create matrix C ... */
+      gan_mat_rmult_sym_q ( &mA, &mB, &mC ); /* C = A*B, OR */
+      gan_mat_rmultT_sym_q ( &mA, &mB, &mC ); /* C = A*B^T, OR */
+      gan_matT_rmult_sym_q ( &mA, &mB, &mC ); /* C = A^T*B, OR */
+      gan_matT_rmultT_sym_q ( &mA, &mB, &mC ); /* C = A^T*B^T */
+\end{verbatim}
+with the alternatives
+\begin{verbatim}
+      Gan_Matrix mA, mB; /* matrices A & B */
+      Gan_SquMatrix *psmC; /* matrix C */
+
+      /* ... create and fill matrices A, B ... */
+      psmC = gan_mat_rmult_sym_s ( &mA, &mB ); /* C = A*B, OR */
+      psmC = gan_mat_rmultT_sym_s ( &mA, &mB ); /* C = A*B^T, OR */
+      psmC = gan_matT_rmult_sym_s ( &mA, &mB ); /* C = A^T*B, OR */
+      psmC = gan_matT_rmultT_sym_s ( &mA, &mB ); /* C = A^T*B^T */
+\end{verbatim}
+In the case that $A$ and $B$ are the same matrix, we can be sure that both
+$AA\tr$ and $A\tr A$ are symmetric, and there are special Gandalf routines
+for these cases, distinguished according to whether $A$ is multiplied by its
+own transpose on the {\bf r}ight or {\bf l}eft:
+\begin{verbatim}
+      Gan_Matrix mA; /* matrix A */
+      Gan_SquMatrix smC; /* matrix C */
+
+      /* ... create and fill matrix A, create matrix C ... */
+      gan_mat_srmultT_q ( &mA, &mC ); /* C = A*A^T, OR */
+      gan_mat_slmultT_q ( &mA, &mC ); /* C = A^T*A */
+\end{verbatim}
+with the alternatives
+\begin{verbatim}
+      Gan_Matrix mA; /* matrix A */
+      Gan_SquMatrix *psmC; /* matrix C */
+
+      /* ... create and fill matrix A ... */
+      psmC = gan_mat_srmultT_s ( &mA ); /* C = A*A^T, OR */
+      psmC = gan_mat_slmultT_s ( &mA ); /* C = A^T*A */
+\end{verbatim}
+
+If one or both of the input matrices is a special square matrix, there are
+many more combinations available. First consider a square matrix $A$ being
+multiplied on left or right by a general rectangular matrix $B$, giving
+a result matrix $C$. Given the possibility of both implicit transpose and
+inverse of the square matrix, we need to consider the operations
+\[ C = A B,\;\;\;C = A B\tr,\;\;\;C = A\tr B,\;\;\;C = A\tr B\tr,
+\]
+\[ C = A\inv B,\;\;\;C = A\inv B\tr,\;\;\;C = A\trinv B,\;\;\;C = A\trinv B\tr
+\]
+\[ C = B A,\;\;\;C = B\tr A,\;\;\;C = B A\tr,\;\;\;C = B\tr A\tr,
+\]
+\[ C = B A\inv,\;\;\;C = B\tr A\inv,\;\;\;C = B A\trinv,\;\;\;C = B\tr A\trinv
+\]
+These operations are implemented by the following Gandalf routines:
+\begin{verbatim}
+      Gan_SquMatrix smA; /* square matrix A */
+      Gan_Matrix mB, mC; /* matrices B & C */
+
+      /* ... create and fill matrices A, B, create matrix C ... */
+
+      /* routines right-multipling A by B */
+      gan_squmat_rmult_q ( &smA, &mB, &mC ); /* C = A*B, OR */
+      gan_squmat_rmultT_q ( &smA, &mB, &mC ); /* C = A*B^T, OR */
+      gan_squmatT_rmult_q ( &smA, &mB, &mC ); /* C = A^T*B, OR */
+      gan_squmatT_rmultT_q ( &smA, &mB, &mC ); /* C = A^T*B^T, OR */
+      gan_squmatI_rmult_q ( &smA, &mB, &mC ); /* C = A^-1*B, OR */
+      gan_squmatI_rmultT_q ( &smA, &mB, &mC ); /* C = A^-1*B^T, OR */
+      gan_squmatIT_rmult_q ( &smA, &mB, &mC ); /* C = A^-T*B, OR */
+      gan_squmatIT_rmultT_q ( &smA, &mB, &mC ); /* C = A^-T*B^T */
+
+      /* routines left-multipling A by B */
+      gan_squmat_lmult_q ( &smA, &mB, &mC ); /* C = B*A, OR */
+      gan_squmat_lmultT_q ( &smA, &mB, &mC ); /* C = B^T*A, OR */
+      gan_squmatT_lmult_q ( &smA, &mB, &mC ); /* C = B*A^T, OR */
+      gan_squmatT_lmultT_q ( &smA, &mB, &mC ); /* C = B^T*A^T, OR */
+      gan_squmatI_lmult_q ( &smA, &mB, &mC ); /* C = B*A^-1, OR */
+      gan_squmatI_lmultT_q ( &smA, &mB, &mC ); /* C = B^T*A^-1, OR */
+      gan_squmatIT_lmult_q ( &smA, &mB, &mC ); /* C = B*A^-T, OR */
+      gan_squmatIT_lmultT_q ( &smA, &mB, &mC ); /* C = B^T*A^-T */
+\end{verbatim}
+These routines have the alternative form
+\begin{verbatim}
+      Gan_SquMatrix smA; /* square matrix A */
+      Gan_Matrix mB, *pmC; /* matrices B & C */
+
+      /* ... create and fill matrices A, B ... */
+
+      /* routines right-multipling A by B */
+      pmC = gan_squmat_rmult_s ( &smA, &mB ); /* C = A*B, OR */
+      pmC = gan_squmat_rmultT_s ( &smA, &mB ); /* C = A*B^T, OR */
+      pmC = gan_squmatT_rmult_s ( &smA, &mB ); /* C = A^T*B, OR */
+      pmC = gan_squmatT_rmultT_s ( &smA, &mB ); /* C = A^T*B^T, OR */
+      pmC = gan_squmatI_rmult_s ( &smA, &mB ); /* C = A^-1*B, OR */
+      pmC = gan_squmatI_rmultT_s ( &smA, &mB ); /* C = A^-1*B^T, OR */
+      pmC = gan_squmatIT_rmult_s ( &smA, &mB ); /* C = A^-T*B, OR */
+      pmC = gan_squmatIT_rmultT_s ( &smA, &mB ); /* C = A^-T*B^T */
+
+      /* routines left-multipling A by B */
+      pmC = gan_squmat_lmult_s ( &smA, &mB ); /* C = B*A, OR */
+      pmC = gan_squmat_lmultT_s ( &smA, &mB ); /* C = B^T*A, OR */
+      pmC = gan_squmatT_lmult_s ( &smA, &mB ); /* C = B*A^T, OR */
+      pmC = gan_squmatT_lmultT_s ( &smA, &mB ); /* C = B^T*A^T, OR */
+      pmC = gan_squmatI_lmult_s ( &smA, &mB ); /* C = B*A^-1, OR */
+      pmC = gan_squmatI_lmultT_s ( &smA, &mB ); /* C = B^T*A^-1, OR */
+      pmC = gan_squmatIT_lmult_s ( &smA, &mB ); /* C = B*A^-T, OR */
+      pmC = gan_squmatIT_lmultT_s ( &smA, &mB ); /* C = B^T*A^-T */
+\end{verbatim}
+The in-place versions will overwrite the contents of matrix $B$ with the
+result, and work fine unless $A$ is of symmetric type (in which case the
+error handler is invoked and {\tt NULL} returned):
+\begin{verbatim}
+      Gan_SquMatrix smA; /* square matrix A */
+      Gan_Matrix mB; /* matrix B */
+
+      /* ... create and fill matrices A, B ... */
+
+      /* routines right-multipling A by B */
+      gan_squmat_rmult_i ( &smA, &mB ); /* replace B = A*B, OR */
+      gan_squmat_rmultT_i ( &smA, &mB ); /* replace B = A*B^T, OR */
+      gan_squmatT_rmult_i ( &smA, &mB ); /* replace B = A^T*B, OR */
+      gan_squmatT_rmultT_i ( &smA, &mB ); /* replace B = A^T*B^T, OR */
+      gan_squmatI_rmult_i ( &smA, &mB ); /* replace B = A^-1*B, OR */
+      gan_squmatI_rmultT_i ( &smA, &mB ); /* replace B = A^-1*B^T, OR */
+      gan_squmatIT_rmult_i ( &smA, &mB ); /* replace B = A^-T*B, OR */
+      gan_squmatIT_rmultT_i ( &smA, &mB ); /* replace B = A^-T*B^T */
+
+      /* routines left-multipling A by B */
+      gan_squmat_lmult_i ( &smA, &mB ); /* replace B = B*A, OR */
+      gan_squmat_lmultT_i ( &smA, &mB ); /* replace B = B^T*A, OR */
+      gan_squmatT_lmult_i ( &smA, &mB ); /* replace B = B*A^T, OR */
+      gan_squmatT_lmultT_i ( &smA, &mB ); /* replace B = B^T*A^T, OR */
+      gan_squmatI_lmult_i ( &smA, &mB ); /* replace B = B*A^-1, OR */
+      gan_squmatI_lmultT_i ( &smA, &mB ); /* replace B = B^T*A^-1, OR */
+      gan_squmatIT_lmult_i ( &smA, &mB ); /* replace B = B*A^-T, OR */
+      gan_squmatIT_lmultT_i ( &smA, &mB ); /* replace B = B^T*A^-T */
+\end{verbatim}
+Now we consider multiplying a square matrix $A$ by its own transpose, producing
+a symmetric matrix $B$. This operation will most often be applied to triangular
+matrices, and in Gandalf implicit transpose and inverse of the input
+matrix are supported, giving rise to the operations
+\[ B = A A\tr,\;\;\;\;B = A\tr A,\;\;\;\;B = A\inv A\trinv,\;\;\;\;B = A\trinv A\inv
+\]
+which are implemented by the routines
+\begin{verbatim}
+      Gan_SquMatrix smA, smB; /* declare matrices A & B */
+
+      /* ... create & fill matrix A, create (& optionally fill) matrix B ... */
+      gan_squmat_srmultT_squ_q ( &smA, &smB ); /* set B = A*A^T, OR */
+      gan_squmatT_srmult_squ_q ( &smA, &smB ); /* set B = A^T*A, OR */
+      gan_squmatI_srmultIT_squ_q ( &smA, &smB ); /* set B = A^-1*A^-T, OR */
+      gan_squmatIT_srmultI_squ_q ( &smA, &smB ); /* set B = A^-T*A^-1 */
+\end{verbatim}
+There are also routines to build the result matrix $B$ from scratch:
+\begin{verbatim}
+      Gan_SquMatrix smA, *psmB; /* declare matrices A & B */
+
+      /* ... create & fill matrix A ... */
+      psmB = gan_squmat_srmultT_squ_s ( &smA ); /* create B = A*A^T, OR */
+      psmB = gan_squmatT_srmult_squ_s ( &smA ); /* create B = A^T*A, OR */
+      psmB = gan_squmatI_srmultIT_squ_s ( &smA ); /* create B = A^-1*A^-T, OR */
+      psmB = gan_squmatIT_srmultI_squ_s ( &smA ); /* create B = A^-T*A^-1 */
+\end{verbatim}
+and in-place versions of these operations are also available:
+\begin{verbatim}
+      Gan_SquMatrix smA; /* declare matrix A */
+
+      /* ... create & fill matrix A ... */
+      gan_squmat_srmultT_squ_i ( &smA ); /* replace A = A*A^T, OR */
+      gan_squmatT_srmult_squ_i ( &smA ); /* replace A = A^T*A, OR */
+      gan_squmatI_srmultIT_squ_i ( &smA ); /* replace A = A^-1*A^-T, OR */
+      gan_squmatIT_srmultI_squ_i ( &smA ); /* replace A = A^-T*A^-1 */
+\end{verbatim}
+
+Finally, there is a set of routines that multiply a symmetric matrix on left
+and right by a rectangular matrix and its transpose, producing another
+symmetric matrix. The operations implemented are
+\[ S' = A S A\tr,\;\;\;\;\;\;S' = A\tr S A.
+\]
+This triple product is implemented as two matrix multiplications, and the
+matrix to hold the intermediate result is also passed in to the routines,
+so that it is also available on output. The routines are
+\begin{verbatim}
+      Gan_SquMatrix smS, smSp; /* declare matrices S & S' */
+      Gan_Matrix mA, mB; /* declare matrices A & B */
+
+      /* ... create & fill matrices S & A, create (& optionally fill) matrices B & Sp ... */
+      gan_symmat_lrmult_q ( &smS, &mA, &mB, &smSp ); /* set B = S*A^T and Sp = A*S*A^T, OR */
+      gan_symmat_lrmultT_q ( &smS, &mA, &mB, &smSp ); /* set B = S*A and Sp = A^T*S*A */
+\end{verbatim}
+with alternative versions that create the result matrix $S'$ from scratch:
+\begin{verbatim}
+      Gan_SquMatrix smS, *psmSp; /* declare matrices S & S' */
+      Gan_Matrix mA, mB; /* declare matrices A & B */
+
+      /* ... create & fill matrices S & A, create (& optionally fill) matrix B ... */
+      psmSp = gan_symmat_lrmult_s ( &smS, &mA, &mB ); /* set B = S*A^T and Sp = A*S*A^T, OR */
+      psmSp = gan_symmat_lrmultT_s ( &smS, &mA, &mB ); /* set B = S*A and Sp = A^T*S*A */
+\end{verbatim}
+It is allowable to pass {\tt NULL} for the $B$ matrix ({\tt \&mB} in the
+above function calls). In that case the intermediate result is computed and
+thrown away.
+
+\subsubsection{Inverting a general size matrix}
+If a general rectangular matrix $A$ happens to be square, it can be
+inverted using the routine
+\begin{verbatim}
+      Gan_Matrix mA, mB; /* declare matrices A & B */
+
+      /* ... create and fill matrix A, which must be square, create B ... */
+      gan_mat_invert_q ( &mA, &mB ); /* B = A^-1 */
+\end{verbatim}
+There is also a routine to create the inverse matrix $A\inv$ from scratch:
+\begin{verbatim}
+      Gan_Matrix mA, *pmB; /* declare matrix A */
+
+      /* ... create and fill matrix A, which must be square ... */
+      pmB = gan_mat_invert_s ( &mA ); /* B = A^-1 */
+\end{verbatim}
+The routines for special square matrices are similar
+\begin{verbatim}
+      Gan_Matrix mA, mB, *pmB; /* declare matrices A & B */
+
+      /* ... create and fill matrix A, which must be square, create B ... */
+      gan_squmat_invert_q ( &mA, &mB ); /* B = A^-1, OR */
+      pmB = gan_squmat_invert_s ( &mA ); /* B = A^-1 */
+\end{verbatim}
+The type of the output $B$ is in this case set to the appropriate type given
+the input. For all the square matrix types supported by Gandalf (symmetric,
+triangular, diagonal, scaled identity), the matrix type of the inverse $B$
+is the same as that of the input matrix $A$.
+
+{\bf Error detection:} If implicit inverse is used (the
+{\tt ...\_squmatI\_...()} or {\tt ...\_squmatIT\_...()} routines),
+the square matrix involved must be non-singular. If the matrix is singular
+then {\tt NULL} is returned and the Gandalf error handler is invoked.
+Other failure modes are failing to create the result matrix and incompatibility
+between the sizes of the input matrices.
+
+\subsubsection{Cholesky factorising a general size symmetric matrix}
+The Cholesky factor of a symmetric positive definite matrix $S$ is
+a lower triangular matrix $L$ such that
+\[ S = L L\tr
+\]
+and we write $L={\rm chol}(S)$.
+The Gandalf Cholesky factorisation routines apply to all symmetric types
+of matrix, i.e. {\tt GAN\_SYMMETRIC\_MATRIX} itself,
+{\tt GAN\_DIAGONAL\_MATRIX} and {\tt GAN\_SCALED\_IDENT\_MATRIX}.
+Routines are available to compute the factorisation, with the usual options,
+as follows:
+\begin{verbatim}
+      Gan_SquMatrix smS, smL, *psmL; /* declare matrices S & L */
+
+      /* ... create and fill matrix S, which must be symmetric and positive definite,
+             create L ... */
+      gan_symmat_cholesky_q ( &smS, &smL ); /* L = chol(S), OR */
+      psmL = gan_symmat_cholesky_s ( &smS ); /* L = chol(S) */
+      gan_symmat_cholesky_i ( &smS ); /* replace S = chol(S) */
+\end{verbatim}
+The last option {\tt gan\_symmat\_cholesky\_i()} replaces $S$ in-place
+by ${\rm chol}(S)$.
+
+{\bf Error detection:} If $S$ is not either symmetric or positive definite
+in the above routines, {\tt NULL} is returned and the Gandalf error handler
+is invoked. Another failure mode is failing to create the result matrix.
+
+\subsubsection{Symmetric matrix eigendecomposition}
+\begin{verbatim}
+      #include <gandalf/linalg/mat_symmetric.h>
+\end{verbatim}
+Gandalf has a routine for computing the real eigenvalues and eigenvectors of
+a general size symmetric matrix, based on either the
+CLAPACK routine {\tt dspev()} or the CCMath routine {\tt eigval()}.
+A symmetric matrix $S$ can be written as
+\[ S Z = Z W
+\]
+where $W$ is a diagonal matrix of real eigenvalues and $Z$ is a square
+matrix of orthognal eigenvectors, unique if the eigenvalues are distinct.
+If the matrix is positive definite (or semi-definite) then all the eigenvalues
+will be $> 0$ (or $\geq 0$). Here is an example code fragment using the
+Gandalf routine to compute $W$ and (optionally) $Z$.
+\begin{verbatim}
+      Gan_SquMatrix smS; /* declare symmetric matrix */
+      Gan_SquMatrix smW; /* declare matrix of eigenvalues W */
+      Gan_Matrix mZ; /* declare matrix of eigenvectors */
+
+      /* create and fill S */
+      gan_symmat_form ( &smS, 5 );
+      gan_symmat_fill_va ( &smS, 5,
+                            1.0,
+                            2.0,  3.0,
+                            4.0,  5.0,  6.0,
+                            7.0,  8.0,  9.0, 10.0,
+                           11.0, 12.0, 13.0, 14.0, 15.0 );
+
+      /* create Z and W */
+      gan_mat_form ( &mZ, 5, 5 );
+      gan_diagmat_form ( &smW, 0 );
+
+      /* compute sigenvalues and eigenvectors of S */
+      gan_symmat_eigen ( &smS, &smW, &mZ, GAN_TRUE, NULL, 0 );
+\end{verbatim}
+After calling this routine {\tt smW} will contain the computed eigenvalues,
+and {\tt mZ} the eigenvectors. If the eigenvector matrix is passed as
+{\tt NULL}, the eigenvectors are not computed. The boolean fourth argument
+indicates whether the eigenvectors should be sorted into ascending order.
+The fifth and sixth arguments define a workspace array of {\tt double}s,
+and the size of the array, which can be used by LAPACK. If passed as
+{\tt NULL, 0} as above, the workspace is allocated inside the function.
+
+\subsubsection{Accumulated symmetric matrix eigendecomposition}
+\label{acc-symeigen-sec}
+\begin{verbatim}
+      #include <gandalf/linalg/symmat_eigen.h>
+\end{verbatim}
+There is also a specific module in Gandalf to compute the eigenvalues and
+eigenvectors of a positive semi-definite matrix accumulated as a sum of
+outer products of vectors. This is useful for instance when solving
+homogeneous linear equations; for an example see the computation of the
+fundamental \& essential matrix in Section~\ref{fun-ess-sec}.
+The symmetric matrix $S$ is constructed as
+\begin{equation}
+ S = \sum_{i=1}^n \sigma_i \xvec_i \xvec_i\tr
+ \label{acc-eigen-sum}
+\end{equation}
+given the $n$ vectors $\xvec_i$ and weighting factors $s_i$, $i=1,\ldots,n$.
+
+There is a structure to hold the accumulated matrix and the resulting
+eigendecomposition matrices:
+\begin{verbatim}
+      /* structure to hold accumulated symmetric matrix and resulting
+       * eigendecomposition of a sum of vector outer products
+       */
+      typedef struct
+      {
+         Gan_SquMatrix SxxT; /* accumulated sum of vector outer products */
+         Gan_SquMatrix W;    /* diagonal matrix of eigenvalues */
+         Gan_Matrix    Z;    /* matrix of eigenvectors */
+         Gan_Vector    work; /* workspace vector for computing eigendecomposition */
+
+         /* whether this structure was dynamically allocated */
+         Gan_Bool alloc;
+      } Gan_SymMatEigenStruct;
+\end{verbatim}
+To start the computation, create an instance of the structure using
+\begin{verbatim}
+      Gan_SymMatEigenStruct SymEigen;
+
+      /* create structure for computing eigenvalues and eigenvectors,
+         initialising accumulated matrix S (here 5x5) to zero */
+      gan_symeigen_form ( &SymEigen, 5 );
+\end{verbatim}
+This routine creates the structure and its constituent matrices, and
+initialises the outer product sum matrix, in this case a $5\times 5$ matrix,
+to zero. You can then add a term to the sum in Equation~\ref{acc-eigen-sum}
+using the routine
+\begin{verbatim}
+      /* increment matrix S by 
+      gan_symeigen_increment ( &SymEigen, 2.0, /* weighting factor s */
+                               3.4, 1.0, 9.7, 3.4, 2.1 ); /* elements of vector x */
+\end{verbatim}
+Here the first value $2.0$ is the weighting factor $\sigma$ for this vector,
+and the elements of the vector $\xvec$ are passed into a variable argument
+list (and hence have to be explicitly {\tt double} type).
+You should call {\tt gan\_symeigen\_increment()} once for each of the
+$n$ vectors. Then solve for the eigenvalues \& eigenvectors using the routine
+\begin{verbatim}
+      /* solve for eigenvalues and eigenvectors */
+      gan_symeigen_solve ( &SymEigen );
+\end{verbatim}
+after which the eigenvalues can be read back from {\tt SymEigen.W} and the
+eigenvectors from {\tt SymEigen.Z}.
+If you want to reuse the structure on a new eigendecomposition computation,
+call the routine
+\begin{verbatim}
+      /* reset accumulated symmetric to zero, optionally changing size of matrix */
+      gan_symeigen_reset ( &SymEigen, 5 );
+\end{verbatim}
+where the last argument allows you to change the size of the matrix if
+desired. Finally to free the structure use
+\begin{verbatim}
+      /* free eigensystem structure and constituent matrices */
+      gan_symeigen_free ( &SymEigen );
+\end{verbatim}
+
+{\bf Error detection:} {\tt sym\_symeigen\_form()} returns a pointer to
+the eigensystem structure ({\tt \&SymEigen}), and so returns {\tt NULL} on
+error. {\tt sym\_symeigen\_increment()}, {\tt sym\_symeigen\_solve()} and
+{\tt sym\_symeigen\_reset()} return boolean values, so {\tt GAN\_FALSE}
+indicates an error. In all cases the Gandalf error handler is invoked.
+
+\subsection{Single precision general size matrices \& vectors}
+Note that for the routines to fill a matrix/vector with values, described
+in Sections~\ref{fill-vec-gen-sec} and~\ref{fill-mat-gen-sec}, the values
+provided in the single precision case must actually still be double precision,
+because C has the restriction that floating point variable argument list
+values must be double precision. So for instance, this won't work:
+\begin{verbatim}
+      Gan_Vector_f vx;
+
+      gan_vecf_form ( &vx, 6 );
+      gan_vecf_fill_va ( &vx, 6, 1.0F, 2.0F, 3.0F, 4.0F, 5.0F, 6.0F ); /* WRONG */
+\end{verbatim}
+Instead use
+\begin{verbatim}
+      gan_vecf_fill_va ( &vx, 6, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ); /* RIGHT! */
+\end{verbatim}
+\label{single-gen-sec}
+If necessary use a {\tt (double)} cast in front of each value.

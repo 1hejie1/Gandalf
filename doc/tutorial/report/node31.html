@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size vector addition</TITLE>
+<META NAME="description" CONTENT="Fixed size vector addition">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node32.html">
+<LINK REL="previous" HREF="node30.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node32.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html742"
+  HREF="node32.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html738"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html732"
+  HREF="node30.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html740"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html743"
+  HREF="node32.html">Fixed size vector subtraction</A>
+<B> Up:</B> <A NAME="tex2html739"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html733"
+  HREF="node30.html">Creating and accessing fixed</A>
+ &nbsp; <B>  <A NAME="tex2html741"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00411200000000000000">
+Fixed size vector addition</A>
+</H3>
+To add two 3-vectors use either the macro
+<PRE>
+      Gan_Vector3 v3z;
+
+      gan_vec3_add_q ( &amp;v3x, &amp;v3y, &amp;v3z ); /* macro */
+</PRE>
+or the function
+<PRE>
+      v3z = gan_vec3_add_s ( &amp;v3x, &amp;v3y ); /* function call */
+</PRE>
+See the discussion of ``quick'' and ``slow'' versions of the same operation,
+identified by the <TT>..._q</TT> and <TT>..._s</TT> suffices,
+in Section&nbsp;<A HREF="node3.html#conventions-sec">1.1</A>. In this case, the ``slow'' version
+<TT>gan_vec3_add_s()</TT> has the overhead of a function call relative
+to the ``quick'' version <TT>gan_vec3_add_q()</TT>, so the latter should
+be used unless the input vectors are not simple variables (i.e. they might
+be elements of arrays), in which case the repeated evaluation required
+by the macro version might be slower.
+
+<P>
+There are also in-place versions of the add operation, which overwrite one
+of the input vectors with the result. The macro operations
+<PRE>
+      gan_vec3_add_i1 ( &amp;v3x, &amp;v3y ); /* result in-place in v3x */
+</PRE>
+and
+<PRE>
+      gan_vec3_add_i2 ( &amp;v3x, &amp;v3y ); /* result in-place in v3y */
+</PRE>
+produce the same result but overwrite respectively the first <TT>v3x</TT>
+and the second <TT>v3y</TT> argument with the result. There is also a
+more explicit macro
+<PRE>
+      gan_vec3_increment ( &amp;v3x, &amp;v3y ); /* result in-place in v3x */
+</PRE>
+which increments <TT>v3x</TT> by <TT>v3y</TT>, i.e. identical to
+<TT>gan_vec3_add_i1()</TT>. Note that if one of the input arguments is
+a non-trivial expression, and the result is being overwritten on the other,
+use the function <TT>gan_vec3_add_s()</TT>, as in
+<PRE>
+      Gan_Vector3 av3x[100];
+
+      /* ... fill av3x array ... */
+      v3x = gan_vec3_add_s ( &amp;v3x, &amp;av3x[33] );
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html742"
+  HREF="node32.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html738"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html732"
+  HREF="node30.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html740"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html743"
+  HREF="node32.html">Fixed size vector subtraction</A>
+<B> Up:</B> <A NAME="tex2html739"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html733"
+  HREF="node30.html">Creating and accessing fixed</A>
+ &nbsp; <B>  <A NAME="tex2html741"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,1450 @@
+\section{Fixed size matrices and vectors} \label{fixed-size-sec}
+\subsection{Fixed size vectors} \label{fixed-size-vec-sec}
+Vectors of sizes two, three and four are represented by specific structures
+in Gandalf. The structure and function definitions are nearly identical,
+so we shall only describe the workings of 3-vectors. To use 3-vectors
+include the header file
+\begin{verbatim}
+      #include <gandalf/linalg/3vector.h>
+\end{verbatim}
+for double precision, or
+\begin{verbatim}
+      #include <gandalf/linalg/3vectorf.h>
+\end{verbatim}
+for single precision 3-vectors.
+A double precision 3-vector is defined as
+\begin{verbatim}
+      typedef struct Gan_Vector3
+      {
+         double x, y, z;
+      } Gan_Vector3, Gan_Vector3_d
+\end{verbatim}
+and a single precision 3-vector as
+\begin{verbatim}
+      typedef struct Gan_Vector3_f
+      {
+         float x, y, z;
+      } Gan_Vector3_f;
+\end{verbatim}
+
+Most of the routines below return a pointer to the result vector/matrix.
+This may be used as an argument to another routine, although care must
+be taken with macros as regards multiple evaluation. The routines are very
+safe, because everything using fixed size vectors \& matrices can be written
+to involve only automatic variables with no dynamic allocation, and the only
+failure modes are arithmetic overflow (Gandalf does not check for this).
+The few exceptions are noted in the text.
+
+\subsubsection{Creating and accessing fixed size vectors}
+Single fixed size vectors are such simple objects, it makes sense to
+normally use declare structure variables directly, rather than use pointers
+to structures created by {\tt malloc()}. So to create a double precision
+3-vector, use the declaration
+\begin{verbatim}
+      Gan_Vector3 v3x;
+\end{verbatim}
+From now on, we shall describe the functions for double precision vectors
+only. Single precision functions are very similar and will be explained below.
+Setting the coordinates of a 3-vector can be achieved by one of
+\begin{enumerate}
+  \item Initialising the 3-vector when it is created, as in
+\begin{verbatim}
+      Gan_Vector3 v3x = {1.0, 2.0, 3.0};
+\end{verbatim}
+
+  \item Accessing the structure elements directly:
+\begin{verbatim}
+      v3x.x = 1.0; v3x.y = 2.0; v3x.z = 3.0;
+\end{verbatim}
+  \item Using the macro call
+\begin{verbatim}
+      gan_vec3_fill_q ( &v3x, 1.0, 2.0, 3.0 );
+\end{verbatim}
+Note that the Gnu C compiler prints a warning when the above call is compiled,
+and also for most other similar calls in the linear algebra package.
+This warning can be avoided by inserting an initial {\tt (void)} cast:
+\begin{verbatim}
+      (void)gan_vec3_fill_q ( &v3x, 1.0, 2.0, 3.0 );
+\end{verbatim}
+We omit this cast in the following to keep the exposition simple.
+  \item The equivalent function call
+\begin{verbatim}
+      v3x = gan_vec3_fill_s ( 1.0, 2.0, 3.0 );
+\end{verbatim}
+\end{enumerate}
+Setting a 3-vector to zero can be accomplished using one of the calls
+\begin{verbatim}
+      gan_vec3_zero_q ( &v3x ); /* macro, OR */
+      v3x = gan_vec3_zero_s(); /* function call */
+\end{verbatim}
+
+Copying 3-vectors can be accomplished either by direct assignment
+\begin{verbatim}
+      Gan_Vector3 v3y;
+
+      v3y = v3x;
+\end{verbatim}
+or by use of the one of the routines
+\begin{verbatim}
+      gan_vec3_copy_q ( &v3x, &v3y ); /* macro, OR */
+      v3y = gan_vec3_copy_s ( &v3x ); /* function call */
+\end{verbatim}
+
+\subsubsection{Fixed size vector addition}
+To add two 3-vectors use either the macro
+\begin{verbatim}
+      Gan_Vector3 v3z;
+
+      gan_vec3_add_q ( &v3x, &v3y, &v3z ); /* macro */
+\end{verbatim}
+or the function
+\begin{verbatim}
+      v3z = gan_vec3_add_s ( &v3x, &v3y ); /* function call */
+\end{verbatim}
+See the discussion of ``quick'' and ``slow'' versions of the same operation,
+identified by the {\tt ...\_q} and {\tt ...\_s} suffices,
+in Section~\ref{conventions-sec}. In this case, the ``slow'' version
+{\tt gan\_vec3\_add\_s()} has the overhead of a function call relative
+to the ``quick'' version {\tt gan\_vec3\_add\_q()}, so the latter should
+be used unless the input vectors are not simple variables (i.e. they might
+be elements of arrays), in which case the repeated evaluation required
+by the macro version might be slower.
+
+There are also in-place versions of the add operation, which overwrite one
+of the input vectors with the result. The macro operations
+\begin{verbatim}
+      gan_vec3_add_i1 ( &v3x, &v3y ); /* result in-place in v3x */
+\end{verbatim}
+and
+\begin{verbatim}
+      gan_vec3_add_i2 ( &v3x, &v3y ); /* result in-place in v3y */
+\end{verbatim}
+produce the same result but overwrite respectively the first {\tt v3x}
+and the second {\tt v3y} argument with the result. There is also a
+more explicit macro
+\begin{verbatim}
+      gan_vec3_increment ( &v3x, &v3y ); /* result in-place in v3x */
+\end{verbatim}
+which increments {\tt v3x} by {\tt v3y}, i.e. identical to
+{\tt gan\_vec3\_add\_i1()}. Note that if one of the input arguments is
+a non-trivial expression, and the result is being overwritten on the other,
+use the function {\tt gan\_vec3\_add\_s()}, as in
+\begin{verbatim}
+      Gan_Vector3 av3x[100];
+
+      /* ... fill av3x array ... */
+      v3x = gan_vec3_add_s ( &v3x, &av3x[33] );
+\end{verbatim}
+
+\subsubsection{Fixed size vector subtraction}
+To subtract 3-vectors use the equivalent macros and functions
+\begin{verbatim}
+      gan_vec3_sub_q ( &v3x, &v3y, &v3z ); /* macro */
+      v3z = gan_vec3_sub_s ( &v3x, &v3y ); /* function call */
+      gan_vec3_sub_i1 ( &v3x, &v3y ); /* result in-place in v3x */
+      gan_vec3_sub_i2 ( &v3x, &v3y ); /* result in-place in v3y */
+      gan_vec3_decrement ( &v3x, &v3y ); /* result in-place in v3x */
+\end{verbatim}
+
+\subsubsection{Rescaling a fixed size vector}
+There are similar functions to multiply a 3-vector by a scalar
+\begin{verbatim}
+      double ds;
+
+      gan_vec3_scale_q ( &v3x, ds, &v3z ); /* macro */
+      v3z = gan_vec3_scale_s ( &v3x, ds ); /* function call */
+      gan_vec3_scale_i ( &v3x, ds ); /* macro, result in-place in v3x */
+\end{verbatim}
+to divide a 3-vector by a (non-zero) scalar
+\begin{verbatim}
+      gan_vec3_divide_q ( &v3x, ds, &v3z ); /* macro */
+      v3z = gan_vec3_divide_s ( &v3x, ds ); /* function call */
+      gan_vec3_divide_i ( &v3x, ds ); /* macro, result in-place in v3x */
+\end{verbatim}
+to negate a 3-vector
+\begin{verbatim}
+      gan_vec3_negate_q ( &v3x, &v3z ); /* macro */
+      v3z = gan_vec3_negate_s ( &v3x ); /* function call */
+      gan_vec3_negate_i ( &v3x ); /* macro, result in-place in v3x */
+\end{verbatim}
+and to scale a 3-vector to unit length (2-norm)
+\begin{verbatim}
+      gan_vec3_unit_q ( &v3x, &v3z ); /* macro */
+      v3z = gan_vec3_unit_s ( &v3x ); /* function call */
+      gan_vec3_unit_i ( &v3x ); /* macro, result in-place in v3x */
+\end{verbatim}
+The last guarantees than the total squared element of the vector
+returned by {\tt gan\_vec3\_sqrlen()} will be one; see below.
+
+{\tt Error detection:} If zero is passed as the scalar value to the
+{\tt ...\_divide\_[qi]()} routines, {\tt NULL} will be returned, while the
+{\tt ...\_divide\_s()} routines will abort the program. You should add tests
+for division by zero {\em before} calling any of the {\tt ...\_divide\_[qsi]()}
+routines. Similarly, the {\tt ...\_unit\_[qsi]()} routines will fail if
+the input vector contains only zeros. If this is a possibility then the
+program should check beforehand.
+
+\subsubsection{Fixed size vector products}
+Vector dot product (scalar product) is compute using the alternatives
+\begin{verbatim}
+      ds = gan_vec3_dot_q ( &v3x, &v3y ); /* macro, or */
+      ds = gan_vec3_dot_s ( &v3x, &v3y ); /* function call */
+\end{verbatim}
+Similarly, to compute the squared length of a 3-vector, use
+\begin{verbatim}
+      ds = gan_vec3_sqrlen_q ( &v3x ); /* macro, or */
+      ds = gan_vec3_sqrlen_s ( &v3x ); /* function call */
+\end{verbatim}
+
+For 3-vectors only we also have the cross product (vector product)
+\begin{verbatim}
+      gan_vec3_cross_q ( &v3x, &v3y, &v3z ); /* macro */
+      v3z = gan_vec3_cross_s ( &v3x, &v3y ); /* function call */
+\end{verbatim}
+
+There are also outer products formed by two vectors, producing a matrix.
+These functions are described in Section~\ref{fixed-vector-outer-sec}.
+
+\subsubsection{Fixed size vector file I/O}
+Gandalf supports both ASCII and binary format file I/O of vectors and
+matrices. Both formats use standard {\tt FILE~*} file streams.
+ASCII format is obviously more convenient to use, while binary format is
+more compact and guarantees no loss of precision when the data is read.
+To print a 3-vector in ASCII format, use
+\begin{verbatim}
+      Gan_Bool gan_vec3_fprint ( FILE *fp, Gan_Vector3 *p,
+                                 const char *prefix, int indent, const char *fmt );
+\end{verbatim}
+{\tt prefix} is a prefix string to print before the vector itself, {\tt indent}
+is the number of spaces to indent the vector by, and {\tt fmt} is a format
+string to use when printing the vector, e.g. {\tt "\%f"}. So for example
+\begin{verbatim}
+      FILE *pfFile;
+
+      pfFile = fopen ( "/tmp/vectors", "w" );
+      gan_vec3_fill_q ( &v3x, 1.0, 2.0, 3.0 );
+      gan_vec3_fprint ( pfFile, &v3x, "Example vector", 3, "%f" );
+\end{verbatim}
+will print the output
+\begin{verbatim}
+         Example vector: 1.000000 2.000000 3.000000
+\end{verbatim}
+to the file {\tt "/tmp/vectors"}.
+There is also a version {\tt gan\_vec3\_print()} for printing to
+standard output:
+\begin{verbatim}
+      Gan_Bool gan_vec3_print ( Gan_Vector3 *p,
+                                const char *prefix, int indent, const char *fmt );
+\end{verbatim}
+The corresponding input function is
+\begin{verbatim}
+      Gan_Bool gan_vec3_fscanf ( FILE *fp, Gan_Vector3 *p,
+                                 char *prefix, int prefix_len )
+\end{verbatim}
+which reads the vector from the file stream {\tt fp} into the 3-vector
+pointer {\tt p}. It also reads the prefix string (up to the specified maximum
+length {\tt prefix\_len}), which can be compared with the expected prefix
+string to check for consistency.
+
+Binary file I/O is handled by the functions {\tt gan\_vec3\_fwrite()}
+and {\tt gan\_vec3\_fread()}. To write a 3-vector in binary format use
+\begin{verbatim}
+      Gan_Bool gan_vec3_fwrite ( FILE *fp, Gan_Vector3 *p, gan_ui32 magic_number );
+\end{verbatim}
+The {\tt magic\_number} takes the same role as the {\tt prefix} string
+in {\tt gan\_vec3\_fprint()}, and is written into the file so that it can be
+used later to identify the vector when it is read back using
+\begin{verbatim}
+      Gan_Bool gan_vec3_fread ( FILE *fp, Gan_Vector3 *p, gan_ui32 *magic_number );
+\end{verbatim}
+
+{\tt Error detection:} The I/O routines return a boolean value, returning
+{\tt GAN\_TRUE} on success, {\tt GAN\_FALSE} on failure, invoking the Gandalf
+error handle in the latter case.
+
+\subsubsection{Conversion from general to fixed size vector}
+Functions are provided to convert a general vector {\tt Gan\_Vector}
+{\tt Gan\_Vector3}, provided that the general vector has actually been
+created with size three. So for instance
+\begin{verbatim}
+      Gan_Vector *pvx;
+
+      pvx = gan_vec_alloc(3);
+      gan_vec_fill_va ( pvx, 3, 2.0, 3.0, 4.0 );
+      gan_vec3_from_vec_q ( pvx, &v3x );
+\end{verbatim}
+or
+\begin{verbatim}
+      v3x = gan_vec3_from_vec_s ( pvx );
+\end{verbatim}
+fill {\tt v3x} with the same values as the general vector.
+Calling these functions with a general vector {\tt pvx} not having
+the same size as the fixed size vector is an error.
+
+{\tt Error detection:} The conversion routines return the pointer to the
+filled fixed size vector, or {\tt NULL} on failure, invoking the Gandalf
+error handle in the latter case.
+
+\subsubsection{Single precision fixed size vectors}
+\begin{verbatim}
+      #include <gandalf/linalg/3vectorf.h>
+\end{verbatim}
+There is an identical set of functions for handling single precision
+floating point vectors, the names of which are obtained by replacing
+{\tt "gan\_vec3\_..."} in the above functions with {\tt "gan\_vec3f\_..."}.
+For example, to add two single precision 3-vectors use
+\begin{verbatim}
+      Gan_Vector3_f v3x, v3y, v3z;
+
+      /* ... fill v3x and v3y ... */
+      gan_vec3f_add_q ( &v3x, &v3y, &v3z );
+\end{verbatim}
+
+\subsubsection{Other types of fixed size vector}
+As well as floating point coordinates, integer vectors are often useful.
+Although Gandalf does not currently provide sets of functions handling
+vectors with integer coordinates, structures are defined as follows
+\begin{verbatim}
+      /* structure definition for unsigned character 3-vector */
+      typedef struct Gan_Vector3_uc
+      {
+         unsigned char x, y, z;
+      } Gan_Vector3_uc;
+
+      /* structure definition for short integer 3-vector */
+      typedef struct Gan_Vector3_s
+      {
+         short x, y, z;
+      } Gan_Vector3_s;
+
+      /* structure definition for unsigned short integer 3-vector */
+      typedef struct Gan_Vector3_us
+      {
+         unsigned short x, y, z;
+      } Gan_Vector3_us;
+
+      /* structure definition for integer 3-vector */
+      typedef struct Gan_Vector3_i
+      {
+         int x, y, z;
+      } Gan_Vector3_i;
+
+      /* structure definition for unsigned integer 3-vector */
+      typedef struct Gan_Vector3_ui
+      {
+         unsigned int x, y, z;
+      } Gan_Vector3_ui;
+\end{verbatim}
+
+\subsubsection{Other sizes of fixed size vector}
+Gandalf supports fixed size vectors with sizes two, three and four.
+The functions described above for size three vectors are repeated
+for sizes two and four, both single and double precision, in the header
+files
+\begin{verbatim}
+      #include <gandalf/linalg/2vector.h>   /* double precision */
+      #include <gandalf/linalg/2vectorf.h>  /* single precision */
+      #include <gandalf/linalg/4vector.h>   /* double precision */
+      #include <gandalf/linalg/4vectorf.h>  /* single precision */
+\end{verbatim}
+
+\subsubsection{Setting/extracting parts of fixed size vectors}
+Apart from the cross product routines {\tt gan\_vec3\_cross\_[qs]()}
+defined only for 3-vectors, there are a few other miscellaneous routines which
+apply to a subset of the fixed size vectors. These routines enable setting
+or extracting parts of a fixed size vector using another fixed size with
+a different size. The most comprehensive set of such routines is for
+vectors of size four. So for instance to extract the first three elements
+of a 4-vector and write them into a 3-vector, use
+\begin{verbatim}
+      Gan_Vector3 v3x;
+      Gan_Vector4 v4x;
+
+      gan_vec4_fill_q ( &v4x, 1.0, 2.0, 3.0, 4.0 );
+      gan_vec4_get_v3t_q ( &v4x, &v3x ); /* macro */
+\end{verbatim}
+or alternatively
+\begin{verbatim}
+      v3x = gan_vec4_get_v3t_s ( &v4x ); /* function */
+\end{verbatim}
+both of which set {\tt v3x} to {\tt \{1.0, 2.0, 3.0\}}.
+To build a 4-vector from a 3-vector and a scalar use
+\begin{verbatim}
+      gan_vec3_fill_q ( &v3x, 1.0, 2.0, 3.0 );
+      gan_vec4_set_parts_q ( &v4x, &v3x, 4.0 ); /* macro */
+\end{verbatim}
+or alternatively
+\begin{verbatim}
+      v4x = gan_vec4_set_parts_s ( &v3x, 4.0 ); /* function */
+\end{verbatim}
+both of which set {\tt v4x} to {\tt \{1.0, 2.0, 3.0, 4.0\}}.
+To build a 4-vector from two 2-vectors use
+\begin{verbatim}
+      Gan_Vector3 v2xt, v2xb;
+      Gan_Vector4 v4x;
+
+      gan_vec2_fill_q ( &v2xt,  1.0, 2.0 );
+      gan_vec2_fill_q ( &v2xb, 3.0, 4.0 );
+      gan_vec4_set_blocks_q ( &v4x, &v2xt, &v2xb ); /* macro */
+\end{verbatim}
+(note that the ``t'' and ``b'' in {\tt v2xt} and {\tt v2xb} stand for the
+``top'' and ``bottom'' parts of vector $\xvec$), or alternatively
+\begin{verbatim}
+      v4x = gan_vec4_set_blocks_s ( &v2xt, &v2xb ); /* function */
+\end{verbatim}
+both of which again set {\tt v4x} to {\tt \{1.0, 2.0, 3.0, 4.0\}}.
+
+For 3-vectors the equivalent set of functions involves splitting the
+3-vector into the {\tt x,y} coordinates as a 2-vector and {\tt z} as the
+scalar. Then we have
+\begin{verbatim}
+      Gan_Vector2 v2xt;
+      Gan_Vector3 v3x;
+
+      gan_vec3_fill_q ( &v3x, 1.0, 2.0, 3.0 );
+      gan_vec3_get_v2t_q ( &v3x, &v2xt ); /* macro, or */
+      v2xt = gan_vec3_get_v2t_s ( &v3x ); /* function */
+\end{verbatim}
+the last two lines of which both set {\tt v2xt} to {\tt \{1.0, 2.0\}}.
+To build a 3-vector from a 2-vector and a scalar use
+\begin{verbatim}
+      gan_vec2_fill_q ( &v2xt, 1.0, 2.0 );
+      gan_vec3_set_parts_q ( &v3x, &v2xt, 3.0 ); /* macro, or */
+      v3x = gan_vec3_set_parts_s ( &v2xt, 3.0 ); /* function */
+\end{verbatim}
+both of which set {\tt v3x} to {\tt \{1.0, 2.0, 3.0\}}.
+
+\subsection{Fixed size matrices} \label{fixed-size-mat-sec}
+Matrices of sizes $2\times 2$, $2\times 3$, $2\times 4$, $3\times 3$,
+$3\times 4$ and $4\times 4$ are represented by specific structures
+in Gandalf. There is a large set of functions which is repeated across
+every size of matrix. There is also a set of functions specific to square
+matrices. In both cases we will choose a single size of matrix and describe
+the functions available for that size. The sizes we will use are $3\times 4$
+matrices for the functions available to every size of matrix, and $3\times 3$
+matrices for the functions specific to square matrices.
+
+\subsubsection{Definitions of fixed size matrice}\label{fixed34-sec}
+To use $3\times 4$ matrices or $3\times 3$ matrices
+include the header files
+\begin{verbatim}
+      #include <gandalf/linalg/3x4matrix.h> /* OR */
+      #include <gandalf/linalg/3x3matrix.h>
+\end{verbatim}
+respectively. This is for double precision matrix elements.
+The files to include for single precision elements are
+\begin{verbatim}
+      #include <gandalf/linalg/3x4matrixf.h> /* OR */
+      #include <gandalf/linalg/3x3matrixf.h>
+\end{verbatim}
+A double precision $3\times 4$ matrix is defined as
+\begin{verbatim}
+      typedef struct Gan_Matrix34
+      {
+         double xx, xy, xz, xw,
+                yx, yy, yz, yw,
+                zx, zy, zz, zw;
+      } Gan_Matrix34;
+\end{verbatim}
+A $3\times 3$ matrix is similarly defined as
+\begin{verbatim}
+      typedef struct Gan_Matrix33
+      {
+         double xx, xy, xz,
+                yx, yy, yz,
+                zx, zy, zz;
+      } Gan_Matrix33;
+\end{verbatim}
+For square matrices there is also a specific structure to handle symmetric
+and triangular matrix structures, as follows:
+\begin{verbatim}
+      #ifndef NDEBUG
+      /* square matrix type, for setting and checking in debug mode */
+      typedef enum { GAN_SYMMETRIC_MATRIX33, GAN_LOWER_TRI_MATRIX33 }
+       Gan_SquMatrix33Type;
+      #endif /* #ifndef NDEBUG */
+
+      /* structure definition for square 3x3 matrix */
+      typedef struct Gan_SquMatrix33
+      {
+      #ifndef NDEBUG
+         /* square matrix type, for setting and checking in debug mode */
+         Gan_SquMatrix33Type type;
+      #endif /* #ifndef NDEBUG */
+
+         /* matrix data */
+         double xx,
+                yx, yy,
+                zx, zy, zz;
+      } Gan_SquMatrix33;
+\end{verbatim}
+Note that the matrix type field {\tt Gan\_SquMatrix33} is only used in
+debug compilation mode ({\tt NDEBUG} not defined). The {\tt type} field is
+actually invisible to the programmers' interface to the Gandalf functions,
+and is used merely for internal checking. Note also that Gandalf does not
+provide explicit support for {\em upper} triangular fixed size matrices
+(although it does for general size matrices;
+see Section~\ref{general-size-sec}). Any operations involving upper triangular
+matrices can be implemented using implicit transpose of a lower triangular
+matrix.
+
+Single precision structures are defined similarly, with the names changed
+to {\tt Gan\_Matrix34\_f}, {\tt Gan\_SquMatrix33\_f} etc.
+
+\subsubsection{Creating and accessing fixed size matrices}
+Single fixed size matrices are such simple objects, it makes sense to
+normally use declare structure variables directly, rather than use pointers
+to structures created by {\tt malloc()}. So to create a double precision
+$3\times 4$ matrix, use the declaration
+\begin{verbatim}
+      Gan_Matrix34 m34A;
+\end{verbatim}
+From now on, we shall describe the routines for double precision matrices
+only. Single precision functions are very similar and will be explained below.
+Setting the coordinates of a $3\times 4$ matrix can be achieved by one of
+\begin{enumerate}
+  \item Initialising the $3\times 4$ matrix when it is created, as in
+\begin{verbatim}
+      Gan_Matrix34 m34A = {1.0,  2.0,  3.0,  4.0,
+                           5.0,  6.0,  7.0,  8.0,
+                           9.0, 10.0, 11.0, 12.0};
+\end{verbatim}
+
+  \item Accessing the structure elements directly:
+\begin{verbatim}
+      m34A.xx = 1.0; m34A.xy = 2.0; m34A.xz = 3.0; /* etc. */
+\end{verbatim}
+  \item Using the macro call
+\begin{verbatim}
+      gan_mat34_fill_q ( &m34A, 1.0,  2.0,  3.0,  4.0,
+                                5.0,  6.0,  7.0,  8.0,
+                                9.0, 10.0, 11.0, 12.0 );
+\end{verbatim}
+Note that the Gnu C compiler prints a warning when the above call is compiled,
+and also for most other similar calls in the linear algebra package.
+This warning can be avoided by inserting an initial {\tt (void)} cast:
+\begin{verbatim}
+      (void)gan_mat34_fill_q ( &m34A, 1.0,  2.0,  3.0,  4.0,
+                                      5.0,  6.0,  7.0,  8.0,
+                                      9.0, 10.0, 11.0, 12.0 );
+\end{verbatim}
+We omit this cast in the following to keep the exposition simple.
+  \item The equivalent function call
+\begin{verbatim}
+      m34A = gan_mat34_fill_s ( 1.0,  2.0,  3.0,  4.0,
+                                5.0,  6.0,  7.0,  8.0,
+                                9.0, 10.0, 11.0, 12.0 );
+\end{verbatim}
+\end{enumerate}
+
+The methods of initialising a $3\times 3$ matrix follow those listed above
+for $3\times 4$ matrices, for instance
+\begin{verbatim}
+      Gan_Matrix33 m33A;
+
+      gan_mat33_fill_q ( &m33A, 1.0, 2.0, 3.0,
+                                4.0, 5.0, 6.0,
+                                7.0, 8.0, 9.0 ); /* OR */
+      m33A = gan_mat33_fill_s ( 1.0, 2.0, 3.0,
+                                4.0, 5.0, 6.0,
+                                7.0, 8.0, 9.0 );
+\end{verbatim}
+For a symmetric or lower triangular
+{\tt Gan\_SquMatrix33} matrix, direct initialisation (options 1 and 2 above) is
+not advisable, because of the {\tt type} field of the structure whose
+presence depends on {\tt NDEBUG}, Instead use the macro calls
+\begin{verbatim}
+      Gan_SquMatrix33 sm33S, sm33L;
+
+      /* symmetric matrix */
+      gan_symmat33_fill_q ( &sm33S, 1.0,
+                                    2.0, 3.0,
+                                    4.0, 5.0, 6.0 );
+
+      /* lower triangular matrix */
+      gan_ltmat33_fill_q ( &sm33L, 1.0,
+                                   2.0, 3.0,
+                                   4.0, 5.0, 6.0 );
+\end{verbatim}
+The first of these fills the matrix without specifying the values above the
+diagonal, and actually builds the matrix
+\[ S = \beginm{ccc} 1 & 2 & 4 \\ 2 & 3 & 5 \\ 4 & 5 & 6\endm
+\]
+The second builds the lower triangular matrix
+\[ L = \beginm{ccc} 1 & 0 & 0 \\ 2 & 3 & 0 \\ 4 & 5 & 6\endm
+\]
+Setting a fixed-size matrix to zero can be accomplished using one of the calls
+\begin{verbatim}
+      gan_mat34_zero_q ( &m34A ); /* OR */ m34A = gan_mat34_zero_s();
+      gan_mat33_zero_q ( &m33A ); /* OR */ m33A = gan_mat33_zero_s();
+      gan_symmat33_zero_q ( &sm33S ); /* OR */ sm33S = gan_symmat33_zero_s();
+      gan_ltmat33_zero_q ( &sm33L ); /* OR */ sm33L = gan_ltmat33_zero_s();
+\end{verbatim}
+
+Setting a square matrix to identity is achieved using
+\begin{verbatim}
+      gan_mat33_ident_q ( &m33A ); /* OR */ m33A = gan_mat33_ident_s();
+      gan_symmat33_ident_q ( &sm33S ); /* OR */ sm33S = gan_symmat33_ident_s();
+      gan_ltmat33_ident_q ( &sm33L ); /* OR */ sm33L = gan_ltmat33_ident_s();
+\end{verbatim}
+
+Copying $3\times 4$ matrices can be accomplished either by direct assignment
+\begin{verbatim}
+      Gan_Matrix34 m34B;
+
+      m34B = m34A;
+\end{verbatim}
+or by use of one of the routines
+\begin{verbatim}
+      gan_mat34_copy_q ( &m34A, &m34B ); /* macro, OR */
+      m34B = gan_mat34_copy_s ( &m34A ); /* function call */
+\end{verbatim}
+The methods of copying general, symmetric and lower triangular matrices follow
+that of $3\times 4$ matrices.
+
+\subsubsection{Fixed size matrix addition}
+To add two $3\times4$ matrices use either the macro
+\begin{verbatim}
+      Gan_Matrix34 m34C;
+
+      /* ... set up m34A, m34B using e.g. gan_mat34_fill_q() ... */
+      gan_mat34_add_q ( &m34A, &m34B, &m34C ); /* macro */
+\end{verbatim}
+or the function
+\begin{verbatim}
+      m34C = gan_mat34_add_s ( &m34A, &m34B ); /* function call */
+\end{verbatim}
+See the discussion of ``quick'' and ``slow'' versions of the same operation,
+identified by the {\tt ...\_q} and {\tt ...\_s} suffices,
+in Section~\ref{conventions-sec}. In this case, the ``slow'' version
+{\tt gan\_mat34\_add\_s()} has the overhead of a function call relative
+to the ``quick'' version {\tt gan\_mat34\_add\_q()}, so the latter should
+be used unless the input matrices are not simple variables (i.e. they might
+be elements of arrays), in which case the repeated evaluation required
+by the macro version might be slower.
+
+There are also in-place versions of the add operation, which overwrite one
+of the input matrices with the result. The macro operations
+\begin{verbatim}
+      gan_mat34_add_i1 ( &m34A, &m34B ); /* result in-place in m34A */
+\end{verbatim}
+and
+\begin{verbatim}
+      gan_mat34_add_i2 ( &m34A, &m34B ); /* result in-place in m34B */
+\end{verbatim}
+produce the same result but overwrite respectively the first {\tt m34A}
+and the second {\tt m34B} argument with the result. There is also a
+more explicit macro
+\begin{verbatim}
+      gan_mat34_increment ( &m34A, &m34B ); /* result in-place in m34A */
+\end{verbatim}
+which increments {\tt m34A} by {\tt m34B}, i.e. identical to
+{\tt gan\_mat34\_add\_i1()}. Note that if one of the input arguments is
+a non-trivial expression, and the result is being overwritten on the other,
+use the function {\tt gan\_mat34\_add\_s()}, as in
+\begin{verbatim}
+      Gan_Matrix34 am34A[100];
+
+      /* ... fill am34A array ... */
+      m34A = gan_mat34_add_s ( &m34A, &am34A[33] );
+\end{verbatim}
+
+For general, symmetric and lower triangular $3\times 3$ matrices the
+addition routines follow those for $3\times 4$ matrices. So for general
+$3\times 3$ matrices we have the options
+\begin{verbatim}
+      Gan_Matrix33 m33A, m33B, m33C;
+
+      /* ... set up m33A, m33B using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_add_q ( &m33A, &m33B, &m33C ); /* macro, OR */
+      m33C = gan_mat33_add_s ( &m33A, &m33B ); /* function call */
+      gan_mat33_add_i1 ( &m33A, &m33B ); /* macro, result in-place in m33A */
+      gan_mat33_add_i2 ( &m33A, &m33B ); /* macro, result in-place in m33B */
+      gan_mat33_increment ( &m33A, &m33B ); /* equivalent to gan_mat33_add_i1() */
+\end{verbatim}
+For symmetric $3\times 3$ matrices we have
+\begin{verbatim}
+      Gan_SquMatrix33 sm33Sa, sm33Sb, sm33Sc;
+
+      /* ... set up sm33Sa, sm33Sb using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_add_q ( &sm33Sa, &sm33Sb, &sm33Sc ); /* macro, OR */
+      sm33Sc = gan_symmat33_add_s ( &sm33Sa, &sm33Sb ); /* function call */
+      gan_symmat33_add_i1 ( &sm33Sa, &sm33Sb ); /* macro, result in-place in sm33Sa */
+      gan_symmat33_add_i2 ( &sm33Sa, &sm33Sb ); /* macro, result in-place in sm33Sb */
+      gan_symmat33_increment ( &sm33Sa, &sm33Sb ); /* equivalent to gan_symmat33_add_i1() */
+\end{verbatim}
+Finally for lower triangular $3\times 3$ matrices we have
+\begin{verbatim}
+      Gan_SquMatrix33 sm33La, sm33Lb, sm33Lc;
+
+      /* ... set up sm33La, sm33Lb using e.g. gan_ltmat33_fill_q() ... */
+      gan_ltmat33_add_q ( &sm33La, &sm33Lb, &sm33Lc ); /* macro, OR */
+      sm33Lc = gan_ltmat33_add_s ( &sm33La, &sm33Lb ); /* function call */
+      gan_ltmat33_add_i1 ( &sm33La, &sm33Lb ); /* macro, result in-place in sm33La */
+      gan_ltmat33_add_i2 ( &sm33La, &sm33Lb ); /* macro, result in-place in sm33Lb */
+      gan_ltmat33_increment ( &sm33La, &sm33Lb ); /* equivalent to gan_ltmat33_add_i1() */
+\end{verbatim}
+
+For general square matrices there are routines to implement the operation
+\[ S = A+A\tr,
+\]
+obtaining a symmetric matrix $S$ by adding together a general square matrix $A$
+and its transpose. The routines for $3\times 3$ matrices are
+\begin{verbatim}
+      Gan_Matrix33 m33A;
+      Gan_SquMatrix33 sm33S;
+
+      /* set up m33A using e.g. gan_mat33_fill_q() */
+      gan_mat33_saddT_q ( &m33A, &sm33S ); /* S = A+A^T, macro */
+      sm33S = gan_mat33_saddT_s ( &m33A ); /* S = A+A^T, function call */
+\end{verbatim}
+
+\subsubsection{Fixed size matrix subtraction}
+To subtract $3\times4$ matrices use the equivalent macros and functions
+\begin{verbatim}
+      gan_mat34_sub_q ( &m34A, &m34B, &m34C ); /* macro */
+      m34C = gan_mat34_sub_s ( &m34A, &m34B ); /* function call */
+      gan_mat34_sub_i1 ( &m34A, &m34B ); /* result in-place in m34A */
+      gan_mat34_sub_i2 ( &m34A, &m34B ); /* result in-place in m34B */
+      gan_mat34_decrement ( &m34A, &m34B ); /* result in-place in m34A */
+\end{verbatim}
+For general $3\times 3$ matrices we have the options
+\begin{verbatim}
+      Gan_Matrix33 m33A, m33B, m33C;
+
+      /* ... set up m33A, m33B using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_sub_q ( &m33A, &m33B, &m33C ); /* macro, OR */
+      m33C = gan_mat33_sub_s ( &m33A, &m33B ); /* function call */
+      gan_mat33_sub_i1 ( &m33A, &m33B ); /* macro, result in-place in m33A */
+      gan_mat33_sub_i2 ( &m33A, &m33B ); /* macro, result in-place in m33B */
+      gan_mat33_decrement ( &m33A, &m33B ); /* equivalent to gan_mat33_sub_i1() */
+\end{verbatim}
+For symmetric $3\times 3$ matrices we have
+\begin{verbatim}
+      Gan_SquMatrix33 sm33Sa, sm33Sb, sm33Sc;
+
+      /* ... set up sm33Sa, sm33Sb using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_sub_q ( &sm33Sa, &sm33Sb, &sm33Sc ); /* macro, OR */
+      sm33Sc = gan_symmat33_sub_s ( &sm33Sa, &sm33Sb ); /* function call */
+      gan_symmat33_sub_i1 ( &sm33Sa, &sm33Sb ); /* macro, result in-place in sm33Sa */
+      gan_symmat33_sub_i2 ( &sm33Sa, &sm33Sb ); /* macro, result in-place in sm33Sb */
+      gan_symmat33_decrement ( &sm33Sa, &sm33Sb ); /* equivalent to gan_symmat33_sub_i1() */
+\end{verbatim}
+Finally for lower triangular $3\times 3$ matrices we have
+\begin{verbatim}
+      Gan_SquMatrix33 sm33La, sm33Lb, sm33Lc;
+
+      /* ... set up sm33La, sm33Lb using e.g. gan_ltmat33_fill_q() ... */
+      gan_ltmat33_sub_q ( &sm33La, &sm33Lb, &sm33Lc ); /* macro, OR */
+      sm33Lc = gan_ltmat33_sub_s ( &sm33La, &sm33Lb ); /* function call */
+      gan_ltmat33_sub_i1 ( &sm33La, &sm33Lb ); /* macro, result in-place in sm33La */
+      gan_ltmat33_sub_i2 ( &sm33La, &sm33Lb ); /* macro, result in-place in sm33Lb */
+      gan_ltmat33_decrement ( &sm33La, &sm33Lb ); /* equivalent to gan_ltmat33_sub_i1() */
+\end{verbatim}
+
+\subsubsection{Rescaling a fixed size matrix}
+There are similar functions to multiply a $3\times 4$ matrix by a scalar
+\begin{verbatim}
+      double ds;
+
+      gan_mat34_scale_q ( &m34A, ds, &m34C ); /* macro */
+      m34C = gan_mat34_scale_s ( &m34A, ds ); /* function call */
+      gan_mat34_scale_i ( &m34A, ds ); /* macro, result in-place in m34A */
+\end{verbatim}
+to divide a $3\times 4$ matrix by a (non-zero) scalar
+\begin{verbatim}
+      gan_mat34_divide_q ( &m34A, ds, &m34C ); /* macro */
+      m34C = gan_mat34_divide_s ( &m34A, ds ); /* function call */
+      gan_mat34_divide_i ( &m34A, ds ); /* macro, result in-place in m34A */
+\end{verbatim}
+to negate a $3\times 4$ matrix
+\begin{verbatim}
+      gan_mat34_negate_q ( &m34A, &m34C ); /* macro */
+      m34C = gan_mat34_negate_s ( &m34A ); /* function call */
+      gan_mat34_negate_i ( &m34A ); /* macro, result in-place in m34A */
+\end{verbatim}
+and to scale a $3\times 4$ matrix to unit unit Frobenius norm
+\begin{verbatim}
+      gan_mat34_unit_q ( &m34A, &m34C ); /* macro */
+      m34C = gan_mat34_unit_s ( &m34A ); /* function call */
+      gan_mat34_unit_i ( &m34A ); /* macro, result in-place in m34A */
+\end{verbatim}
+The Frobenius norm of a matrix is the square-root of the sum of squares
+of the matrix elements. The Gandalf functions for computing it are
+described in~\ref{fixed-det-trace-norms-sec}.
+
+Equivalent routiness to the above for multiplying/dividing a matrix by a
+scalar, negating a matrix and scaling a matrix to unit Frobenius norm are
+available for square fixed size matrices. Without listing the routines
+exhaustively, some examples are
+\begin{verbatim}
+      gan_mat33_scale_q ( &m33A, ds, &m33C ); /* macro */
+      sm33Sc = gan_symmat33_divide_s ( &sm33Sa, ds ); /* function call */
+      gan_ltmat33_negate_i ( &sm33La ); /* macro, result in-place in sm33La */
+      m33C = gan_mat33_unit_s ( &m33A ); /* function call */
+\end{verbatim}
+
+{\tt Error detection:} If zero is passed as the scalar value to the
+{\tt ...\_divide\_[qi]()} routines, {\tt NULL} will be returned, while the
+{\tt ...\_divide\_s()} routines will abort the program. You should add tests
+for division by zero {\em before} calling any of the {\tt ...\_divide\_[qsi]()}
+routines. Similarly, the {\tt ...\_unit\_[qsi]()} routines will fail if
+the input matrix contains only zeros. If this is a possibility then the
+program should check beforehand.
+
+\subsubsection{Transposing a fixed size matrix}
+Explicit matrix transposition is not often required in Gandalf, because of
+the extensive support for implicit transpose in other matrix operations.
+However where necessary, computing the transpose can be achieved using
+\begin{verbatim}
+      Gan_Matrix33 m33A, m33B;
+
+      /* set up m33A using e.g. gan_mat33_fill_q() */
+      gan_mat33_tpose_q ( &m33A, &m33B ); /* B = A^T */
+      m33B = gan_mat33_tpose_s ( &m33A ); /* B = A^T */
+      gan_mat33_tpose_i ( &m33A ); /* A = A^T, result in-place in A */
+\end{verbatim}
+
+\subsubsection{Fixed size vector outer products} \label{fixed-vector-outer-sec}
+The outer product operation on two fixed size vectors $\xvec$ and $\yvec$
+is the matrix
+\[ A = \xvec \yvec\tr
+\]
+In Gandalf, any pair of vectors can be combined in this way\footnote{So long as
+$\xvec$ and $\yvec$ are ordered so that the size of $\xvec$ is less than or
+equal to the size of $\yvec$.}. The operation
+on a 3-vector and a 4-vector produces a $3\times 4$ matrix, using either of
+the routines
+\begin{verbatim}
+      Gan_Vector3 v3x;
+      Gan_Vector4 v4y;
+      Gan_Matrix34 m34A;
+
+      /* ... set up v3x and v4y using e.g. gan_vec[34]_fill_q() ... */
+      gan_vec34_outer_q ( &v3x, &v4y, &m34A ); /* macro, or */
+      m34A = gan_vec34_outer_s ( &v3x, &v4y ); /* function call */
+\end{verbatim}
+Similar routines {\tt gan\_vec33\_outer\_[qs]()} enable the computation
+of the outer product of two 3-vectors, resulting in a $3\times 3$ matrix.
+If $\xvec=\yvec$, the result of the outer product is a symmetric matrix
+\[ S = \xvec \xvec\tr
+\]
+Gandalf has special routines for this case:
+\begin{verbatim}
+      Gan_Vector3 v3x;
+      Gan_SquMatrix33 sm33S;
+
+      /* ... set up v3x using e.g. gan_vec3_fill_q() ... */
+      gan_vec33_outer_sym_q ( &v3x, &sm33S ); /* macro, or */
+      sm33S = gan_vec33_outer_sym_s ( &v3x ); /* function call */
+\end{verbatim}
+
+\subsubsection{Fixed size matrix/vector multiplication}
+Gandalf supports matrix/vector multiplication with the matrix optionally
+being (implicitly) transposed. If the matrix is triangular, Gandalf also
+supports multiplication by the inverse of the matrix, computed implicitly
+as described in the introduction to this chapter.
+These operations can be written as
+\begin{eqnarray}
+ \yvec &\!\!=\!\!& A\xvec\;\;\;\;\mbox{OR}\;\;\;\; \yvec = A\tr\xvec\;\;\;\mbox{OR} \nonumber \\
+ \yvec &\!\!=\!\!& A\inv\xvec\;\;\;\;\mbox{OR}\;\;\;\; \yvec = A\trinv\xvec\;\;\;\mbox{(triangular $A$ only)} \nonumber
+\end{eqnarray}
+The Gandalf routines involving a $3\times 4$ matrix for the first of these
+(no transpose of $A$) is
+\begin{verbatim}
+      Gan_Vector4 v4x;
+      Gan_Vector3 v3y;
+      Gan_Matrix34 m34A;
+
+      /* ... set up m34A and v4x ... */
+      gan_mat34_multv4_q ( &m34A, &v4x, &v3y ); /* macro, or */
+      v3y = gan_mat34_multv4_s ( &m34A, &v4x ); /* function call */
+\end{verbatim}
+while if $A$ is to be transposed then the routines are
+\begin{verbatim}
+      Gan_Vector3 v3x;
+      Gan_Vector4 v4y;
+      Gan_Matrix34 m34A;
+
+      /* ... set up m34A and v3x ... */
+      gan_mat34T_multv3_q ( &m34A, &v3x, &v4y ); /* macro, or */
+      v4y = gan_mat34T_multv3_s ( &m34A, &v3x ); /* function call */
+\end{verbatim}
+There are similar routines {\tt gan\_mat33\_multv3\_[qs]()} and
+{\tt gan\_mat33T\_multv3\_[qs]()} for $A$ being a general $3\times 3$ matrix.
+For symmetric matrices, there is only one pair of routines:
+\begin{verbatim}
+      Gan_Vector3 v3x, v3y;
+      Gan_SquMatrix33 sm33S;
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q(), and v3x ... */
+      gan_symmat33_multv3_q ( &sm33S, &v3x, &v3y ); /* macro, or */
+      v3y = gan_symmat33_multv3_s ( &sm33S, &v3x ); /* function call */
+\end{verbatim}
+In the case that matrix $A$ is triangular, Gandalf also supports
+multiplication of vectors by the inverse of $A$. In this case the result
+may be computed in-place in the input vector, So the complete set of
+matrix/vector multiplication routines for triangular matrices is
+\begin{verbatim}
+      Gan_Vector3 v3x, v3y;
+      Gan_SquMatrix33 sm33L;
+
+      /* ... set up sm33L using e.g. gan_ltmat33_fill_q(), and v3x ... */
+
+      /* multiply vector by lower triangular matrix */
+      gan_ltmat33_multv3_q ( &sm33L, &v3x, &v3y ); /* macro, or */
+      v3y = gan_ltmat33_multv3_s ( &sm33L, &v3x ); /* function call, or */
+      gan_ltmat33_multv3_i ( &sm33L, &v3x ); /* macro, in-place in v3x */
+
+      /* multiply vector by upper triangular matrix */
+      gan_ltmat33T_multv3_q ( &sm33L, &v3x, &v3y ); /* macro, or */
+      v3y = gan_ltmat33T_multv3_s ( &sm33L, &v3x ); /* function call, or */
+      gan_ltmat33T_multv3_i ( &sm33L, &v3x ); /* macro, in-place in v3x */
+
+      /* multiply vector by inverse of lower triangular matrix */
+      gan_ltmat33I_multv3_q ( &sm33L, &v3x, &v3y ); /* macro, or */
+      v3y = gan_ltmat33I_multv3_s ( &sm33L, &v3x ); /* function call, or */
+      gan_ltmat33I_multv3_i ( &sm33L, &v3x ); /* macro, in-place in v3x */
+
+      /* multiply vector by inverse of upper triangular matrix */
+      gan_ltmat33IT_multv3_q ( &sm33L, &v3x, &v3y ); /* macro, or */
+      v3y = gan_ltmat33IT_multv3_s ( &sm33L, &v3x ); /* function call, or */
+      gan_ltmat33IT_multv3_i ( &sm33L, &v3x ); /* macro, in-place in v3x */
+\end{verbatim}
+
+{\bf Error detection:} If implicit inverse is used (the {\tt ...I\_multv...()}
+or {\tt ...IT\_multv...()} routines), the matrix must
+be non-singular, which for triangular matrices means that none of the
+diagonal elements should be zero. If the matrix was produced
+by successful Cholesky factorisation of a symmetric matrix
+(see Section~\ref{fixed-decomp-sec}) the matrix is guaranteed to be
+non-singular. This is the normal method of creating a triangular matrix,
+and Gandalf uses {\tt assert()} to check for the singularity of the matrix.
+
+\subsubsection{Fixed size matrix/matrix multiplication}
+Most useful matrix product combinations are supported by Gandalf.
+Here we describe all the combinations involving $3\times 4$ matrices.
+The first functions to describe are those which involve multiplication
+by a $3\times 3$ on the left or $4\times 4$ matrix on the right,
+the square matrix optionally being (implicitly) transposed,
+the product producing another $3\times 4$ matrix.
+The operator combinations are
+\[ D_{3\times 4} = B_{3\times 3} A_{3\times 4},\;\;\;
+   D_{3\times 4} = B_{3\times 3}\tr A_{3\times 4},\;\;\;
+   D_{3\times 4} = A_{3\times 4} C_{4\times 4},\;\;\;
+   D_{3\times 4} = A_{3\times 4} C_{4\times 4}\tr
+\]
+which are implemented in Gandalf using the macros
+\begin{verbatim}
+      Gan_Matrix34 m34A, m34D;
+      Gan_Matrix33 m33B;
+      Gan_Matrix44 m44C;
+
+      /* ... set up m34A, m33B and m44C ... */
+      gan_mat34_lmultm33_q  ( &m34A, &m33B, &m34D ); /* D = B*A   */
+      gan_mat34_lmultm33T_q ( &m34A, &m33B, &m34D ); /* D = B*A^T */
+      gan_mat34_rmultm44_q  ( &m34A, &m44C, &m34D ); /* D = A*C   */
+      gan_mat34_rmultm44T_q ( &m34A, &m44C, &m34D ); /* D = A*C^T */
+\end{verbatim}
+Equivalent function calls are available:
+\begin{verbatim}
+      m34D = gan_mat34_lmultm33_s  ( &m34A, &m33B ); /* D = B*A   */
+      m34D = gan_mat34_lmultm33T_s ( &m34A, &m33B ); /* D = B*A^T */
+      m34D = gan_mat34_rmultm44_s  ( &m34A, &m44C ); /* D = A*C   */
+      m34D = gan_mat34_rmultm44T_s ( &m34A, &m44C ); /* D = A*C^T */
+\end{verbatim}
+Note that although by and large the functions described here for $3\times 4$
+matrices are repeated for square matrices, there is redundancy because
+in the case of $3\times 3$ matrices the routines
+\begin{verbatim}
+      m33D = gan_mat33_lmultm33_s  ( &m33A, &m33B ); /* D = B*A   */
+      m33D = gan_mat33_rmultm33_s  ( &m33B, &m33A ); /* D = B*A   */
+\end{verbatim}
+would be equivalent, so in fact only the routines
+{\tt gan\_mat33\_rmultm33\_[qs]()} are defined.
+
+The square matrix may be symmetric or triangular, for which cases there
+are specific Gandalf functions. Firstly for multiplying by symmetric matrices
+we have the routines
+\begin{verbatim}
+      Gan_Matrix34 m34A, m34B;
+      Gan_SquMatrix33 sm33S;
+      Gan_SquMatrix44 sm44S;
+
+      /* ... set up m34A, symmetric sm33S and sm44S ... */
+      gan_mat34_lmults33_q ( &m34A, &sm33S, &m34B ); /* B = S*A, macro */
+      gan_mat34_rmults44_q ( &m34A, &sm44S, &m34B ); /* B = A*S, macro */
+\end{verbatim}
+with equivalent function calls
+\begin{verbatim}
+      m34B = gan_mat34_lmults33_q ( &m34A, &sm33S ); /* B = S*A, function call */
+      m34B = gan_mat34_rmults44_q ( &m34A, &sm44S ); /* B = A*S, function call */
+\end{verbatim}
+When multiplying by a triangular matrix, there are also options of implicit
+transpose and inverse, as described in the introduction to this chapter.
+Gandalf also supports in-place operations in this case. So there is a whole
+family of functions covering multiplication of a matrix by a triangular
+matrix. Mathematically the operations are
+\[ B=LA, \;\;\; B=L\tr A, \;\;\; B=L\inv A, \;\;\; B=L\trinv A
+\]
+\[ B=AL, \;\;\; B=AL\tr, \;\;\; B=AL\inv, \;\;\; B=AL\trinv
+\]
+Gandalf macro routines to implement these operations are
+\begin{verbatim}
+      Gan_Matrix34 m34A, m34B;
+      Gan_SquMatrix33 sm33L;
+      Gan_SquMatrix44 sm44L;
+
+      /* ... set up m34A, lower triangular sm33L and sm44L ... */
+      gan_mat34_lmultl33_q   ( &m34A, &sm33L, &m34B ); /* B = L*A,    macro */
+      gan_mat34_lmultl33T_q  ( &m34A, &sm33L, &m34B ); /* B = L^T*A,  macro */
+      gan_mat34_lmultl33I_q  ( &m34A, &sm33L, &m34B ); /* B = L^-1*A, macro */
+      gan_mat34_lmultl33IT_q ( &m34A, &sm33L, &m34B ); /* B = L^-T*A, macro */
+      gan_mat34_rmultl44_q   ( &m34A, &sm44L, &m34B ); /* B = A*L,    macro */
+      gan_mat34_rmultl44T_q  ( &m34A, &sm44L, &m34B ); /* B = A*L^T,  macro */
+      gan_mat34_rmultl44I_q  ( &m34A, &sm44L, &m34B ); /* B = A*L^-1, macro */
+      gan_mat34_rmultl44IT_q ( &m34A, &sm44L, &m34B ); /* B = A*L^-T, macro */
+\end{verbatim}
+There are also function calls to implement the same operations:
+\begin{verbatim}
+      m34B = gan_mat34_lmultl33_s   ( &m34A, &sm33L ); /* B = L*A,    function call */
+      m34B = gan_mat34_lmultl33T_s  ( &m34A, &sm33L ); /* B = L^T*A,  function call */
+      m34B = gan_mat34_lmultl33I_s  ( &m34A, &sm33L ); /* B = L^-1*A, function call */
+      m34B = gan_mat34_lmultl33IT_s ( &m34A, &sm33L ); /* B = L^-T*A, function call */
+      m34B = gan_mat34_rmultl44_s   ( &m34A, &sm44L ); /* B = A*L,    function call */
+      m34B = gan_mat34_rmultl44T_s  ( &m34A, &sm44L ); /* B = A*L^T,  function call */
+      m34B = gan_mat34_rmultl44I_s  ( &m34A, &sm44L ); /* B = A*L^-1, function call */
+      m34B = gan_mat34_rmultl44IT_s ( &m34A, &sm44L ); /* B = A*L^-T, function call */
+\end{verbatim}
+Finally there is a set of macros for writing the result in-place into
+the $3\times 4$ matrix $A$.
+\begin{verbatim}
+      gan_mat34_lmultl33_i   ( &m34A, &sm33L ); /* A = L*A,    macro */
+      gan_mat34_lmultl33T_i  ( &m34A, &sm33L ); /* A = L^T*A,  macro */
+      gan_mat34_lmultl33I_i  ( &m34A, &sm33L ); /* A = L^-1*A, macro */
+      gan_mat34_lmultl33IT_i ( &m34A, &sm33L ); /* A = L^-T*A, macro */
+      gan_mat34_rmultl44_i   ( &m34A, &sm44L ); /* A = A*L,    macro */
+      gan_mat34_rmultl44T_i  ( &m34A, &sm44L ); /* A = A*L^T,  macro */
+      gan_mat34_rmultl44I_i  ( &m34A, &sm44L ); /* A = A*L^-1, macro */
+      gan_mat34_rmultl44IT_i ( &m34A, &sm44L ); /* A = A*L^-T, macro */
+\end{verbatim}
+
+The next set of functions deals with multiplying a matrix by itself in
+transpose, resulting in a symmetric matrix. These operations have the form
+\[ S_{4\times 4} = A_{3\times 4}\tr A_{3\times 4}\;\;\;\;\mbox{OR}\;\;\;\;
+   S_{3\times 3} = A_{3\times 4} A_{3\times 4}\tr
+\]
+The Gandalf macro routines to implement these operations are
+\begin{verbatim}
+      Gan_Matrix34 m34A;
+      Gan_SquMatrix33 sm33S;
+      Gan_SquMatrix44 sm44S;
+
+      /* ... set up m34A using e.g. gan_mat34_fill_q() ... */
+      gan_mat34_slmultT_q ( &m34A, &sm44S ); /* S = A^T*A */
+      gan_mat34_srmultT_q ( &m34A, &sm33S ); /* S = A*A^T */
+\end{verbatim}
+with equivalent function calls
+\begin{verbatim}
+      sm44S = gan_mat34_slmultT_s ( &m34A ); /* S = A^T*A */
+      sm33S = gan_mat34_srmultT_s ( &m34A ); /* S = A*A^T */
+\end{verbatim}
+There are similar routines for general $3\times 3$ matrices. For triangular
+matrices the functions are
+\begin{verbatim}
+      Gan_SquMatrix33 sm33L, sm33S;
+
+      /* ... set up sm33L using e.g. gan_ltmat33_fill_q()... */
+      gan_ltmat33_slmultT_q ( &sm33L, &sm33S ); /* S = L^T*L, macro */
+      sm33S = gan_ltmat33_slmultT_s ( &sm33L ); /* S = L^T*L, function call */
+      gan_ltmat33_srmultT_q ( &sm33L, &sm33S ); /* S = L*L^T, macro */
+      sm33S = gan_ltmat33_srmultT_s ( &sm33L ); /* S = L*L^T, function call */
+\end{verbatim}
+In the case of triangular matrices the operation ``multiply by transposed
+self'' can also be done in-place, so we also have the macro routines
+\begin{verbatim}
+      Gan_SquMatrix33 sm33A;
+
+      /* ... set up sm33A as triangular using e.g. gan_ltmat33_fill_q()... */
+      gan_ltmat33_slmultT_i ( &sm33A ); /* A = A^T*A, macro */
+      gan_ltmat33_srmultT_i ( &sm33A ); /* A = A*A^T, macro */
+\end{verbatim}
+
+There are also routines to multiply a matrix by the transpose
+of another matrix of the same size, where the result is {\em assumed} to be
+a symmetric matrix. So mathematically the operations have the form
+\[ S_{4\times 4} = A_{3\times 4}\tr B_{3\times 4}\;\;\;\;\mbox{OR}\;\;\;\;
+   S_{3\times 3} = A_{3\times 4} B_{3\times 4}\tr
+\]
+The Gandalf macro routines to implement these operations are
+\begin{verbatim}
+      Gan_Matrix34 m34A, m34B;
+      Gan_SquMatrix33 sm33S;
+      Gan_SquMatrix44 sm44S;
+
+      /* ... set up m34A, m34B using e.g. gan_mat34_fill_q() ... */
+      gan_mat34_rmultm34T_sym_q ( &m34A, &m34B, &sm33S ); /* S = A*B^T */
+      gan_mat34_lmultm34T_sym_q ( &m34B, &m34A, &sm44S ); /* S = A^T*B */
+\end{verbatim}
+with equivalent function calls
+\begin{verbatim}
+      sm33S = gan_mat34_rmultm34T_sym_s ( &m34A, &m34B ); /* S = A*B^T */
+      sm44S = gan_mat34_lmultm34T_sym_s ( &m34B, &m34A ); /* S = A^T*B */
+\end{verbatim}
+
+A common operation is to multiply a symmetric matrix on left and right by
+a matrix and its transpose, producing another symmetric matrix.
+Gandalf supports all combinations of these operations.
+Those involving $3\times 4$ matrices are
+\begin{verbatim}
+      Gan_SquMatrix33 sm33Sa;
+      Gan_SquMatrix44 sm44Sb;
+      Gan_Matrix34 m34A;
+
+      gan_symmat33_lrmultm34T_q ( &sm33Sa, &m34A, &sm44Sb ); /* Sb = A^T*Sa*A, macro */
+      sm44Sb = gan_symmat33_lrmultm34T_s ( &sm33Sa, &m34A ); /* Sb = A^T*Sa*A, function call */
+      gan_symmat44_lrmultm34_q ( &sm44Sb, &m34A, &sm33Sa ); /* Sa = A*Sb*A^T, macro */
+      sm33Sa = gan_symmat44_lrmultm34_s ( &sm44Sb, &m34A ); /* Sa = A*Sb*A^T, function call */
+\end{verbatim}
+
+{\bf Error detection:} If implicit inverse is used (e.g. the
+{\tt ...multl33I\_[qsi]()} or {\tt ...multl33IT\_[qsi]()} routines),
+the matrix must be non-singular, which for triangular matrices
+means that none of the diagonal elements should be zero.
+If the matrix was produced
+by successful Cholesky factorisation of a symmetric matrix
+(see Section~\ref{fixed-decomp-sec}) the matrix is guaranteed to be
+non-singular. This is the normal method of creating a triangular matrix,
+and Gandalf uses {\tt assert()} to check for the singularity of the matrix.
+
+\subsubsection{Fixed size matrix inverse}
+All types of square matrices can be inverted in Gandalf.
+If the matrix is singular, {\tt NULL}
+is normally returned and an error condition set using
+{\tt gan\_err\_register()} (see Section~\ref{error-handling-sec}).
+The routines to invert a $3\times 3$ matrix are
+\begin{verbatim}
+      Gan_Matrix33 m33A, m33B;
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_invert_q ( &m33A, &m33B ); /* B = A^-1, OR */
+      m33B = gan_mat33_invert_s ( &m33A ); /* B = A^-1, OR */
+      gan_mat33_invert_i ( &m33A ); /* A = A^-1, in-place in A */
+\end{verbatim}
+Note that the routine {\tt gan\_mat33\_invert\_s()} returns the structure,
+rather than a pointer value, so cannot return an error condition.
+Do not use it unless you are SURE that your matrix is non-singular!
+The basic routines {\tt gan\_mat33\_invert\_[qs]()} are implemented as
+functions rather than macros, because they require temporary variables.
+There are similar routines for symmetric matrices
+\begin{verbatim}
+      Gan_SquMatrix33 sm33Sa, sm33Sb;
+
+      /* ... set up sm33Sa using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_invert_q ( &sm33Sa, &sm33Sb ); /* Sb = Sa^-1, OR */
+      sm33Sb = gan_symmat33_invert_s ( &sm33Sa ); /* Sb = Sa^-1, OR */
+      gan_symmat33_invert_i ( &sm33Sa ); /* Sa = Sa^-1, in-place in Sa */
+\end{verbatim}
+and for triangular matrices
+\begin{verbatim}
+      Gan_SquMatrix33 sm33La, sm33Lb;
+
+      /* ... set up sm33La using e.g. gan_ltmat33_fill_q() ... */
+      gan_ltmat33_invert_q ( &sm33La, &sm33Lb ); /* Lb = La^-1, OR */
+      sm33Lb = gan_ltmat33_invert_s ( &sm33La ); /* Lb = La^-1, OR */
+      gan_ltmat33_invert_i ( &sm33La ); /* La = La^-1, in-place in La */
+\end{verbatim}
+
+If you don't want to invoke the error package when inversion is attempted
+on a singular matrix, there is a set of routines which allows to instead to
+return the error condition as part of the result. For instance the code
+fragment
+\begin{verbatim}
+      Gan_Matrix33 m33A, m33B;
+      int error_code;
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      if ( gan_mat33_invert ( &m33A, &m33B, &error_code ) == NULL )
+      {
+         /* error found, act on it ... */
+      }
+
+      /* no error found */
+\end{verbatim}
+attempts to invert matrix $A$, and if an error is found, returns NULL,
+with the error condition returned in the {\tt error\_code} variable.
+For singular matrices the error condition is
+{\tt GAN\_ERROR\_SINGULAR\_MATRIX}. There are similar routines
+{\tt gan\_symmat33\_invert()} and {\tt gan\_ltmat33\_invert()} for
+symmetric and triangular matrices respectively.
+
+\subsubsection{Determinant, trace, norms of fixed size matrix}
+\label{fixed-det-trace-norms-sec}
+To compute the determinant of a square matrix use one of the routines
+\begin{verbatim}
+      Gan_Matrix m33A;
+      Gan_SquMatrix33 sm33S, sm33L;
+      double dDetA, dDetS, dDetL;
+
+      /* set up m33A, sm33S as symmetric and sm33L as lower triangular */
+      dDetA = gan_mat33_det_q(&m33A); /* macro computing det(A) */
+      dDetA = gan_mat33_det_s(&m33A); /* function computing det(A) */
+      dDetS = gan_symmat33_det_q(&sm33S); /* macro computing det(S) */
+      dDetS = gan_symmat33_det_s(&sm33S); /* function computing det(S) */
+      dDetL = gan_ltmat33_det_q(&sm33L); /* macro computing det(L) */
+      dDetL = gan_ltmat33_det_s(&sm33L); /* function computing det(L) */
+\end{verbatim}
+The routines to compute the trace of a square matrix are similar:
+\begin{verbatim}
+      Gan_Matrix m33A;
+      Gan_SquMatrix33 sm33S, sm33L;
+      double dTraceA, dTraceS, dTraceL;
+
+      /* set up m33A, sm33S as symmetric and sm33L as lower triangular */
+      dTraceA = gan_mat33_trace_q(&m33A); /* macro computing trace(A) */
+      dTraceA = gan_mat33_trace_s(&m33A); /* function computing trace(A) */
+      dTraceS = gan_symmat33_trace_q(&sm33S); /* macro computing trace(S) */
+      dTraceS = gan_symmat33_trace_s(&sm33S); /* function computing trace(S) */
+      dTraceL = gan_ltmat33_trace_q(&sm33L); /* macro computing trace(L) */
+      dTraceL = gan_ltmat33_trace_s(&sm33L); /* function computing trace(L) */
+\end{verbatim}
+For all types of fixed size matrix there are also routines to compute the
+sum of squares of the matrix elements, as well as the Frobenius norm,
+which is the square-root of the sum of squares. For $3\times 4$ matrices
+the routines are
+\begin{verbatim}
+      Gan_Matrix34 m34A;
+      double dSumSA, dFNormA;
+
+      /* ... set up m34A using e.g. gan_mat34_fill_q() ... */
+      dSumSA = gan_mat34_sumsqr_q(&m34A); /* macro computing sum(A_ij^2) */
+      dSumSA = gan_mat34_sumsqr_s(&m34A); /* function computing sum(A_ij^2) */
+      dFNormA = gan_mat34_Fnorm_q(&m34A); /* macro computing sqrt(sum(A_ij^2)) */
+      dFNormA = gan_mat34_Fnorm_s(&m34A); /* function computing sqrt(sum(A_ij^2)) */
+\end{verbatim}
+There are equivalent routines for other types of matrix.
+
+\subsubsection{Fixed size matrix decompositions} \label{fixed-decomp-sec}
+Gandalf supports several of the standard matrix decompositions. Cholesky
+factorisation applies to any positive definite symmetric matrix $S$, producing
+the lower triangular matrix $L$ so that
+\[ S = L L\tr
+\]
+It can be computed for $3\times 3$ symmetric matrices using the routines
+\begin{verbatim}
+      Gan_SquMatrix33 sm33S, sm33L;
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_cholesky_q ( &sm33S, &sm33L ); /* L = chol(S) */
+      sm33L = gan_symmat33_cholesky_s ( &sm33S ); /* L = chol(S) */
+\end{verbatim}
+There is also a routine for computing the Cholesky factorisation in-place
+in the input matrix, converting an input symmetric matrix $A$ into a lower
+triangular matrix:
+\begin{verbatim}
+      Gan_SquMatrix33 sm33A;
+
+      /* ... set up sm33A as symmetric using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_cholesky_i ( &sm33A ); /* A = chol(A) */
+\end{verbatim}
+The routines {\tt gan\_symmat33\_cholesky\_[qi]()} return {\tt NULL} and
+invoke the Gandalf error handler\\ {\tt gan\_err\_register()} if the matrix
+is not positive definite ({\tt gan\_symmat33\_cholesky\_s()} aborts the
+program on error, so don't use it unless you're SURE your matrix is OK!).
+If you don't want to invoke the error package when factorisation is attempted
+on a non-positive-definite matrix, there is a set of routines which allows
+to instead to return the error condition as part of the result.
+For instance the code fragment
+\begin{verbatim}
+      Gan_SquMatrix33 sm33S, sm33L;
+      int error_code;
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q() ... */
+      if ( gan_symmat33_choleksy ( &sm33S, &sm33L, &error_code ) == NULL )
+      {
+         /* error found, act on it ... */
+      }
+
+      /* no error found */
+\end{verbatim}
+attempts to factorise matrix $S$, and if an error is found, returns NULL,
+with the error condition returned in the {\tt error\_code} variable.
+For non-positive-definite matrices the error condition is
+{\tt GAN\_ERROR\_NOT\_POSITIVE\_DEFINITE}.
+
+Other factorisations are available in Gandalf. Singular value decomposition
+(SVD) can be used to decompose almost any matrix $A$ into factors as
+\[ A = UWV\tr
+\]
+where $U$ and $V$ are orthogonal matrices and $W$ is diagonal.
+Currently Gandalf supports SVD for $3\times 3$ and $4\times 4$ matrices.
+To use the functions for $3\times 3$ matrices, include the header file
+\begin{verbatim}
+      #include <gandalf/linalg/3x3matrix_svd.h>
+\end{verbatim}
+There are routines for SVD of a matrix or its transpose, as follows
+\begin{verbatim}
+      Gan_Matrix33 m33A, m33U, m33VT;
+      Gan_Vector3 v3W;
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_svd ( &m33A, &m33U, &v3W, &m33VT ); /* A = U*W*V^T, OR */
+      gan_mat33T_svd ( &m33A, &m33U, &v3W, &m33VT ); /* A^T = U*W*V^T */
+\end{verbatim}
+These routines return a {\tt Gan\_Bool} result, which is {\tt GAN\_TRUE}
+on success and {\tt GAN\_FALSE} on failure.
+
+There are also a number of routines for computing the eigenvalues and
+eigenvectors of fixed size matrices. For $3\times 3$ matrices only there
+is a routine to compute the eigenvectors and complex eigenvalues of
+a $3\times 3$ matrix. To use the routine include the header file
+\begin{verbatim}
+      #include <gandalf/linalg/3x3matrix_eigen.h>
+\end{verbatim}
+The matrix $A$ has ``left'' and ``right'' eigenvectors associated with the
+same eigenvalues $\lambda_i$, so that the equation
+\[ A \vvec_i = \lambda_i \vvec_i
+\]
+defines the right eigenvectors, and
+\[ \uvec_i^H A = \lambda_i \uvec_i^H
+\]
+defines the left eigenvectors, where $\uvec_i^H$ denotes the conjugate
+transpose of vector $\uvec_i$.
+The computed eigenvectors are normalized to have Euclidean norm   
+equal to one and largest component real. The Gandalf routine that implements
+this is built on the equivalent CLAPACK routine {\tt dgeev()}:
+\begin{verbatim}
+      Gan_Matrix33 m33A; /* matrix to be decomposed */
+      Gan_Matrix33 m33UL, m33VR; /* left and right eigenvectors */
+      Gan_Vector3 v3lr, v3li; /* real and imaginary parts of eigenvalues */
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_eigen ( &m33A, &v3lr, &v3li, &m33UL, &m33VR );
+\end{verbatim}
+
+The eigenvalues of symmetric matrices are guaranteed to be real.
+Routines are available for computing the eigenvalues and eigenvectors of
+$3\times 3$ and $4\times 4$ symmetric matrices, based on either the
+CLAPACK routine {\tt dspev()} or the CCMath routine {\tt eigval()}.
+For $3\times 3$ matrices the routine is declared in the header file
+\begin{verbatim}
+      #include <gandalf/linalg/3x3matrix_eigsym.h>
+\end{verbatim}
+Here is an example using the routine
+\begin{verbatim}
+      Gan_SquMatrix33 sm33S; /* symmetric matrix to be decomposed */
+      Gan_Matrix33 m33Z; /* (right) eigenvectors of A */
+      Gan_Vector3 v3W; /* eigenvalues */
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_eigen ( &sm33S, &v3W, &m33Z );
+\end{verbatim}
+
+\subsubsection{Fixed size matrix file I/O}
+Gandalf supports both ASCII and binary format file I/O of matrices.
+Both formats use standard {\tt FILE~*} file streams.
+ASCII format is obviously more convenient to use, while binary format is
+more compact and guarantees no loss of precision when the data is read.
+To print a $3\times 4$ matrix in ASCII format, use
+\begin{verbatim}
+      Gan_Bool gan_mat34_fprint ( FILE *fp, Gan_Matrix34 *p,
+                                  const char *prefix, int indent, const char *fmt );
+\end{verbatim}
+{\tt prefix} is a prefix string to print before the matrix itself, {\tt indent}
+is the number of spaces to indent the matrix by, and {\tt fmt} is a format
+string to use when printing the matrix, e.g. {\tt "\%f"}. So for example
+\begin{verbatim}
+      FILE *pfFile;
+
+      pfFile = fopen ( "/tmp/matrices", "w" );
+      gan_mat34_fill_q ( &m34A, 1.0,  2.0,  3.0,  4.0,
+                                5.0,  6.0,  7.0,  8.0,
+                                9.0, 10.0, 11.0, 12.0 );
+      gan_mat34_fprint ( pfFile, &m34A, "Example matrix", 3, "%f" );
+\end{verbatim}
+will print the output
+\begin{verbatim}
+         Example matrix
+          1.000000 2.000000 3.000000 4.000000
+          5.000000 6.000000 7.000000 8.000000
+          9.000000 10.000000 11.000000 12.000000
+\end{verbatim}
+to the file {\tt "/tmp/matrices"}.
+There is also a version {\tt gan\_mat34\_print()} for printing to
+standard output:
+\begin{verbatim}
+      Gan_Bool gan_mat34_print ( Gan_Matrix34 *p,
+                                 const char *prefix, int indent, const char *fmt );
+\end{verbatim}
+The corresponding input function is
+\begin{verbatim}
+      Gan_Bool gan_mat34_fscanf ( FILE *fp, Gan_Matrix34 *p,
+                                  char *prefix, int prefix_len )
+\end{verbatim}
+which reads the matrix from the file stream {\tt fp} into the $3\times 4$
+matrix pointer {\tt p}. It also reads the prefix string (up to the specified
+maximum length {\tt prefix\_len}), which can be compared with the expected
+prefix string to check for consistency.
+
+Binary file I/O is handled by the functions {\tt gan\_mat34\_fwrite()}
+and {\tt gan\_mat34\_fread()}. To write a $3\times 4$ matrix in binary
+format use
+\begin{verbatim}
+      Gan_Bool gan_mat34_fwrite ( FILE *fp, Gan_Matrix34 *p, gan_ui32 magic_number );
+\end{verbatim}
+The {\tt magic\_number} takes the same role as the {\tt prefix} string
+in {\tt gan\_mat34\_fprint()}, and is written into the file so that it can be
+used later to identify the matrix when it is read back using
+\begin{verbatim}
+      Gan_Bool gan_mat34_fread ( FILE *fp, Gan_Matrix34 *p, gan_ui32 *magic_number );
+\end{verbatim}
+
+There are similar functions {\tt gan\_mat33\_fprint()},
+{\tt gan\_mat33\_print()}, {\tt gan\_mat33\_fscanf()} for ASCII I/O of
+$3\times 3$ matrices, and {\tt gan\_mat33\_fwrite()}, {\tt gan\_mat33\_fread()}
+for binary I/O of $3\times 3$ matrices. Functions for symmetric and
+triangular matrices follow the same pattern.
+
+{\tt Error detection:} The I/O routines return a boolean value, returning
+{\tt GAN\_TRUE} on success, {\tt GAN\_FALSE} on failure, invoking the Gandalf
+error handle in the latter case.
+
+\subsubsection{Conversion from general to fixed size matrix}
+Functions are provided to convert a general matrix {\tt Gan\_Matrix}
+{\tt Gan\_Matrix34}, provided that the general matrix has actually been
+created with size three. So for instance
+\begin{verbatim}
+      Gan_Matrix *pmMatrix;
+
+      pmMatrix = gan_mat_alloc(3,4);
+      gan_mat_fill_va ( pmMatrix, 3, 4, 1.0,  2.0,  3.0,  4.0,
+                                        5.0,  6.0,  7.0,  8.0,
+                                        9.0, 10.0, 11.0, 12.0 );
+      gan_mat34_from_mat_q ( pmMatrix, &m34A );
+\end{verbatim}
+or
+\begin{verbatim}
+      m34A = gan_mat34_from_mat_s ( pmMatrix );
+\end{verbatim}
+fill {\tt m34A} with the same values as the general matrix.
+Calling these functions with a general matrix {\tt pmMatrix} not having
+the same size as the fixed size matrix is an error.
+
+{\tt Error detection:} The conversion routines return the pointer to the
+filled fixed size matrix, or {\tt NULL} on failure, invoking the Gandalf
+error handle in the latter case.
+
+\subsubsection{Single precision fixed size matrices}
+\begin{verbatim}
+      #include <gandalf/linalg/3matrixf.h>
+\end{verbatim}
+There is an identical set of functions for handling single precision
+floating point matrices, the names of which are obtained by replacing
+{\tt "gan\_mat34\_..."} in the above functions with {\tt "gan\_mat34f\_..."}.
+For example, to add two single precision $3\times 4$ matrices use
+\begin{verbatim}
+      Gan_Matrix34_f m34A, m34B, m34C;
+
+      /* ... fill m34A and m34B ... */
+      gan_mat34f_add_q ( &m34A, &m34B, &m34C );
+\end{verbatim}

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Quaternion routines</TITLE>
+<META NAME="description" CONTENT="Quaternion routines">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node128.html">
+<LINK REL="previous" HREF="node126.html">
+<LINK REL="up" HREF="node126.html">
+<LINK REL="next" HREF="node128.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2016"
+  HREF="node128.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2012"
+  HREF="node126.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2006"
+  HREF="node126.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2014"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2017"
+  HREF="node128.html">General rotation routines</A>
+<B> Up:</B> <A NAME="tex2html2013"
+  HREF="node126.html">Representing 3D rotations</A>
+<B> Previous:</B> <A NAME="tex2html2007"
+  HREF="node126.html">Representing 3D rotations</A>
+ &nbsp; <B>  <A NAME="tex2html2015"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00681000000000000000">
+Quaternion routines</A>
+</H2>
+There is a special set of functions and macros to handle quaternions.
+A <TT>Gan_Quaternion</TT> is basically the same object as a <TT>Gan_Vector4</TT>,
+and a lot of the routines are macro calls to the equivalent 4-vector routines.
+Here is a code fragment illustrating the use of quaternions in Gandalf.
+<PRE>
+      Gan_Quaternion q1, q2, q3; /* declare three quaternions */
+
+      /* fill q1 the "quick" way and scale it to unit length */
+      gan_quat_fill_q ( &amp;q1, 0.5, -0.2, 0.3, 0.3 );
+      gan_quat_unit_i ( &amp;q1 );
+
+      /* fill q2 the "slow" way and scale it to unit length */
+      q2 = gan_quat_fill_s ( -0.4, 0.7, 0.1, 0.9 );
+      q2 = gan_quat_unit_s ( &amp;q2 );
+
+      /* add two quaternions */
+      gan_quat_add_q ( &amp;q1, &amp;q2, &amp;q3 );
+
+      /* subtract two quaternions */
+      gan_quat_sub_q ( &amp;q1, &amp;q2, &amp;q3 );
+
+      /* multiply a quaternion by a scalar */
+      gan_quat_scale_q ( &amp;q1, 2.0, &amp;q3 ); /* q3 = 2*q1, OR */
+      q3 = gan_quat_scale_s ( &amp;q1, 2.0 ); /* q3 = 2*q1, OR */
+      gan_quat_scale_i ( &amp;q1, 2.0 ); /* replace q1 = 2*q1 in-place */
+
+      /* divide a quaternion by a scalar */
+      gan_quat_divide_q ( &amp;q1, 2.0, &amp;q3 ); /* q3 = q1/2, OR */
+      q3 = gan_quat_divide_s ( &amp;q1, 2.0 ); /* q3 = q1/2, OR */
+      gan_quat_divide_i ( &amp;q1, 2.0 ); /* replace q1 = q1/2 in-place */
+
+      /* print squared length of quaternion */
+      printf ( "quaternion squared length |q|^2=%f\n",
+               gan_quat_sqrlen_q(&amp;q3) ); /* macro version, OR */
+      printf ( "quaternion squared length |q|^2=%f\n",
+               gan_quat_sqrlen_s(&amp;q3) ); /* function version */
+</PRE>
+
+<P>
+<B>Error detection:</B> The routines <TT>gan_quat_divide_[qi]()</TT> and
+<TT>gan_quat_unit_[qi]()</TT> return <TT>NULL</TT> upon division by zero error,
+invoking the Gandalf error handler,
+whereas the equivalent <TT>..._s()</TT> routines abort the program on error.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

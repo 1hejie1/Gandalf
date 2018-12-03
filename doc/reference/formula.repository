@@ -1,0 +1,356 @@
+\form#0:$ \geq 0$
+\form#1:$ x^2 $
+\form#2:$ x $
+\form#3:\[ a\:x^2 + b\:x + c = 0 \]
+\form#4:$ x^3 $
+\form#5:\[ a\:x^3 + b\:x^2 + c\:x + d = 0 \]
+\form#6:$p + q$
+\form#7:$p - q$
+\form#8:\[ \left(\begin{array}{c} X \\ Y \end{array}\right) \]
+\form#9:\[ p = \left(\begin{array}{c} X \\ Y \end{array}\right) \]
+\form#10:$ q = -p $
+\form#11:$ p \leftarrow -p $
+\form#12:$r = p + q$
+\form#13:$p \leftarrow p + q$
+\form#14:$q \leftarrow p + q$
+\form#15:$r = p - q$
+\form#16:$ p \leftarrow p - q$
+\form#17:$ q \leftarrow p - q$
+\form#18:$ p \leftarrow p - q $
+\form#19:$ p.q $
+\form#20:$ p.p $
+\form#21:$ L $
+\form#22:\[ b'_i = \frac{1}{||L^{-1} b_i||}L^{-1} b_i \]
+\form#23:\[ \sum_{i=1\ldots n} (b'_i {b'_i}^{\top}) = \frac{n}{2} I_{2\times 2} \]
+\form#24:$ I_{2\times 2} $
+\form#25:$ b'_i $
+\form#26:\[ \left(\begin{array}{cc} XX & XY \\ YX & YY \end{array}\right) \]
+\form#27:$ A \leftarrow A^{\top} $
+\form#28:$ A^{-1} $
+\form#29:$ A B = I $
+\form#30:$ A^{*} $
+\form#31:\[ B A^{\top} = \mbox{det}(A) I \]
+\form#32:$ A^{*{\top}} $
+\form#33:\[ B A = \mbox{det}(A) I \]
+\form#34:\[ A = \left(\begin{array}{c} p^{\top} \\ q^{\top} \end{array}\right) \]
+\form#35:\[ A = \left(\begin{array}{cc} p & q \end{array}\right) \]
+\form#36:\[ \left(\begin{array}{cc} XX & YX \\ YX & YY \end{array}\right) \]
+\form#37:$ \mbox{chol}(A) $
+\form#38:\[ B B^{\top} = A \]
+\form#39:\[ A B = B A = I \]
+\form#40:\[ \left(\begin{array}{cc} XX & 0 \\ YX & YY \end{array}\right) \]
+\form#41:$ A + A^{\top} $
+\form#42:\[ A^{*} A^{\top} = \mbox{det}(A) I \]
+\form#43:\[ A^{*{\top}} A = \mbox{det}(A) I \]
+\form#44:$ A + B $
+\form#45:$ A - B $
+\form#46:$ p q^{\top} $
+\form#47:$ A p $
+\form#48:$ A^{\top} p $
+\form#49:$ B^{\top} A $
+\form#50:$ A B $
+\form#51:$ A B^{\top} $
+\form#52:$ A^{\top} A $
+\form#53:$ A A^{\top} $
+\form#54:$ B A $
+\form#55:$ B^{\top} A B $
+\form#56:$ B A B^{\top} $
+\form#57:$ B^{-1} A $
+\form#58:$ B^{-{\top}} A $
+\form#59:$ A B^{-1} $
+\form#60:$ A B^{-{\top}} $
+\form#61:$ p p^{\top} $
+\form#62:$ A^{-1} p $
+\form#63:$ A^{-{\top}} p $
+\form#64:\[ A = \left(\begin{array}{cc} XX & XY \\ YX & YY \end{array}\right) \]
+\form#65:$ B = A^{\top} $
+\form#66:$ B = A + A^{\top} $
+\form#67:$ B = A^{-1} $
+\form#68:$ A \leftarrow A^{-1} $
+\form#69:$ B = -A $
+\form#70:$ A \leftarrow -A $
+\form#71:$ C = A + B $
+\form#72:$ A \leftarrow A + B $
+\form#73:$ B \leftarrow A + B $
+\form#74:$ C = A - B $
+\form#75:$ A \leftarrow A - B $
+\form#76:$ B \leftarrow A - B $
+\form#77:$ A = p q^{\top} $
+\form#78:$ q = A p $
+\form#79:$ q = A^{\top} p $
+\form#80:$ C = B^{\top} A $
+\form#81:$ C = A B $
+\form#82:$ C = A B^{\top} $
+\form#83:$ C = B A $
+\form#84:$ C = B^{-1} A $
+\form#85:$ C = B^{-{\top}} A $
+\form#86:$ C = A B^{-1} $
+\form#87:$ C = A B^{-{\top}} $
+\form#88:$ A \leftarrow B A $
+\form#89:$ A \leftarrow B^{-1} A $
+\form#90:$ A \leftarrow B^{\top} A $
+\form#91:$ A \leftarrow B^{-{\top}} A $
+\form#92:$ A \leftarrow A B $
+\form#93:$ A \leftarrow A B^{-1} $
+\form#94:$ A \leftarrow A B^{\top} $
+\form#95:$ A \leftarrow A B^{-{\top}} $
+\form#96:$ B = A^{\top} A $
+\form#97:$ B = A A^{\top} $
+\form#98:\[ A = \left(\begin{array}{cc} XX & YX \\ YX & YY \end{array}\right) \]
+\form#99:$ A = p p^{\top} $
+\form#100:$ B = \mbox{chol} (A) $
+\form#101:$ A \leftarrow \mbox{chol}(A) $
+\form#102:\[ A = \left(\begin{array}{cc} XX & 0 \\ YX & YY \end{array}\right) \]
+\form#103:$ p \leftarrow A^{-1} p $
+\form#104:$ q = A^{-{\top}} p $
+\form#105:$ p \leftarrow A^{-{\top}} p $
+\form#106:$ p \leftarrow A p $
+\form#107:$ p = A^{\top} p $
+\form#108:$ A \leftarrow A^{\top} A $
+\form#109:$ A \leftarrow A A^{\top} $
+\form#110:\[ A\:Z = Z\:W, \;\; Z^{\top}\:A = W\:`Z^{\top} \]
+\form#111:\[ B'_i = \frac{1}{||B_i L^{-{\top}}||_F}(B_i L^{-{\top}}) \]
+\form#112:\[ \sum_{i=1\ldots n} ({B'_i}^{\top} B'_i) = \frac{n}{2} I_{2\times 2} \]
+\form#113:$ B'_i $
+\form#114:\[ B'_i = \frac{1}{||L^{-1} B_i||_F}(L^{-1} B_i) \]
+\form#115:\[ \sum_{i=1\ldots n} (B'_i {B'_i}^{\top}) = \frac{n}{2} I_{2\times 2} \]
+\form#116:\[ \left(\begin{array}{ccc} XX & XY & XZ \\ YX & YY & YZ \end{array}\right) \]
+\form#117:\[ A \left(\begin{array}{c} p \\ h \end{array}\right) \]
+\form#118:\[ \left(\begin{array}{cc} \multicolumn{2}{c}{B} \\ 0^{\top} & b \end{array}\right) = \left(\begin{array}{cc} \multicolumn{2}{c}{A} \\ 0^{\top} & a \end{array}\right)^{-1} \]
+\form#119:\[ A = \left(\begin{array}{ccc} p & q & r \end{array}\right) \]
+\form#120:\[ \left(\begin{array}{cc} B & p \end{array}\right) \]
+\form#121:\[ A = \left(\begin{array}{ccc} XX & XY & XZ \\ YX & YY & YZ \end{array}\right) \]
+\form#122:\[ C = A B^{\top} \]
+\form#123:\[ q = A \left(\begin{array}{c} p \\ h \end{array}\right) \]
+\form#124:\[ A = \left(\begin{array}{cc} B & p \end{array}\right) \]
+\form#125:\[ \sum_{i=1\ldots n} ({B'_i}^{\top} B'_i) = \frac{n}{3} I_{3\times 3} \]
+\form#126:$ I_{3\times 3} $
+\form#127:\[ \left(\begin{array}{cccc} XX & XY & XZ & XW \\ YX & YY & YZ & YW \end{array}\right) \]
+\form#128:\[ A = \left(\begin{array}{cccc} p & q & r & s \end{array}\right) \]
+\form#129:\[ A = \left(\begin{array}{cccc} XX & XY & XZ & XW \\ YX & YY & YZ & YW \end{array}\right) \]
+\form#130:\[ \sum_{i=1\ldots n} ({B'_i}^{\top} B'_i) = \frac{n}{4} I_{4\times 4} \]
+\form#131:$ I_{4\times 4} $
+\form#132:\[ \left(\begin{array}{c} X \\ Y \\ Z \end{array}\right) \]
+\form#133:$p \times q$
+\form#134:\[ \left(\begin{array}{c} q \\ s \end{array}\right) \]
+\form#135:\[ p = \left(\begin{array}{c} X \\ Y \\ Z \end{array}\right) \]
+\form#136:$r = p \times q$
+\form#137:\[ p = \left(\begin{array}{c} q \\ s \end{array}\right) \]
+\form#138:\[ \sum_{i=1\ldots n} (b'_i {b'_i}^{\top}) = \frac{n}{3} I_{3\times 3} \]
+\form#139:\[ \left(\begin{array}{ccc} XX & XY & XZ \\ YX & YY & YZ \\ ZX & ZY & ZZ \end{array}\right) \]
+\form#140:\[ \left(\begin{array}{c} q \\ 1 \end{array}\right) = \lambda A \left(\begin{array}{c} p \\ h \end{array}\right) \]
+\form#141:$ \lambda $
+\form#142:\[ A = [p]_{\times} \]
+\form#143:\[ A x = p \times x \]
+\form#144:$ [p]_{\times} $
+\form#145:\[ A = \left(\begin{array}{c} p^{\top} \\ q^{\top} \\ r^{\top} \end{array}\right) \]
+\form#146:\[ A = \left(\begin{array}{cc} B & p \\ q^{\top} & s \end{array}\right) \]
+\form#147:\[ \left(\begin{array}{cc} B & p \\ q^{\top} & s \end{array}\right) \]
+\form#148:\[ \left(\begin{array}{ccc} p & q & r \end{array}\right) \]
+\form#149:\[ \left(\begin{array}{c} p^{\top} \\ q^{\top} \\ r^{\top} \end{array}\right) \]
+\form#150:\[ \left(\begin{array}{ccc} XX & YX & ZX \\ YX & YY & ZY \\ ZX & ZY & ZZ \end{array}\right) \]
+\form#151:\[ A = \left(\begin{array}{cc} B & p \\ p^{\top} & s \end{array}\right) \]
+\form#152:\[ \left(\begin{array}{cc} B & p \\ p^{\top} & s \end{array}\right) \]
+\form#153:\[ \left(\begin{array}{ccc} XX & 0 & 0 \\ YX & YY & 0 \\ ZX & ZY & ZZ \end{array}\right) \]
+\form#154:\[ A = \left(\begin{array}{cc} B & 0 \\ p^{\top} & s \end{array}\right) \]
+\form#155:\[ \left(\begin{array}{cc} B & 0 \\ p^{\top} & s \end{array}\right) \]
+\form#156:\[ A = \left(\begin{array}{ccc} XX & XY & XZ \\ YX & YY & YZ \\ ZX & ZY & ZZ \end{array}\right) \]
+\form#157:\[ A = \left(\begin{array}{ccc} XX & YX & ZX \\ YX & YY & ZY \\ ZX & ZY & ZZ \end{array}\right) \]
+\form#158:\[ A = \left(\begin{array}{ccc} XX & 0 & 0 \\ YX & YY & 0 \\ ZX & ZY & ZZ \end{array}\right) \]
+\form#159:\[ \sum_{i=1\ldots n} (B'_i {B'_i}^{\top}) = \frac{n}{3} I_{3\times 3} \]
+\form#160:\[ A = U \: S \: VT \]
+\form#161:\[ A^{\top} = U \: S \: VT \]
+\form#162:$ \left(\begin{array}{ccc} XX & 0 & 0 \\ YX & YY & 0 \\ ZX & ZY & ZZ \end{array}\right) $
+\form#163:\[ \left(\begin{array}{cccc} XX & XY & XZ & XW \\ YX & YY & YZ & YW \\ ZX & ZY & ZZ & ZW \end{array}\right) \]
+\form#164:\[ \left(\begin{array}{cccc} p & q & r & s \end{array}\right) \]
+\form#165:\[ A = \left(\begin{array}{cccc} XX & XY & XZ & XW \\ YX & YY & YZ & YW \\ ZX & ZY & ZZ & ZW \end{array}\right) \]
+\form#166:\[ \left(\begin{array}{c} X \\ Y \\ Z \\ W \end{array}\right) \]
+\form#167:\[ \left(\begin{array}{c} q \\ r \end{array}\right) \]
+\form#168:\[ p = \left(\begin{array}{c} X \\ Y \\ Z \\ W \end{array}\right) \]
+\form#169:\[ p = \left(\begin{array}{c} q \\ r \end{array}\right) \]
+\form#170:\[ \left(\begin{array}{cccc} XX & XY & XZ & XW \\ YX & YY & YZ & YW \\ ZX & ZY & ZZ & ZW \\ WX & WY & WZ & WW \end{array}\right) \]
+\form#171:\[ A = \left(\begin{array}{c} p^{\top} \\ q^{\top} \\ r^{\top} \\ s^{\top} \end{array}\right) \]
+\form#172:\[ M = \left(\begin{array}{cc} A & B \\ C & D \end{array}\right) \]
+\form#173:\[ \left(\begin{array}{cc} A & B \\ C & D \end{array}\right) \]
+\form#174:\[ \left(\begin{array}{cccc} XX & YX & ZX & WX \\ YX & YY & ZY & WY \\ ZX & ZY & ZZ & WZ \\ WX & WY & WZ & WW \end{array}\right) \]
+\form#175:\[ A = \left(\begin{array}{cc} B & C \\ C^{\top} & D \end{array}\right) \]
+\form#176:\[ \left(\begin{array}{cc} B & C \\ C^{\top} & D \end{array}\right) \]
+\form#177:\[ \left(\begin{array}{cccc} XX & 0 & 0 & 0 \\ YX & YY & 0 & 0 \\ ZX & ZY & ZZ & 0 \\ WX & WY & WZ & WW \end{array}\right) \]
+\form#178:\[ A = \left(\begin{array}{cccc} XX & XY & XZ & XW \\ YX & YY & YZ & YW \\ ZX & ZY & ZZ & ZW \\ WX & WY & WZ & WW \end{array}\right) \]
+\form#179:\[ A = \left(\begin{array}{cccc} XX & YX & ZX & WX \\ YX & YY & ZY & WY \\ ZX & ZY & ZZ & ZW \\ WX & WY & WZ & WW \end{array}\right) \]
+\form#180:\[ A = \left(\begin{array}{cccc} XX & 0 & 0 & 0 \\ YX & YY & 0 & 0 \\ ZX & ZY & ZZ & 0 \\ WX & WY & WZ & WW \end{array}\right) \]
+\form#181:\[ \sum_{i=1\ldots n} (B'_i {B'_i}^{\top}) = \frac{n}{4} I_{4\times 4} \]
+\form#182:$ C = A(^{\top}) + B(^{\top}) $
+\form#183:$ y = A(^{\top}) x $
+\form#184:$ A^{\top} $
+\form#185:$ C = A + B^{\top} $
+\form#186:$ A + B^{\top} $
+\form#187:$ A \leftarrow A + B^{\top} $
+\form#188:$ C = A^{\top} + B $
+\form#189:$ A^{\top} + B $
+\form#190:$ C = A^{\top} + B^{\top} $
+\form#191:$ A^{\top} + B^{\top} $
+\form#192:$ B = A^{\top} + A $
+\form#193:$ A^{\top} + A $
+\form#194:$ C = A - B^{\top} $
+\form#195:$ A - B^{\top} $
+\form#196:$ A \leftarrow A - B^{\top} $
+\form#197:$ y = A x $
+\form#198:$ A x $
+\form#199:$ y = A^{\top} x $
+\form#200:$ A^{\top} x $
+\form#201:$ C = A^{\top} B $
+\form#202:$ A^{\top} B $
+\form#203:$ C = A^{\top} B^{\top} $
+\form#204:$ A^{\top} B^{\top} $
+\form#205:\[ A = L \: Q \]
+\form#206:$ m $
+\form#207:$ n $
+\form#208:$ m \geq n $
+\form#209:$ \geq n+\mbox{max}(1,m) $
+\form#210:\[ A = Q \: R \]
+\form#211:$ \geq m+\mbox{max}(1,n) $
+\form#212:$ a A $
+\form#213:$ A \leftarrow a A $
+\form#214:$ \frac{1}{a} A $
+\form#215:$ A \leftarrow \frac{1}{a} A $
+\form#216:$ -A $
+\form#217:$ y = A * x $
+\form#218:$ x \leftarrow A x $
+\form#219:$ x \leftarrow A^{\top} x $
+\form#220:$ y = A^{-1} x $
+\form#221:$ A^{-1} x $
+\form#222:$ x \leftarrow A^{-1} x $
+\form#223:$ y = A^{-{\top}} x $
+\form#224:$ A^{-{\top}} x $
+\form#225:$ x \leftarrow A^{-{\top}} x $
+\form#226:$ B \leftarrow A B $
+\form#227:$ B \leftarrow A^{\top} B $
+\form#228:$ A^{-1} B $
+\form#229:$ B \leftarrow A^{-1} B $
+\form#230:$ C = A^{-1} B^{\top} $
+\form#231:$ A^{-1} B^{\top} $
+\form#232:$ C = A^{-{\top}} B $
+\form#233:$ A^{-{\top}} B $
+\form#234:$ B \leftarrow A^{-{\top}} B $
+\form#235:$ C = A^{-{\top}} B^{\top} $
+\form#236:$ A^{-{\top}} B^{\top} $
+\form#237:$ B \leftarrow B A $
+\form#238:$ C = B A^{\top} $
+\form#239:$ B A^{\top} $
+\form#240:$ B \leftarrow B A^{\top} $
+\form#241:$ C = B^{\top} A^{\top} $
+\form#242:$ B^{\top} A^{\top} $
+\form#243:$ B A^{-1} $
+\form#244:$ C = B^{\top} A^{-1} $
+\form#245:$ B^{\top} A^{-1} $
+\form#246:$ C = B A^{-{\top}} $
+\form#247:$ C = B^{\top} A^{-{\top}} $
+\form#248:$ B^{\top} A^{-{\top}} $
+\form#249:$ B = A^{-1} A^{-{\top}} $
+\form#250:$ A^{-1} A^{-{\top}} $
+\form#251:$ B = A^{-{\top}} A^{-1} $
+\form#252:$ A^{-{\top}} A^{-1} $
+\form#253:$ A \leftarrow A^{-{\top}} A^{-1} $
+\form#254:$ B^{\top} $
+\form#255:$ D = B A B^{\top} $
+\form#256:$ D = B^{\top} A B $
+\form#257:$ A = L L^{\top} $
+\form#258:\[ A = U\: S\: VT \]
+\form#259:$ \mbox{max}(3 \mbox{min}(m,n)+\mbox{max}(m,n),5*\mbox{min}(m,n)-4) $
+\form#260:$ m,n $
+\form#261:\[ y \leftarrow y + a x \]
+\form#262:\[ y \leftarrow \alpha a^{(\top)} x + \beta y \]
+\form#263:\[ A \leftarrow A + a x y^{\top} \]
+\form#264:\[ A \leftarrow A + a x x^{\top} \]
+\form#265:\[ x \leftarrow a x \]
+\form#266:\[ C \leftarrow \alpha A^{(\top)} B^{(\top)} + \beta C \]
+\form#267:\[ A = L L^{\top} \]
+\form#268:\[ A = Q R \]
+\form#269:$ Q $
+\form#270:$ R $
+\form#271:\[ A = L Q \]
+\form#272:\[ A X = B \]
+\form#273:\[ X = (A^{\top} A)^{-1} A^{\top} B \]
+\form#274:$ s\:a\:a^{\top} $
+\form#275:$ s $
+\form#276:$ s\:a\:b^{\top} $
+\form#277:\[ A\:X = B \]
+\form#278:$ (A^{\top} A) $
+\form#279:$ (A^{\top} B) $
+\form#280:\[ C\:X = D \]
+\form#281:$ X $
+\form#282:$ C\:X = D $
+\form#283:$ a x $
+\form#284:$ z = x + y $
+\form#285:$ z = x - y $
+\form#286:$ x.y $
+\form#287:$ A = x y^{\top} $
+\form#288:$ A = x x^{\top} $
+\form#289:$ x \leftarrow a x $
+\form#290:$ y = \frac{1}{a} x $
+\form#291:$ x \leftarrow \frac{1}{a} x $
+\form#292:$ y = -x $
+\form#293:$ -x $
+\form#294:$ x \leftarrow -x $
+\form#295:$ x + y $
+\form#296:$ x \leftarrow x + y $
+\form#297:$ y \leftarrow x + y $
+\form#298:$ x - y $
+\form#299:$ x \leftarrow x - y $
+\form#300:$ y \leftarrow x - y $
+\form#301:$ x y^{\top} $
+\form#302:$ x x^{\top} $
+\form#303:$ ||x||^2 $
+\form#304:$ (stride \geq width) $
+\form#305:$L.X=0$
+\form#306:$ R^2 $
+\form#307:$ d\:R $
+\form#308:$ d $
+\form#309:$ F $
+\form#310:$ R = e^{[r]_{\times}} $
+\form#311:$ R_{xx} $
+\form#312:$ R_{xy} $
+\form#313:$ R_{xz} $
+\form#314:$ R_{yx} $
+\form#315:$ R_{yy} $
+\form#316:$ R_{yz} $
+\form#317:$ R_{zx} $
+\form#318:$ R_{zy} $
+\form#319:$ R_{zz} $
+\form#320:\[ a[j][0]*X[0] + ... + a[j][k-1]*X[k-1] + a[j][k] = 0 \]
+\form#321:\[ X0[i] - S0[i] <= X[i] <= X0[i] + S0[i]. \]
+\form#322:\[ memory~for~one~subdivision~\times~maximum~subdivision~level. \]
+\form#323:\[ s = sgx2\:sgy2 - sgxy^2 - \kappa(sgx2+sgy2)^2. \]
+\form#324:$z = h(x) + w$
+\form#325:$z$
+\form#326:$h()$
+\form#327:$x$
+\form#328:$w$
+\form#329:$N$
+\form#330:$F(x,z+w) = 0$
+\form#331:$F()$
+\form#332:\[ z = h(x) + w \]
+\form#333:\[ F(x,z+w) = 0 \]
+\form#334:$ a/b $
+\form#335:$ y=ax+b $
+\form#336:$ x/y $
+\form#337:$ (p1+p2)/2 $
+\form#338:$ p2 $
+\form#339:$ y $
+\form#340:$ ((h-1)/2+1)((w-1)/2+1) $
+\form#341:$ (h-1)(w-1)/4 $
+\form#342:\[ y = m\:x + c \]
+\form#343:$ x,y $
+\form#344:$ (m,c) $
+\form#345:$ (x_i,y_i) $
+\form#346:\[ c_i = y_i - m_i \times x_i \]
+\form#347:$ (x,y) $
+\form#348:\[ -m_{\rm range}/2 <= m <= m_{\rm range}/2, c_{\rm root}-c_{\rm range}/2 <= c <= c_{\rm root}+c_{\rm range}/2, \]
+\form#349:$ (m_i,c_i) $
+\form#350:$ X_{new} = R\:X $
+\form#351:$ R\:X $
+\form#352:$ R_3 = R_1\:R_2 $
+\form#353:$ R_1\:R_2 $
+\form#354:$ R_3 = R_1\:R_2^{-1} $
+\form#355:$ R_1\:R_2^{-1} $

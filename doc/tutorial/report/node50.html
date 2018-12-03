@@ -1,0 +1,402 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size matrix/matrix multiplication</TITLE>
+<META NAME="description" CONTENT="Fixed size matrix/matrix multiplication">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node51.html">
+<LINK REL="previous" HREF="node49.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node51.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html981"
+  HREF="node51.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html977"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html971"
+  HREF="node49.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html979"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html982"
+  HREF="node51.html">Fixed size matrix inverse</A>
+<B> Up:</B> <A NAME="tex2html978"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html972"
+  HREF="node49.html">Fixed size matrix/vector multiplication</A>
+ &nbsp; <B>  <A NAME="tex2html980"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412900000000000000">
+Fixed size matrix/matrix multiplication</A>
+</H3>
+Most useful matrix product combinations are supported by Gandalf.
+Here we describe all the combinations involving <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices.
+The first functions to describe are those which involve multiplication
+by a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> on the left or <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$4\times 4$"> matrix on the right,
+the square matrix optionally being (implicitly) transposed,
+the product producing another <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix.
+The operator combinations are
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+D_{3\times 4} = B_{3\times 3} A_{3\times 4},\;\;\;
+   D_{3\times 4} = B_{3\times 3}^{\top}A_{3\times 4},\;\;\;
+   D_{3\times 4} = A_{3\times 4} C_{4\times 4},\;\;\;
+   D_{3\times 4} = A_{3\times 4} C_{4\times 4}^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="573" HEIGHT="29" BORDER="0"
+ SRC="img39.png"
+ ALT="\begin{displaymath}D_{3\times 4} = B_{3\times 3} A_{3\times 4},\;\;\;
+D_{3\tim...
+...},\;\;\;
+D_{3\times 4} = A_{3\times 4} C_{4\times 4}^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+which are implemented in Gandalf using the macros
+<PRE>
+      Gan_Matrix34 m34A, m34D;
+      Gan_Matrix33 m33B;
+      Gan_Matrix44 m44C;
+
+      /* ... set up m34A, m33B and m44C ... */
+      gan_mat34_lmultm33_q  ( &amp;m34A, &amp;m33B, &amp;m34D ); /* D = B*A   */
+      gan_mat34_lmultm33T_q ( &amp;m34A, &amp;m33B, &amp;m34D ); /* D = B*A^T */
+      gan_mat34_rmultm44_q  ( &amp;m34A, &amp;m44C, &amp;m34D ); /* D = A*C   */
+      gan_mat34_rmultm44T_q ( &amp;m34A, &amp;m44C, &amp;m34D ); /* D = A*C^T */
+</PRE>
+Equivalent function calls are available:
+<PRE>
+      m34D = gan_mat34_lmultm33_s  ( &amp;m34A, &amp;m33B ); /* D = B*A   */
+      m34D = gan_mat34_lmultm33T_s ( &amp;m34A, &amp;m33B ); /* D = B*A^T */
+      m34D = gan_mat34_rmultm44_s  ( &amp;m34A, &amp;m44C ); /* D = A*C   */
+      m34D = gan_mat34_rmultm44T_s ( &amp;m34A, &amp;m44C ); /* D = A*C^T */
+</PRE>
+Note that although by and large the functions described here for <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$">
+matrices are repeated for square matrices, there is redundancy because
+in the case of <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices the routines
+<PRE>
+      m33D = gan_mat33_lmultm33_s  ( &amp;m33A, &amp;m33B ); /* D = B*A   */
+      m33D = gan_mat33_rmultm33_s  ( &amp;m33B, &amp;m33A ); /* D = B*A   */
+</PRE>
+would be equivalent, so in fact only the routines
+<TT>gan_mat33_rmultm33_[qs]()</TT> are defined.
+
+<P>
+The square matrix may be symmetric or triangular, for which cases there
+are specific Gandalf functions. Firstly for multiplying by symmetric matrices
+we have the routines
+<PRE>
+      Gan_Matrix34 m34A, m34B;
+      Gan_SquMatrix33 sm33S;
+      Gan_SquMatrix44 sm44S;
+
+      /* ... set up m34A, symmetric sm33S and sm44S ... */
+      gan_mat34_lmults33_q ( &amp;m34A, &amp;sm33S, &amp;m34B ); /* B = S*A, macro */
+      gan_mat34_rmults44_q ( &amp;m34A, &amp;sm44S, &amp;m34B ); /* B = A*S, macro */
+</PRE>
+with equivalent function calls
+<PRE>
+      m34B = gan_mat34_lmults33_q ( &amp;m34A, &amp;sm33S ); /* B = S*A, function call */
+      m34B = gan_mat34_rmults44_q ( &amp;m34A, &amp;sm44S ); /* B = A*S, function call */
+</PRE>
+When multiplying by a triangular matrix, there are also options of implicit
+transpose and inverse, as described in the introduction to this chapter.
+Gandalf also supports in-place operations in this case. So there is a whole
+family of functions covering multiplication of a matrix by a triangular
+matrix. Mathematically the operations are
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+B=LA, \;\;\; B=L^{\top}A, \;\;\; B=L^{-1}A, \;\;\; B=L^{-\top}A
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="337" HEIGHT="27" BORDER="0"
+ SRC="img40.png"
+ ALT="\begin{displaymath}B=LA, \;\;\; B=L^{\top}A, \;\;\; B=L^{-1}A, \;\;\; B=L^{-\top}A
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+B=AL, \;\;\; B=AL^{\top}, \;\;\; B=AL^{-1}, \;\;\; B=AL^{-\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="335" HEIGHT="27" BORDER="0"
+ SRC="img41.png"
+ ALT="\begin{displaymath}B=AL, \;\;\; B=AL^{\top}, \;\;\; B=AL^{-1}, \;\;\; B=AL^{-\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Gandalf macro routines to implement these operations are
+<PRE>
+      Gan_Matrix34 m34A, m34B;
+      Gan_SquMatrix33 sm33L;
+      Gan_SquMatrix44 sm44L;
+
+      /* ... set up m34A, lower triangular sm33L and sm44L ... */
+      gan_mat34_lmultl33_q   ( &amp;m34A, &amp;sm33L, &amp;m34B ); /* B = L*A,    macro */
+      gan_mat34_lmultl33T_q  ( &amp;m34A, &amp;sm33L, &amp;m34B ); /* B = L^T*A,  macro */
+      gan_mat34_lmultl33I_q  ( &amp;m34A, &amp;sm33L, &amp;m34B ); /* B = L^-1*A, macro */
+      gan_mat34_lmultl33IT_q ( &amp;m34A, &amp;sm33L, &amp;m34B ); /* B = L^-T*A, macro */
+      gan_mat34_rmultl44_q   ( &amp;m34A, &amp;sm44L, &amp;m34B ); /* B = A*L,    macro */
+      gan_mat34_rmultl44T_q  ( &amp;m34A, &amp;sm44L, &amp;m34B ); /* B = A*L^T,  macro */
+      gan_mat34_rmultl44I_q  ( &amp;m34A, &amp;sm44L, &amp;m34B ); /* B = A*L^-1, macro */
+      gan_mat34_rmultl44IT_q ( &amp;m34A, &amp;sm44L, &amp;m34B ); /* B = A*L^-T, macro */
+</PRE>
+There are also function calls to implement the same operations:
+<PRE>
+      m34B = gan_mat34_lmultl33_s   ( &amp;m34A, &amp;sm33L ); /* B = L*A,    function call */
+      m34B = gan_mat34_lmultl33T_s  ( &amp;m34A, &amp;sm33L ); /* B = L^T*A,  function call */
+      m34B = gan_mat34_lmultl33I_s  ( &amp;m34A, &amp;sm33L ); /* B = L^-1*A, function call */
+      m34B = gan_mat34_lmultl33IT_s ( &amp;m34A, &amp;sm33L ); /* B = L^-T*A, function call */
+      m34B = gan_mat34_rmultl44_s   ( &amp;m34A, &amp;sm44L ); /* B = A*L,    function call */
+      m34B = gan_mat34_rmultl44T_s  ( &amp;m34A, &amp;sm44L ); /* B = A*L^T,  function call */
+      m34B = gan_mat34_rmultl44I_s  ( &amp;m34A, &amp;sm44L ); /* B = A*L^-1, function call */
+      m34B = gan_mat34_rmultl44IT_s ( &amp;m34A, &amp;sm44L ); /* B = A*L^-T, function call */
+</PRE>
+Finally there is a set of macros for writing the result in-place into
+the <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">.
+<PRE>
+      gan_mat34_lmultl33_i   ( &amp;m34A, &amp;sm33L ); /* A = L*A,    macro */
+      gan_mat34_lmultl33T_i  ( &amp;m34A, &amp;sm33L ); /* A = L^T*A,  macro */
+      gan_mat34_lmultl33I_i  ( &amp;m34A, &amp;sm33L ); /* A = L^-1*A, macro */
+      gan_mat34_lmultl33IT_i ( &amp;m34A, &amp;sm33L ); /* A = L^-T*A, macro */
+      gan_mat34_rmultl44_i   ( &amp;m34A, &amp;sm44L ); /* A = A*L,    macro */
+      gan_mat34_rmultl44T_i  ( &amp;m34A, &amp;sm44L ); /* A = A*L^T,  macro */
+      gan_mat34_rmultl44I_i  ( &amp;m34A, &amp;sm44L ); /* A = A*L^-1, macro */
+      gan_mat34_rmultl44IT_i ( &amp;m34A, &amp;sm44L ); /* A = A*L^-T, macro */
+</PRE>
+
+<P>
+The next set of functions deals with multiplying a matrix by itself in
+transpose, resulting in a symmetric matrix. These operations have the form
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S_{4\times 4} = A_{3\times 4}^{\top}A_{3\times 4}\;\;\;\;\mbox{OR}\;\;\;\;
+   S_{3\times 3} = A_{3\times 4} A_{3\times 4}^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="308" HEIGHT="29" BORDER="0"
+ SRC="img42.png"
+ ALT="\begin{displaymath}S_{4\times 4} = A_{3\times 4}^{\top}A_{3\times 4}\;\;\;\;\mbo...
+...\;\;\;\;
+S_{3\times 3} = A_{3\times 4} A_{3\times 4}^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The Gandalf macro routines to implement these operations are
+<PRE>
+      Gan_Matrix34 m34A;
+      Gan_SquMatrix33 sm33S;
+      Gan_SquMatrix44 sm44S;
+
+      /* ... set up m34A using e.g. gan_mat34_fill_q() ... */
+      gan_mat34_slmultT_q ( &amp;m34A, &amp;sm44S ); /* S = A^T*A */
+      gan_mat34_srmultT_q ( &amp;m34A, &amp;sm33S ); /* S = A*A^T */
+</PRE>
+with equivalent function calls
+<PRE>
+      sm44S = gan_mat34_slmultT_s ( &amp;m34A ); /* S = A^T*A */
+      sm33S = gan_mat34_srmultT_s ( &amp;m34A ); /* S = A*A^T */
+</PRE>
+There are similar routines for general <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices. For triangular
+matrices the functions are
+<PRE>
+      Gan_SquMatrix33 sm33L, sm33S;
+
+      /* ... set up sm33L using e.g. gan_ltmat33_fill_q()... */
+      gan_ltmat33_slmultT_q ( &amp;sm33L, &amp;sm33S ); /* S = L^T*L, macro */
+      sm33S = gan_ltmat33_slmultT_s ( &amp;sm33L ); /* S = L^T*L, function call */
+      gan_ltmat33_srmultT_q ( &amp;sm33L, &amp;sm33S ); /* S = L*L^T, macro */
+      sm33S = gan_ltmat33_srmultT_s ( &amp;sm33L ); /* S = L*L^T, function call */
+</PRE>
+In the case of triangular matrices the operation ``multiply by transposed
+self'' can also be done in-place, so we also have the macro routines
+<PRE>
+      Gan_SquMatrix33 sm33A;
+
+      /* ... set up sm33A as triangular using e.g. gan_ltmat33_fill_q()... */
+      gan_ltmat33_slmultT_i ( &amp;sm33A ); /* A = A^T*A, macro */
+      gan_ltmat33_srmultT_i ( &amp;sm33A ); /* A = A*A^T, macro */
+</PRE>
+
+<P>
+There are also routines to multiply a matrix by the transpose
+of another matrix of the same size, where the result is <EM>assumed</EM> to be
+a symmetric matrix. So mathematically the operations have the form
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S_{4\times 4} = A_{3\times 4}^{\top}B_{3\times 4}\;\;\;\;\mbox{OR}\;\;\;\;
+   S_{3\times 3} = A_{3\times 4} B_{3\times 4}^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="308" HEIGHT="29" BORDER="0"
+ SRC="img43.png"
+ ALT="\begin{displaymath}S_{4\times 4} = A_{3\times 4}^{\top}B_{3\times 4}\;\;\;\;\mbo...
+...\;\;\;\;
+S_{3\times 3} = A_{3\times 4} B_{3\times 4}^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The Gandalf macro routines to implement these operations are
+<PRE>
+      Gan_Matrix34 m34A, m34B;
+      Gan_SquMatrix33 sm33S;
+      Gan_SquMatrix44 sm44S;
+
+      /* ... set up m34A, m34B using e.g. gan_mat34_fill_q() ... */
+      gan_mat34_rmultm34T_sym_q ( &amp;m34A, &amp;m34B, &amp;sm33S ); /* S = A*B^T */
+      gan_mat34_lmultm34T_sym_q ( &amp;m34B, &amp;m34A, &amp;sm44S ); /* S = A^T*B */
+</PRE>
+with equivalent function calls
+<PRE>
+      sm33S = gan_mat34_rmultm34T_sym_s ( &amp;m34A, &amp;m34B ); /* S = A*B^T */
+      sm44S = gan_mat34_lmultm34T_sym_s ( &amp;m34B, &amp;m34A ); /* S = A^T*B */
+</PRE>
+
+<P>
+A common operation is to multiply a symmetric matrix on left and right by
+a matrix and its transpose, producing another symmetric matrix.
+Gandalf supports all combinations of these operations.
+Those involving <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices are
+<PRE>
+      Gan_SquMatrix33 sm33Sa;
+      Gan_SquMatrix44 sm44Sb;
+      Gan_Matrix34 m34A;
+
+      gan_symmat33_lrmultm34T_q ( &amp;sm33Sa, &amp;m34A, &amp;sm44Sb ); /* Sb = A^T*Sa*A, macro */
+      sm44Sb = gan_symmat33_lrmultm34T_s ( &amp;sm33Sa, &amp;m34A ); /* Sb = A^T*Sa*A, function call */
+      gan_symmat44_lrmultm34_q ( &amp;sm44Sb, &amp;m34A, &amp;sm33Sa ); /* Sa = A*Sb*A^T, macro */
+      sm33Sa = gan_symmat44_lrmultm34_s ( &amp;sm44Sb, &amp;m34A ); /* Sa = A*Sb*A^T, function call */
+</PRE>
+
+<P>
+<B>Error detection:</B> If implicit inverse is used (e.g. the
+<TT>...multl33I_[qsi]()</TT> or <TT>...multl33IT_[qsi]()</TT> routines),
+the matrix must be non-singular, which for triangular matrices
+means that none of the diagonal elements should be zero.
+If the matrix was produced
+by successful Cholesky factorisation of a symmetric matrix
+(see Section&nbsp;<A HREF="node53.html#fixed-decomp-sec">3.1.2.12</A>) the matrix is guaranteed to be
+non-singular. This is the normal method of creating a triangular matrix,
+and Gandalf uses <TT>assert()</TT> to check for the singularity of the matrix.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html981"
+  HREF="node51.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html977"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html971"
+  HREF="node49.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html979"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html982"
+  HREF="node51.html">Fixed size matrix inverse</A>
+<B> Up:</B> <A NAME="tex2html978"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html972"
+  HREF="node49.html">Fixed size matrix/vector multiplication</A>
+ &nbsp; <B>  <A NAME="tex2html980"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

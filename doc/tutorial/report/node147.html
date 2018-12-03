@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The Test Framework</TITLE>
+<META NAME="description" CONTENT="The Test Framework">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node149.html">
+<LINK REL="previous" HREF="node101.html">
+<LINK REL="up" HREF="report.html">
+<LINK REL="next" HREF="node148.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2266"
+  HREF="node148.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2262"
+  HREF="report.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2256"
+  HREF="node146.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2264"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2267"
+  HREF="node148.html">Adding new tests</A>
+<B> Up:</B> <A NAME="tex2html2263"
+  HREF="report.html">Gandalf: The Fast Computer</A>
+<B> Previous:</B> <A NAME="tex2html2257"
+  HREF="node146.html">Complexity Comparison of FHT</A>
+ &nbsp; <B>  <A NAME="tex2html2265"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00700000000000000000"></A> <A NAME="testing-chapter"></A>
+<BR>
+The Test Framework
+</H1>
+There is extensive testing code in the <TT>gandalf/TestFramework</TT>
+directory. A simple way to test your installation of Gandalf is to
+execute the following commands:-
+<PRE>
+      cd gandalf/TestFramework
+      make
+      ./cUnit -all
+</PRE>
+This compiles the main Gandalf test program <TT>cUnit</TT> and runs through
+all the tests. There is at least one test program for each Gandalf package.
+
+<P>
+You can also build test programs individually by <TT>cd</TT>'ing into a
+Gandalf package and typing the command <TT>make all</TT>. For instance,
+the commands
+<PRE>
+      cd gandalf/common
+      make all
+      ./list_test
+</PRE>
+will compile all the test programs in the Common package, and run the linked
+list test program.
+The main test program <TT>TestFramework/cUnit.c</TT> compiles and links with
+all the individual test programs in the Gandalf packages.
+
+<P>
+Input files are all in the <TT>gandalf/TestInput</TT> directory. Output files
+are written into the <TT>gandalf/TestOutput</TT> directory. Test programs are
+designed to purge any old <TT>TestOutput</TT> files before running the test
+program.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html2268"
+  HREF="node148.html">Adding new tests</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>``Quick'', ``slow'' and ``in-place'' Gandalf routines</TITLE>
+<META NAME="description" CONTENT="``Quick'', ``slow'' and ``in-place'' Gandalf routines">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node6.html">
+<LINK REL="previous" HREF="node4.html">
+<LINK REL="up" HREF="node3.html">
+<LINK REL="next" HREF="node6.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html325"
+  HREF="node6.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html321"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html315"
+  HREF="node4.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html323"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html326"
+  HREF="node6.html">Variable argument list functions</A>
+<B> Up:</B> <A NAME="tex2html322"
+  HREF="node3.html">Conventions and style</A>
+<B> Previous:</B> <A NAME="tex2html316"
+  HREF="node4.html">Function/name prefixes and case</A>
+ &nbsp; <B>  <A NAME="tex2html324"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00212000000000000000">
+``Quick'', ``slow'' and ``in-place'' Gandalf routines</A>
+</H2>
+A convention used extensively in the linear algebra and image packages is
+to provide ``quick'' and ``slow'' versions of the same operation,
+indicating the difference using the suffices <TT>..._q</TT> and <TT>..._s</TT>
+respectively. The meanings of the suffices vary, but are one of:
+
+<OL>
+<LI>The ``slow'' version dynamically allocates the memory to hold the
+	result, whereas the ``quick'' version uses a pre-allocated result
+	passed in to the function, avoiding repetitively allocating and
+	freeing memory when the function is called several times.
+	This is the convention used in the image package and for general size
+	matrix and vector functions in the linear algebra package.
+</LI>
+<LI>The ``slow'' version returns a structure as its result, and the
+	``quick'' version expects a pointer to the result structure to be
+	passed in. This is the convention used for fixed-size matrices and
+	vectors in the linear algebra package.
+</LI>
+</OL>
+There is also a conventional <TT>..._i</TT> suffix for operations that overwrite
+one of the input arguments with the result.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html325"
+  HREF="node6.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html321"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html315"
+  HREF="node4.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html323"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html326"
+  HREF="node6.html">Variable argument list functions</A>
+<B> Up:</B> <A NAME="tex2html322"
+  HREF="node3.html">Conventions and style</A>
+<B> Previous:</B> <A NAME="tex2html316"
+  HREF="node4.html">Function/name prefixes and case</A>
+ &nbsp; <B>  <A NAME="tex2html324"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

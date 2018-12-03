@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>More on the error trace</TITLE>
+<META NAME="description" CONTENT="More on the error trace">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node24.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node26.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html577"
+  HREF="node26.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html573"
+  HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html569"
+  HREF="node24.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html575"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html578"
+  HREF="node26.html">Error tests and codes</A>
+<B> Up:</B> <A NAME="tex2html574"
+  HREF="node24.html">Error handling</A>
+<B> Previous:</B> <A NAME="tex2html570"
+  HREF="node24.html">Error handling</A>
+ &nbsp; <B>  <A NAME="tex2html576"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00391000000000000000">
+More on the error trace</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/common/gan_err_trace.h&gt;
+</PRE>
+This module implements the error trace used in <TT>gan_err.[ch]</TT>.
+The header file would not normally be included explicitly in library or
+application code. An error trace is a last-in first-out (LIFO) stack for
+temporarily holding details of multiple error events
+until an application is ready to read the stack.
+
+<P>
+The stack is usually flushed by the function in a
+sequence of nested calls that initially detects an
+error. As the call stack unwinds the successive
+functions also register errors, but they should not
+flush the error trace.
+
+<P>
+The stack is implemented as a linked list of error
+records. If in the process of allocating heap memory
+for a new error record a memory error occurs, then
+this is refered to as a deep error.
+
+<P>
+The stack always maintains two preallocated and unused
+error records for storing the details of the deep
+error and the error that was in the process of being
+registered when the deep error occured.
+
+<P>
+Even if the top of the stack holds a deep error record
+and the two preallocated records are used, new errors
+can still be registered into the trace. These attempts
+may lead to repeated deep errors, in which case the
+top deep error serves as an indicator of the deep
+continuing error state. However, if the registration
+process is successful (because in the intervening
+time, some external agent has <TT>free</TT>'d heap memory) the
+old deep error record is left on the stack and the new
+errors are registered on top of it.
+
+<P>
+To ensure that the stack has at least two preallocated
+records at process startup time, the bottom and second
+to bottom records of the stack use statically
+allocated memory. These can never be dynamically <TT>free</TT>'d.
+
+<P>
+To do this, an external module must define two static
+error records. In <TT>gan_err.c</TT>, this is implemented as:
+<PRE>
+      /* The error trace */
+
+      /* Statically allocate last and 2nd to last records for error trace */
+      static Gan_ErrorTrace record_last = { NULL, GAN_ET_YES, GAN_ET_NO,
+                                            GAN_ET_YES, NULL,
+                                            GAN_EC_DFT_SPARE, NULL, 0, NULL };
+      static Gan_ErrorTrace record_2nd_last = { &amp;record_last, GAN_ET_YES, GAN_ET_NO,
+                                                GAN_ET_YES, NULL,
+                                                GAN_EC_DFT_SPARE, NULL, 0, NULL};
+
+      /* Address of error trace (i.e. top of LIFO stack) */
+      static Gan_ErrorTrace * gan_err_trace_top = &amp;record_2nd_last;
+</PRE>
+The symbol <TT>gan_et_get_record_first()</TT> refers to the current top
+of stack and is passed into the functions defined in this module as argument 1.
+
+<P>
+NB. A statically allocated string containing the deep error text message must
+also exist, but this is defined in <TT>gan_err_trace.c</TT>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html577"
+  HREF="node26.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html573"
+  HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html569"
+  HREF="node24.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html575"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html578"
+  HREF="node26.html">Error tests and codes</A>
+<B> Up:</B> <A NAME="tex2html574"
+  HREF="node24.html">Error handling</A>
+<B> Previous:</B> <A NAME="tex2html570"
+  HREF="node24.html">Error handling</A>
+ &nbsp; <B>  <A NAME="tex2html576"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

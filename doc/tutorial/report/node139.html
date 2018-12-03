@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Example: Plane Fitting</TITLE>
+<META NAME="description" CONTENT="Example: Plane Fitting">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node143.html">
+<LINK REL="previous" HREF="node135.html">
+<LINK REL="up" HREF="node134.html">
+<LINK REL="next" HREF="node140.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2170"
+  HREF="node140.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2166"
+  HREF="node134.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2160"
+  HREF="node138.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2168"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2171"
+  HREF="node140.html">Calculating the Intersection of</A>
+<B> Up:</B> <A NAME="tex2html2167"
+  HREF="node134.html">Fast Hough Transform</A>
+<B> Previous:</B> <A NAME="tex2html2161"
+  HREF="node138.html">Example: Line Fitting</A>
+ &nbsp; <B>  <A NAME="tex2html2169"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION006112000000000000000"></A> <A NAME="plane_fit_sec"></A>
+<BR>
+Example: Plane Fitting
+</H2>
+ The method described here was used in&nbsp;[<A
+ HREF="node149.html#McLauchlan_91">10</A>].
+ A pair of images is rectified so that their epipolar lines are
+ horizontal and parallel. Edges are detected in each image.
+ A region of the left image is then matched to the right image
+ using a planar fit in <IMG
+ WIDTH="56" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img315.png"
+ ALT="$(x,y,d)$"> space where <IMG
+ WIDTH="41" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img316.png"
+ ALT="$(x,y)$"> are
+ the coordinates of edges in the left image and <IMG
+ WIDTH="12" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img118.png"
+ ALT="$d$"> is the disparity,
+ such that if <IMG
+ WIDTH="55" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img317.png"
+ ALT="$(x_r,y_r)$"> are the coordinates of the corresponding edge
+ in the right image,
+ <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+x_r = x + d
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="74" HEIGHT="26" BORDER="0"
+ SRC="img318.png"
+ ALT="\begin{displaymath}x_r = x + d \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+and because of the rectification procedure, <IMG
+ WIDTH="49" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img319.png"
+ ALT="$y_r=y$">.
+
+<P>
+A planar fit is attempted to the disparity points from candidate
+ edge matches between the image, in the knowledge that planes in
+ disparity space <IMG
+ WIDTH="56" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img315.png"
+ ALT="$(x,y,d)$"> correspond to planes in the world.
+
+<P>
+A large number of the disparity points in the box will be
+ incorrect matches, so direct fitting, for example for least squares, would
+ not work. However the Hough transform is well suited to such a problem.
+ It is used to select a large subset of the disparity points that lie
+ near a plane. The Fast Hough transform
+ gives a large increase in speed and decrease in storage
+ requirement over the standard Hough transform method.
+ It is applicable because, with an appropriate parametrisation,
+ plane fitting is a linear Hough transform problem, to which the FHT
+ is restricted.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html2172"
+  HREF="node140.html">Calculating the Intersection of a Plane and a Sphere</A>
+<LI><A NAME="tex2html2173"
+  HREF="node141.html">Calculating the Plane Parameters of a Child Cube</A>
+<LI><A NAME="tex2html2174"
+  HREF="node142.html">Formal Statement of the FHT Plane Fitting Algorithm</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2170"
+  HREF="node140.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2166"
+  HREF="node134.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2160"
+  HREF="node138.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2168"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2171"
+  HREF="node140.html">Calculating the Intersection of</A>
+<B> Up:</B> <A NAME="tex2html2167"
+  HREF="node134.html">Fast Hough Transform</A>
+<B> Previous:</B> <A NAME="tex2html2161"
+  HREF="node138.html">Example: Line Fitting</A>
+ &nbsp; <B>  <A NAME="tex2html2169"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

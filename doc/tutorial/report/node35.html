@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size vector file I/O</TITLE>
+<META NAME="description" CONTENT="Fixed size vector file I/O">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node36.html">
+<LINK REL="previous" HREF="node34.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node36.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html790"
+  HREF="node36.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html786"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html780"
+  HREF="node34.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html788"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html791"
+  HREF="node36.html">Conversion from general to</A>
+<B> Up:</B> <A NAME="tex2html787"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html781"
+  HREF="node34.html">Fixed size vector products</A>
+ &nbsp; <B>  <A NAME="tex2html789"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00411600000000000000">
+Fixed size vector file I/O</A>
+</H3>
+Gandalf supports both ASCII and binary format file I/O of vectors and
+matrices. Both formats use standard <TT>FILE&nbsp;*</TT> file streams.
+ASCII format is obviously more convenient to use, while binary format is
+more compact and guarantees no loss of precision when the data is read.
+To print a 3-vector in ASCII format, use
+<PRE>
+      Gan_Bool gan_vec3_fprint ( FILE *fp, Gan_Vector3 *p,
+                                 const char *prefix, int indent, const char *fmt );
+</PRE>
+<TT>prefix</TT> is a prefix string to print before the vector itself, <TT>indent</TT>
+is the number of spaces to indent the vector by, and <TT>fmt</TT> is a format
+string to use when printing the vector, e.g. <TT>"%f"</TT>. So for example
+<PRE>
+      FILE *pfFile;
+
+      pfFile = fopen ( "/tmp/vectors", "w" );
+      gan_vec3_fill_q ( &amp;v3x, 1.0, 2.0, 3.0 );
+      gan_vec3_fprint ( pfFile, &amp;v3x, "Example vector", 3, "%f" );
+</PRE>
+will print the output
+<PRE>
+         Example vector: 1.000000 2.000000 3.000000
+</PRE>
+to the file <TT>"/tmp/vectors"</TT>.
+There is also a version <TT>gan_vec3_print()</TT> for printing to
+standard output:
+<PRE>
+      Gan_Bool gan_vec3_print ( Gan_Vector3 *p,
+                                const char *prefix, int indent, const char *fmt );
+</PRE>
+The corresponding input function is
+<PRE>
+      Gan_Bool gan_vec3_fscanf ( FILE *fp, Gan_Vector3 *p,
+                                 char *prefix, int prefix_len )
+</PRE>
+which reads the vector from the file stream <TT>fp</TT> into the 3-vector
+pointer <TT>p</TT>. It also reads the prefix string (up to the specified maximum
+length <TT>prefix_len</TT>), which can be compared with the expected prefix
+string to check for consistency.
+
+<P>
+Binary file I/O is handled by the functions <TT>gan_vec3_fwrite()</TT>
+and <TT>gan_vec3_fread()</TT>. To write a 3-vector in binary format use
+<PRE>
+      Gan_Bool gan_vec3_fwrite ( FILE *fp, Gan_Vector3 *p, gan_ui32 magic_number );
+</PRE>
+The <TT>magic_number</TT> takes the same role as the <TT>prefix</TT> string
+in <TT>gan_vec3_fprint()</TT>, and is written into the file so that it can be
+used later to identify the vector when it is read back using
+<PRE>
+      Gan_Bool gan_vec3_fread ( FILE *fp, Gan_Vector3 *p, gan_ui32 *magic_number );
+</PRE>
+
+<P>
+<TT>Error detection:</TT> The I/O routines return a boolean value, returning
+<TT>GAN_TRUE</TT> on success, <TT>GAN_FALSE</TT> on failure, invoking the Gandalf
+error handle in the latter case.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html790"
+  HREF="node36.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html786"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html780"
+  HREF="node34.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html788"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html791"
+  HREF="node36.html">Conversion from general to</A>
+<B> Up:</B> <A NAME="tex2html787"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html781"
+  HREF="node34.html">Fixed size vector products</A>
+ &nbsp; <B>  <A NAME="tex2html789"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Creating and freeing general size vectors</TITLE>
+<META NAME="description" CONTENT="Creating and freeing general size vectors">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node60.html">
+<LINK REL="previous" HREF="node58.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node60.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1119"
+  HREF="node60.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1115"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1109"
+  HREF="node58.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1117"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1120"
+  HREF="node60.html">Adjusting the size of</A>
+<B> Up:</B> <A NAME="tex2html1116"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1110"
+  HREF="node58.html">General size vectors</A>
+ &nbsp; <B>  <A NAME="tex2html1118"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00421100000000000000">
+Creating and freeing general size vectors</A>
+</H3>
+To create a general size vector use one of the routines
+<PRE>
+      Gan_Vector *pvx;
+
+      pvx = gan_vec_alloc(5);
+</PRE>
+or
+<PRE>
+      Gan_Vector vx;
+
+      gan_vec_form ( &amp;vx, 5 );
+</PRE>
+Both these examples create a vector with five elements. The former allocates
+a structure and passes back a pointer to it, whereas the latter builds the
+vector using the provided structure <TT>vx</TT>. Whichever routine is used,
+the two vectors are equivalent in every way and can be used in all the
+Gandalf general size vector routines.
+
+<P>
+In the above calls Gandalf will invoke <TT>malloc()</TT> to create the data
+block to hold the vector elements. Sometimes you will want to provide the
+data block yourself, avoiding the <TT>malloc()</TT> call, if you know the size,
+or at least the maximum size, of the vector. Then you can use the
+following routine.
+<PRE>
+      Gan_Vector vx;
+      double adXData[10];
+
+      gan_vec_form_data ( &amp;vx, 5, adXData, 10 );
+</PRE>
+The last argument is the size of the array <TT>adXData</TT> passed in.
+This means that although the vector <TT>vx</TT> is created with size five,
+the size of the data block, 10, is also stored, and this allows the
+size of <TT>vx</TT> to change (see <TT>gan_vec_set_size()</TT> below) up to
+size 10.
+
+<P>
+Once you have finished with a vector use the routine
+<PRE>
+      gan_vec_free ( pvx ); /* for a pointer variable, OR */
+      gan_vec_free ( &amp;vx ); /* for a structure variable */
+</PRE>
+The <TT>gan_vec_free()</TT> routine applies without modification to all
+the methods of creating the vector. The vector structure maintains
+knowledge of which parts of it (the structure, the data block) were
+dynamically allocated, and only frees the bits that were allocated.
+
+<P>
+From now on the example code fragments we provide will use the convention
+that vectors are declared as structures rather than pointers, but bear in
+mind that either style may be used.
+
+<P>
+<B>Error detection:</B> All the above vector creation routines return a
+pointer to the created vector.
+If an error occurs, the Gandalf error handler is invoked and <TT>NULL</TT>
+is returned. The most likely error modes are failing
+to allocate the data required (i.e. internal <TT>malloc()</TT> or <TT>realloc()</TT>
+calls failing), or passing too small an array into the
+<TT>gan_vec_form_data()</TT> routine.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1119"
+  HREF="node60.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1115"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1109"
+  HREF="node58.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1117"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1120"
+  HREF="node60.html">Adjusting the size of</A>
+<B> Up:</B> <A NAME="tex2html1116"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1110"
+  HREF="node58.html">General size vectors</A>
+ &nbsp; <B>  <A NAME="tex2html1118"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

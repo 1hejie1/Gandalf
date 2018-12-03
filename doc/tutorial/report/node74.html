@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size matrix addition</TITLE>
+<META NAME="description" CONTENT="General size matrix addition">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node75.html">
+<LINK REL="previous" HREF="node73.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node75.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1312"
+  HREF="node75.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1308"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1302"
+  HREF="node73.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1310"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1313"
+  HREF="node75.html">General size matrix subtraction</A>
+<B> Up:</B> <A NAME="tex2html1309"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1303"
+  HREF="node73.html">Transposing a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1311"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422700000000000000">
+General size matrix addition</A>
+</H3>
+To add two matrices <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> together, obtaining the sum
+<IMG
+ WIDTH="82" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img70.png"
+ ALT="$C = A + B$">, use the routine
+<PRE>
+      Gan_Matrix mA, mB, mC; /* declare matrices A, B and C */
+
+      /* ... create and fill mA &amp; mB, create mC ... */
+      gan_mat_add_q ( &amp;mA, &amp;mB, &amp;mC ); /* compute C = A + B */
+</PRE>
+Again matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$C$"> is reallocated if necessary. Matrices <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> and
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> must of course be the same size, or the error handler is invoked
+and <TT>NULL</TT> is returned. The sum matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$C$"> may be create from scratch
+using
+<PRE>
+      Gan_Matrix *pmC; /* declare matrix C as pointer */
+
+      /* ... create and fill mA &amp; mB ... */
+      pmC = gan_mat_add_s ( &amp;mA, &amp;mB ); /* compute C = A + B */
+</PRE>
+Another way of computing matrix addition is to replace one of the input
+matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> or <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> with the result, using one of the in-place routines
+<PRE>
+      gan_mat_add_i1 ( &amp;mA, &amp;mB ); /* replace A = A + B */
+      gan_mat_add_i2 ( &amp;mA, &amp;mB ); /* replace B = A + B */
+</PRE>
+An alternative to <TT>gan_mat_add_i1()</TT> is the more explicit routine
+<PRE>
+      gan_mat_increment ( &amp;mA, &amp;mB ); /* replace A = A + B */
+</PRE>
+
+<P>
+There is also a set of routines for adding a general size matrix to the
+transpose of another:
+<PRE>
+      Gan_Matrix mA, mB, mC, *pmC; /* declare matrices A, B and C */
+
+      /* ... create and fill A &amp; B, create C ... */
+
+      /* B must have the same number of columns as A has rows, and vice versa */
+      gan_mat_addT_q ( &amp;mA, &amp;mB, &amp;mC ); /* compute C = A + B^T, OR */
+      pmC = gan_mat_addT_s ( &amp;mA, &amp;mB ); /* compute C = A + B^T, OR */
+      gan_mat_incrementT ( &amp;mA, &amp;mB ); /* replace A = A + B^T */
+</PRE>
+
+<P>
+Another set of routines allows you to add two matrices and generate a
+symmetric matrix, on the assumption that the result is indeed symmetric.
+Either matrix may be implicitly transposed for the purpose of the operation:
+<PRE>
+      Gan_Matrix mA, mB; /* declare matrices A, B */
+      Gan_SquMatrix smS, *psmS; /* declare result matrix S */
+
+      /* ... create and fill A &amp; B, create S ... */
+
+      /* for these functions, B must have the same number of columns and rows as A */
+      gan_mat_add_sym_q ( &amp;mA, &amp;mB, &amp;smS ); /* S = A + B, OR */
+      psmS = gan_mat_add_sym_s ( &amp;mA, &amp;mB ); /* S = A + B */
+      gan_matT_addT_sym_q ( &amp;mA, &amp;mB, &amp;smS ); /* S = A^T + B^T, OR */
+      psmS = gan_matT_addT_sym_s ( &amp;mA, &amp;mB ); /* S = A^T + B^T */
+
+      /* here B must have the same number of columns as A has rows, and vice versa */
+      gan_mat_addT_sym_q ( &amp;mA, &amp;mB, &amp;smS ); /* S = A + B^T, OR */
+      psmS = gan_mat_addT_sym_s ( &amp;mA, &amp;mB ); /* S = A + B^T */
+      gan_matT_add_sym_q ( &amp;mA, &amp;mB, &amp;smS ); /* S = A^T + B, OR */
+      psmS = gan_matT_add_sym_s ( &amp;mA, &amp;mB ); /* S = A^T + B */
+</PRE>
+
+<P>
+Finally we have some routines for adding a matrix to its own transpose,
+producing a symmetric matrix:
+<PRE>
+      Gan_Matrix mA; /* declare matrix A */
+      Gan_SquMatrix smS, *psmS; /* declare result matrix S */
+
+      /* ... create and fill A, create S ... */
+
+      gan_mat_saddT_sym_q ( &amp;mA, &amp;smS ); /* S = A + A^T, OR */
+      psmS = gan_mat_saddT_sym_s ( &amp;mA ); /* S = A + A^T */
+</PRE>
+
+<P>
+There are equivalent functions for square matrices. Firstly the simple
+routines for adding two matrices:
+<PRE>
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B &amp; C */
+
+      /* ... create and fill smA &amp; smB, create smC ... */
+      gan_squmat_add_q ( &amp;smA, &amp;smB, &amp;smC ); /* compute C = A + B, OR */
+      gan_squmat_add_i1 ( &amp;smA, &amp;smB ); /* replace A = A + B, OR */
+      gan_squmat_add_i2 ( &amp;smA, &amp;smB ); /* replace B = A + B, OR */
+      gan_squmat_increment ( &amp;smA, &amp;smB ); /* replace A = A + B, OR */
+      psmC = gan_squmat_add_s ( &amp;smA, &amp;smB ); /* compute C = A + B as new matrix */
+</PRE>
+Other routines implicitly transpose one of the input matrices:
+<PRE>
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B &amp; C */
+
+      /* ... create and fill smA &amp; smB, create smC ... */
+      gan_squmat_addT_q ( &amp;smA, &amp;smB, &amp;smC ); /* compute C = A + B^T, OR */
+      gan_squmat_incrementT ( &amp;smA, &amp;smB ); /* replace A = A + B^T, OR */
+      psmC = gan_squmat_addT_s ( &amp;smA, &amp;smB ); /* compute C = A + B^T as new matrix */
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>NULL</TT> is returned and the Gandalf error handler
+invoked if the matrix addition fails.
+The most likely failure modes are failing to create/set the result matrix,
+or size/type incompatibility between the input matrices.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1312"
+  HREF="node75.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1308"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1302"
+  HREF="node73.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1310"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1313"
+  HREF="node75.html">General size matrix subtraction</A>
+<B> Up:</B> <A NAME="tex2html1309"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1303"
+  HREF="node73.html">Transposing a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1311"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Accessing the elements of a general size vector</TITLE>
+<META NAME="description" CONTENT="Accessing the elements of a general size vector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node63.html">
+<LINK REL="previous" HREF="node61.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node63.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1155"
+  HREF="node63.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1151"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1145"
+  HREF="node61.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1153"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1156"
+  HREF="node63.html">Copying a general size</A>
+<B> Up:</B> <A NAME="tex2html1152"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1146"
+  HREF="node61.html">Filling a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1154"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00421400000000000000">
+Accessing the elements of a general size vector</A>
+</H3>
+To read the value of a specific element of a vector use
+<PRE>
+      double dEl;
+
+      dEl = gan_vec_get_el ( pvx, 1 ); /* returns x[1], x = (x[0] x[1] ... )^T */
+</PRE>
+This sets <TT>dEl</TT> to the second element of vector <TT>pvx</TT>
+(zero is the first). To set an element to a specific value use
+<PRE>
+      gan_vec_set_el ( pvx, 2, 3.0 ); /* set x[2] to 3, x = (x[0] x[1] ... )^T */
+</PRE>
+This sets the third element of vector <TT>pvx</TT> to 3.
+There are also routines to increment or decrement an element of a vector:
+<PRE>
+      gan_vec_inc_el ( pvx, 0, 2.5 ); /* x_0 += 2.5, x = (x[0] x[1] ... )^T */
+      gan_vec_dec_el ( pvx, 4, 5.0 ); /* x_4 -= 5.0, x = (x[0] x[1] ... )^T */
+</PRE>
+which respectively increment the first element by 2.5 and subtract 5 from
+the fifth element of <TT>pvx</TT>.
+
+<P>
+<B>Error detection:</B> <TT>gan_vec_set_el()</TT>, <TT>gan_vec_inc_el()</TT>
+and <TT>gan_vec_dec_el()</TT> all return boolean values, with <TT>GAN_FALSE</TT>
+returned on failure, in which case the Gandalf error handler is invoked.
+The most likely failure mode is accessing an element outside the bounds of
+the vector. If <TT>NDEBUG</TT> is set then no error checking is done.
+<TT>gan_vec_get_el()</TT> operates similarly, but returns
+<TT>DBL_MAX</TT> on error.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

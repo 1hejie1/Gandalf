@@ -1,0 +1,271 @@
+\chapter{The Test Framework} \label{testing-chapter}
+There is extensive testing code in the {\tt gandalf/TestFramework}
+directory. A simple way to test your installation of Gandalf is to
+execute the following commands:-
+\begin{verbatim}
+      cd gandalf/TestFramework
+      make
+      ./cUnit -all
+\end{verbatim}
+This compiles the main Gandalf test program {\tt cUnit} and runs through
+all the tests. There is at least one test program for each Gandalf package.
+
+You can also build test programs individually by {\tt cd}'ing into a
+Gandalf package and typing the command {\tt make all}. For instance,
+the commands
+\begin{verbatim}
+      cd gandalf/common
+      make all
+      ./list_test
+\end{verbatim}
+will compile all the test programs in the Common package, and run the linked
+list test program.
+The main test program {\tt TestFramework/cUnit.c} compiles and links with
+all the individual test programs in the Gandalf packages.
+
+Input files are all in the {\tt gandalf/TestInput} directory. Output files
+are written into the {\tt gandalf/TestOutput} directory. Test programs are
+designed to purge any old {\tt TestOutput} files before running the test
+program.
+
+\section{Adding new tests}
+New code written for Gandalf should come with a test harness that tests
+the functionality of the module. Currently there is only one module-specific
+test harness in Gandalf, that for linked lists in
+{\tt common/linked\_list.[ch]}, the rest of the test programs combining
+tests over several modules in a package.
+In the future we wish to push Gandalf
+in the direction of Extreme Programming, with test harnesses for each module
+and for testing interactions between modules.
+
+Let us say we have written a new module {\tt histogram.[ch]} in a
+(currently fictitious) {\tt statistics} package. We now wish
+to add a test harness {\tt statistics/histogram\_test.[ch]}
+(actually we should write the test harness {\em first} according to
+Extreme Programming principles). The first thing is to copy another test
+program, say {\tt common/list\_test.[ch]}. Remove the test code and change
+the names of all the definitions and strings to correspond to the new
+test program, leaving the following template files.
+Firstly {\tt histogram\_test.h} should like like this:
+\begin{verbatim}
+      /**
+       * File:          $RCSfile: testing.tex,v $
+       * Module:        Histogram test program
+       * Part of:       Gandalf Library
+       *
+       * Revision:      $Revision: 1.3 $
+       * Last edited:   $Date: 2003/02/24 10:06:15 $
+       * Author:        $Author: pm $
+       * Copyright:     (c) 2002 YOUR INSTITUTION
+       *
+       * Notes:         Tests the histogram functions
+       */
+
+      /* This library is free software; you can redistribute it and/or
+         modify it under the terms of the GNU Lesser General Public
+         License as published by the Free Software Foundation; either
+         version 2.1 of the License, or (at your option) any later version.
+
+         This library is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser General Public
+         License along with this library; if not, write to the Free Software
+         Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+      */
+
+      #include <gandalf/TestFramework/cUnit.h>
+
+      #ifndef CUNIT_HISTOGRAM_TEST_H
+      #define CUNIT_HISTOGRAM_TEST_H
+
+      cUnit_test_suite * histogram_test_build_suite(void);
+
+      #endif
+\end{verbatim}
+Make sure you keep the header and license sections. The {\tt histogram\_test.c}
+file should be:
+\begin{verbatim}
+      /**
+       * File:          $RCSfile: testing.tex,v $
+       * Module:        Histogram test program
+       * Part of:       Gandalf Library
+       *
+       * Revision:      $Revision: 1.3 $
+       * Last edited:   $Date: 2003/02/24 10:06:15 $
+       * Author:        $Author: pm $
+       * Copyright:     (c) 2002 YOUR INSTITUTION
+       *
+       * Notes:         Tests the histogram functions
+       */
+
+      /* This library is free software; you can redistribute it and/or
+         modify it under the terms of the GNU Lesser General Public
+         License as published by the Free Software Foundation; either
+         version 2.1 of the License, or (at your option) any later version.
+
+         This library is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser General Public
+         License along with this library; if not, write to the Free Software
+         Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+      */
+
+      #include <stdlib.h>
+      #include <stdio.h>
+
+      #include <gandalf/TestFramework/cUnit.h>
+      #include <gandalf/statistics/histogram_test.h>
+      #include <gandalf/statistics/histogram.h>
+
+      static Gan_Bool setup_test(void)
+      {
+         printf("\nSetup for histogram_test completed.\n\n");
+         return GAN_TRUE;
+      }
+
+      static Gan_Bool teardown_test(void)
+      {
+         printf("\nTeardown for histogram_test completed.\n\n");
+         return GAN_TRUE;
+      }
+
+      /* Tests all the histogram functions */
+      static Gan_Bool run_test(void)
+      {  
+         return GAN_TRUE;
+      }
+
+      #ifdef HISTOGRAM_TEST_MAIN
+
+      int main ( int argc, char *argv[] )
+      {
+         /* set default Gandalf error handler without trace handling */ 
+         gan_err_set_reporter ( gan_err_default_reporter );
+         gan_err_set_trace ( GAN_ERR_TRACE_OFF );
+
+         setup_test();
+         if ( run_test() )
+            printf ( "Tests ran successfully!\n" );
+         else
+            printf ( "At least one test failed\n" );
+
+         teardown_test();
+         gan_heap_report(NULL);
+         return 0;
+      }
+
+      #else
+
+      /* This function registers the unit tests to a cUnit_test_suite. */
+      cUnit_test_suite *histogram_test_build_suite(void)
+      {
+         cUnit_test_suite *sp;
+
+         /* Get a new test session */
+         sp = cUnit_new_test_suite("histogram_test suite");
+      
+         cUnit_add_test(sp, "histogram_test", run_test);
+
+         /* register a setup and teardown on the test suite 'histogram_test' */
+         if (cUnit_register_setup(sp, setup_test) != GAN_TRUE)
+            printf("Error while setting up test suite histogram_test");
+
+         if (cUnit_register_teardown(sp, teardown_test) != GAN_TRUE)
+            printf("Error while tearing down test suite histogram_test");
+
+         return( sp );
+      }
+
+      #endif /* #ifdef HISTOGRAM_TEST_MAIN */
+\end{verbatim}
+There are now three functions, {\tt setup\_test()}, {\tt teardown\_test()}
+and {\tt run\_test()} for you to fill with your test code.
+{\tt setup\_test()} should create any data structures to be used multiple
+times by the tests. Then {\tt run\_test()} performs the tests, and
+{\tt teardown\_test()} frees the memory allocated by {\tt setup\_test()}.
+You can leave {\tt setup\_test()} and {\tt teardown\_test()} blank if you
+like, and allocate \& free the memory in {\tt run\_test()}.
+It is up to you.
+
+The next stage is to add a rule in the package {\tt Makefile.in} program to
+make your test program. Add {\tt histogram-test} as a target to the
+{\tt all:} line in {\tt statistics/Makefile.in}. Then add the following lines
+to {\tt statistics/Makefile.in}:
+\begin{verbatim}
+      histogram-test:
+              $(LIBTOOL) $(CC) -I$(TOPLEVEL)/.. $(CFLAGS) -DHISTOGRAM_TEST_MAIN histogram_test.c $(PATH_BUILDER_C) -o histogram_test $(LDFLAGS) $(LIB) $(LIBS)
+\end{verbatim}
+Remember that there must be a tab character at the start of the
+{\tt \$(LIBTOOL)} line. Note the predefined symbol {\tt HISTOGRAM\_TEST\_MAIN}.
+This is to make sure that the section of {\tt histogram\_test.c} with the
+{\tt main()} function is compiled in. The other section of the code is
+for when the test functions are linked against the Gandalf test harness.
+For now, rerun {\tt ./configure} from the {\tt gandalf} directory to
+recreate {\tt statistics/Makefile} with the new rules, and make the
+test program with the commands:
+\begin{verbatim}
+      cd statistics
+      make histogram-test
+      ./histogram_test
+\end{verbatim}
+(or {\tt make all}). The tests should be designed so that if the data is
+successfully allocated and all the tests pass, {\tt setup\_test()},
+{\tt run\_test()} and {\tt teardown\_test()} should all return {\tt GAN\_TRUE}.
+There is a special macro {\tt cu\_assert()}, which operates like {\tt assert()}
+in the sense that it tests an expression and fails if zero is returned.
+In the {\tt cu\_assert()} either {\tt GAN\_TRUE} (one, success) is returned
+if the expression is non-zero, and {\tt GAN\_FALSE} (zero, failure) is returned
+if the expression is zero. In the latter case an error message is also
+printed, providing the line at which failure occurs. This provides a
+convenient shorthand for testing the results of the tests.
+
+The next stage is to incorporate the test into the main Gandalf test
+harness. To do this, first edit {\tt gandalf/TestFramework/Makefile.in}
+and add the following:
+\begin{enumerate}
+  \item Add {\tt histogram\_test.o} to the {\tt OBJS} list.
+  \item Add the line
+\begin{verbatim}
+      HISTOGRAM_TEST_C  = $(TOPLEVEL)/statistics/hisogram_test.c
+\end{verbatim}
+	to the list below the {\tt OBJS} list.
+  \item Add the rule
+\begin{verbatim}
+      histogram_test.o: $(HISTOGRAM_TEST_C)
+              $(LIBTOOL) $(CC) -I$(TOPLEVEL)/.. $(CFLAGS) -c $(HISTOGRAM_TEST_C)
+\end{verbatim}
+(remember the tab character again before {\tt \$(LIBTOOL)}).
+\end{enumerate}
+Now you will need to edit {\tt TestFramework/cUnit.c}. Add the header file
+declaration
+\begin{verbatim}
+      #include <gandalf/statistics/histogram_test.h>
+\end{verbatim}
+among the other {\tt \#include} declarations. Find the line
+which has {\tt \#define maxAutoTests} in it and add one to the number
+you see there. You will also need to add a line
+\begin{verbatim}
+         auto_tests[iIndex++] = "histogram_test";
+\end{verbatim}
+in the list of similar lines below, and finally the lines
+\begin{verbatim}
+         pSuite = cUnit_add_test_suite(auto_tests[iIndex++],
+                                       histogram_test_build_suite);
+         gan_list_insert_last(glstAutoSuiteList, pSuite);
+\end{verbatim}
+at the corresponding place in the next set of similar lines.
+You will need to run {\tt configure} again to recreate the
+{\tt TestFramework/Makefile} file, and then typing
+\begin{verbatim}
+      cd TestFramework
+      make
+      ./cUnit -menu
+\end{verbatim}
+should give you the extended menu of test programs with your new test
+as one of the options.

@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size matrix file I/O</TITLE>
+<META NAME="description" CONTENT="Fixed size matrix file I/O">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node55.html">
+<LINK REL="previous" HREF="node53.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node55.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1029"
+  HREF="node55.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1025"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1019"
+  HREF="node53.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1027"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1030"
+  HREF="node55.html">Conversion from general to</A>
+<B> Up:</B> <A NAME="tex2html1026"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1020"
+  HREF="node53.html">Fixed size matrix decompositions</A>
+ &nbsp; <B>  <A NAME="tex2html1028"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004121300000000000000">
+Fixed size matrix file I/O</A>
+</H3>
+Gandalf supports both ASCII and binary format file I/O of matrices.
+Both formats use standard <TT>FILE&nbsp;*</TT> file streams.
+ASCII format is obviously more convenient to use, while binary format is
+more compact and guarantees no loss of precision when the data is read.
+To print a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix in ASCII format, use
+<PRE>
+      Gan_Bool gan_mat34_fprint ( FILE *fp, Gan_Matrix34 *p,
+                                  const char *prefix, int indent, const char *fmt );
+</PRE>
+<TT>prefix</TT> is a prefix string to print before the matrix itself, <TT>indent</TT>
+is the number of spaces to indent the matrix by, and <TT>fmt</TT> is a format
+string to use when printing the matrix, e.g. <TT>"%f"</TT>. So for example
+<PRE>
+      FILE *pfFile;
+
+      pfFile = fopen ( "/tmp/matrices", "w" );
+      gan_mat34_fill_q ( &amp;m34A, 1.0,  2.0,  3.0,  4.0,
+                                5.0,  6.0,  7.0,  8.0,
+                                9.0, 10.0, 11.0, 12.0 );
+      gan_mat34_fprint ( pfFile, &amp;m34A, "Example matrix", 3, "%f" );
+</PRE>
+will print the output
+<PRE>
+         Example matrix
+          1.000000 2.000000 3.000000 4.000000
+          5.000000 6.000000 7.000000 8.000000
+          9.000000 10.000000 11.000000 12.000000
+</PRE>
+to the file <TT>"/tmp/matrices"</TT>.
+There is also a version <TT>gan_mat34_print()</TT> for printing to
+standard output:
+<PRE>
+      Gan_Bool gan_mat34_print ( Gan_Matrix34 *p,
+                                 const char *prefix, int indent, const char *fmt );
+</PRE>
+The corresponding input function is
+<PRE>
+      Gan_Bool gan_mat34_fscanf ( FILE *fp, Gan_Matrix34 *p,
+                                  char *prefix, int prefix_len )
+</PRE>
+which reads the matrix from the file stream <TT>fp</TT> into the <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$">
+matrix pointer <TT>p</TT>. It also reads the prefix string (up to the specified
+maximum length <TT>prefix_len</TT>), which can be compared with the expected
+prefix string to check for consistency.
+
+<P>
+Binary file I/O is handled by the functions <TT>gan_mat34_fwrite()</TT>
+and <TT>gan_mat34_fread()</TT>. To write a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix in binary
+format use
+<PRE>
+      Gan_Bool gan_mat34_fwrite ( FILE *fp, Gan_Matrix34 *p, gan_ui32 magic_number );
+</PRE>
+The <TT>magic_number</TT> takes the same role as the <TT>prefix</TT> string
+in <TT>gan_mat34_fprint()</TT>, and is written into the file so that it can be
+used later to identify the matrix when it is read back using
+<PRE>
+      Gan_Bool gan_mat34_fread ( FILE *fp, Gan_Matrix34 *p, gan_ui32 *magic_number );
+</PRE>
+
+<P>
+There are similar functions <TT>gan_mat33_fprint()</TT>,
+<TT>gan_mat33_print()</TT>, <TT>gan_mat33_fscanf()</TT> for ASCII I/O of
+<IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices, and <TT>gan_mat33_fwrite()</TT>, <TT>gan_mat33_fread()</TT>
+for binary I/O of <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices. Functions for symmetric and
+triangular matrices follow the same pattern.
+
+<P>
+<TT>Error detection:</TT> The I/O routines return a boolean value, returning
+<TT>GAN_TRUE</TT> on success, <TT>GAN_FALSE</TT> on failure, invoking the Gandalf
+error handle in the latter case.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1029"
+  HREF="node55.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1025"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1019"
+  HREF="node53.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1027"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1030"
+  HREF="node55.html">Conversion from general to</A>
+<B> Up:</B> <A NAME="tex2html1026"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1020"
+  HREF="node53.html">Fixed size matrix decompositions</A>
+ &nbsp; <B>  <A NAME="tex2html1028"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

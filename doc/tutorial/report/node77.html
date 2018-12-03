@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size matrix/vector multiplication</TITLE>
+<META NAME="description" CONTENT="General size matrix/vector multiplication">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node78.html">
+<LINK REL="previous" HREF="node76.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node78.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1348"
+  HREF="node78.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1344"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1338"
+  HREF="node76.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1346"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1349"
+  HREF="node78.html">General size matrix/matrix multiplication</A>
+<B> Up:</B> <A NAME="tex2html1345"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1339"
+  HREF="node76.html">Rescaling a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1347"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004221000000000000000">
+General size matrix/vector multiplication</A>
+</H3>
+The general size matrix/vector multiplication, with optional implicit
+transpose of the matrix, computes one of the operations
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf y}= A{\bf x}\;\;\;\;\mbox{OR} \;\;\;\;{\bf y}= A^{\top}{\bf x}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="175" HEIGHT="27" BORDER="0"
+ SRC="img73.png"
+ ALT="\begin{displaymath}{\bf y}= A{\bf x}\;\;\;\;\mbox{OR} \;\;\;\;{\bf y}= A^{\top}{\bf x}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+for vectors <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$">, <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$"> and matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">. They are implemented in Gandalf
+as follows.
+<PRE>
+      Gan_Matrix mA; /* matrix A */
+      Gan_Vector vx, vy; /* vectors x &amp; y */
+
+      /* ... create and fill matrix A and vector x, create (and optionally
+             fill) vector y ... */
+      gan_mat_multv_q ( &amp;mA, &amp;vx, &amp;vy ); /* set y = A*x, OR */
+      gan_matT_multv_q ( &amp;mA, &amp;vx, &amp;vy ); /* set y = A^T*x */
+</PRE>
+with the alternative forms
+<PRE>
+      Gan_Matrix mA; /* matrix A */
+      Gan_Vector vx, *pvy; /* vectors x &amp; y */
+
+      /* ... create and fill matrix A and vector x ... */
+      pvy = gan_mat_multv_s ( &amp;mA, &amp;vx ); /* set y = A*x, y a new vector, OR */
+      pvy = gan_matT_multv_s ( &amp;mA, &amp;vx ); /* set y = A^T*x, y a new vector */
+</PRE>
+
+<P>
+If <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is a special square matrix, more options are available. If <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is
+a triangular matrix, multiplication with a vector can be implemented as
+an in-place operation, whether or not <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is (implicitly) inverted or
+transposed, in any combination. This gives rise to the following Gandalf
+routines.
+<PRE>
+      Gan_SquMatrix smA; /* matrix A */
+      Gan_Vector vx, vy; /* vectors x &amp; y */
+
+      /* ... create and fill matrix A and vector x, create (and optionally
+             fill) vector y ... */
+      gan_squmat_multv_q ( &amp;smA, &amp;vx, &amp;vy ); /* set y = A*x, OR */
+      gan_squmatT_multv_q ( &amp;smA, &amp;vx, &amp;vy ); /* set y = A^T*x, OR */
+      gan_squmatI_multv_q ( &amp;smA, &amp;vx, &amp;vy ); /* set y = A^-1*x, OR */
+      gan_squmatIT_multv_q ( &amp;smA, &amp;vx, &amp;vy ); /* set y = A^-T*x */
+</PRE>
+with in-place versions
+<PRE>
+      Gan_SquMatrix smA; /* matrix A */
+      Gan_Vector vx; /* vector x */
+
+      /* ... create and fill matrix A and vector x ... */
+      gan_squmat_multv_i ( &amp;smA, &amp;vxy ); /* replace x = A*x, OR */
+      gan_squmatT_multv_i ( &amp;smA, &amp;vx ); /* replace x = A^T*x, OR */
+      gan_squmatI_multv_i ( &amp;smA, &amp;vx ); /* replace x = A^-1*x, OR */
+      gan_squmatIT_multv_i ( &amp;smA, &amp;vx ); /* replace x = A^-T*x */
+</PRE>
+and also the routines to create the result vector from scratch:
+<PRE>
+      Gan_SquMatrix smA; /* matrix A */
+      Gan_Vector vx, *pvy; /* vectors x &amp; y */
+
+      /* ... create and fill matrix A and vector x ... */
+      pvy = gan_squmat_multv_s ( &amp;smA, &amp;vxy ); /* set y = A*x, OR */
+      pvy = gan_squmatT_multv_s ( &amp;smA, &amp;vx ); /* set y = A^T*x, OR */
+      pvy = gan_squmatI_multv_s ( &amp;smA, &amp;vx ); /* set y = A^-1*x, OR */
+      pvy = gan_squmatIT_multv_s ( &amp;smA, &amp;vx ); /* set y = A^-T*x */
+</PRE>
+Note that the implicit inverse and in-place features are not available when
+<IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is of symmetric type; Gandalf will invoke the error handler and return
+an error condition <TT>NULL</TT> if <TT>mA</TT> has type
+<TT>GAN_SYMMETRIC_MATRIX</TT>.
+
+<P>
+<B>Error detection:</B> If implicit inverse is used (the
+<TT>gan_squmatI_multv_[qsi]()</TT> or <TT>gan_squmatIT_multv_[qsi]()</TT>
+routines), the matrix must be non-singular. If the matrix is singular
+then <TT>NULL</TT> is returned and the Gandalf error handler is invoked.
+Other failure modes are failing to create the result vector and incompatibility
+between the sizes of the input matrix and vector.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1348"
+  HREF="node78.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1344"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1338"
+  HREF="node76.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1346"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1349"
+  HREF="node78.html">General size matrix/matrix multiplication</A>
+<B> Up:</B> <A NAME="tex2html1345"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1339"
+  HREF="node76.html">Rescaling a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1347"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

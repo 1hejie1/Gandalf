@@ -1,0 +1,545 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Computing a homography between 2D scene and image</TITLE>
+<META NAME="description" CONTENT="Computing a homography between 2D scene and image">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node112.html">
+<LINK REL="previous" HREF="node108.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node110.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1790"
+  HREF="node110.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1786"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1780"
+  HREF="node108.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1788"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1791"
+  HREF="node110.html">Computing a 2D homography</A>
+<B> Up:</B> <A NAME="tex2html1787"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1781"
+  HREF="node108.html">Computing the fundamental/essential matrix</A>
+ &nbsp; <B>  <A NAME="tex2html1789"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00630000000000000000">
+Computing a homography between 2D scene and image</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/vision/homog33_fit.h&gt;
+</PRE>
+If a part of the viewed scene is planar, or the camera is undergoing a
+pure rotation (or both), the (part of the) scene can be reconstructed
+using 2D methods. Here we assume a point-cloud representation, so
+the scene is represented by <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img61.png"
+ ALT="$n$"> points <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img150.png"
+ ALT="${\bf X}_i$"> in homogeneous
+coordinates, <IMG
+ WIDTH="84" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img94.png"
+ ALT="$i=1,\ldots,n$">. The relationship between the <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img150.png"
+ ALT="${\bf X}_i$">
+and points <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img92.png"
+ ALT="${\bf x}_i$"> in an image of the same (part of the) scene is a simple
+linear projective transformation or homography:
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+{\bf x}_i = \lambda_i P {\bf X}_i
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="point-proj-eq"></A><IMG
+ WIDTH="81" HEIGHT="26" BORDER="0"
+ SRC="img151.png"
+ ALT="\begin{displaymath}
+{\bf x}_i = \lambda_i P {\bf X}_i
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.3)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> is a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix representing the homography and
+<IMG
+ WIDTH="13" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img107.png"
+ ALT="$\lambda$"> is a scale factor. This equation also assumes that the camera
+employed in projecting the points onto the image is linear, but if the
+camera is non-linear AND the camera parameters are known, the distortion
+can be removed first by applying the function
+<TT>gan_camera_remove_distortion_[qi]()</TT> to the image points <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img92.png"
+ ALT="${\bf x}_i$">
+as described in Section&nbsp;<A HREF="node102.html#camera-sec">5.1</A>.
+Given four or more point correspondences
+in the image (in general position), the homography matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> can be computed.
+This can be done by first eliminating <IMG
+ WIDTH="13" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img107.png"
+ ALT="$\lambda$"> to obtain homogeneous
+linear equations for the elements of <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">.
+Given that <!-- MATH
+ ${\bf X}=(X\;Y\;Z)^{\top}$
+ -->
+<IMG
+ WIDTH="110" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img153.png"
+ ALT="${\bf X}=(X\;Y\;Z)^{\top}$"> and <!-- MATH
+ ${\bf x}=(x\;y\;z_h)^{\top}$
+ -->
+<IMG
+ WIDTH="100" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img125.png"
+ ALT="${\bf x}=(x\;y\;z_h)^{\top}$">,
+we can obtain the equations
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+x {\bf P}_3.{\bf X}- z_h {\bf P}_1.{\bf X}= 0,\;\;\;
+ y {\bf P}_3.{\bf X}- z_h {\bf P}_2.{\bf X}= 0
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="homog-point"></A><IMG
+ WIDTH="316" HEIGHT="27" BORDER="0"
+ SRC="img154.png"
+ ALT="\begin{displaymath}
+x {\bf P}_3.{\bf X}- z_h {\bf P}_1.{\bf X}= 0,\;\;\;
+y {\bf P}_3.{\bf X}- z_h {\bf P}_2.{\bf X}= 0
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.4)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+where <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> is separated into rows as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+P = \left(\!\!\begin{array}{c} {\bf P}_1^{\top}\\{\bf P}_2^{\top}\\{\bf P}_3^{\top}\end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="85" HEIGHT="64" BORDER="0"
+ SRC="img155.png"
+ ALT="\begin{displaymath}P = \left(\!\!\begin{array}{c} {\bf P}_1^{\top}\ {\bf P}_2^{\top}\ {\bf P}_3^{\top}\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+From four points we get eight such equations, which allows <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> to be
+computed up to a scale factor using the same symmetric eigensystem routines
+as are used to solve for the fundamental and essential matrices above.
+
+<P>
+Note that this formulation differs from the normal formulation which
+considers the homographies <EM>between</EM> images. That is a special case
+of our formulation, because we can take an image as the projective
+``scene'' representation <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img150.png"
+ ALT="${\bf X}_i$">. The scene/image formulation also
+allows us to represent the motion over a sequence of <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img156.png"
+ ALT="$k$"> images in 
+a compact way as the set of homographies <!-- MATH
+ $P{\scriptstyle (j)}$
+ -->
+<IMG
+ WIDTH="32" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img157.png"
+ ALT="$P{\scriptstyle (j)}$"> for images <IMG
+ WIDTH="85" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img158.png"
+ ALT="$j=1,\ldots,k$">
+mapping the scene <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img150.png"
+ ALT="${\bf X}_i$"> to each set of image points <!-- MATH
+ ${\bf x}_i{\scriptstyle (j)}$
+ -->
+<IMG
+ WIDTH="35" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img159.png"
+ ALT="${\bf x}_i{\scriptstyle (j)}$">,
+rather than as an arbitrary collection of pairwise homographies.
+
+<P>
+To start the calculation, define an accumulated symmetric matrix eigensystem
+structure and initialise it using the following routine:
+<PRE>
+      Gan_SymMatEigenStruct SymEigen;
+
+      /* initialise eigensystem matrix */
+      gan_homog33_init ( &amp;SymEigen );
+</PRE>
+Then for each point correspondence, build the equations&nbsp;<A HREF="#homog-point">5.4</A>
+and increment the accumulated symmetric eigensystem matrix
+by calling the following function:
+<PRE>
+      int iEqCount=0, iCount;
+      Gan_Vector3 v3X, v3x; /* declare scene and image points X &amp; x */
+
+      for ( iCount = 0; iCount &lt; 100; iCount++ )
+      {
+         /* ... build scene and image point coordinates into X and x ... */
+
+         /* increment matrix using point correspondence */
+         gan_homog33_increment_p ( &amp;SymEigen, &amp;v3X, &amp;v3x, 1.0, &amp;iEqCount );
+      }
+</PRE>
+The fourth argument <TT>1.0</TT> is a weighting factor for the equations as
+described in Section&nbsp;<A HREF="node82.html#acc-symeigen-sec">3.2.2.15</A>. The last argument <TT>iEqCount</TT>
+is a running count of the total number of equations processed thus far,
+to be passed below to the function to solve for <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">.
+
+<P>
+Once the point correspondences have been processed in this way,
+you can solve the equations using
+<PRE>
+      Gan_Matrix33 m33P; /* homography matrix P */
+
+      gan_homog33_solve ( &amp;SymEigen, iEqCount, &amp;m33P );
+</PRE>
+to compute the homography <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">. If you want to repeat the calculation of
+a homography with new data, you can start again by calling
+<PRE>
+      gan_homog33_reset ( &amp;SymEigen );
+</PRE>
+
+<P>
+At the end of the homography calculation(s) you can free the eigensystem
+structure using the function
+<PRE>
+      gan_homog33_free ( &amp;SymEigen );
+</PRE>
+
+<P>
+Given correspondences between lines, it is also possible to generate
+homogeneous linear equations for <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> and either combine with points or
+compute <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> purely from lines. To see how to derive the equations for
+lines, take the line equations
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf L}.{\bf X}= 0,\;\;\;\;{\bf l}.{\bf x}= 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="130" HEIGHT="27" BORDER="0"
+ SRC="img160.png"
+ ALT="\begin{displaymath}{\bf L}.{\bf X}= 0,\;\;\;\;{\bf l}.{\bf x}= 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+define the homogeneous line parameters <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img122.png"
+ ALT="${\bf L}$"> in the scene and <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img127.png"
+ ALT="${\bf l}$"> in
+the image. We can derive the relationship between <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img122.png"
+ ALT="${\bf L}$">, <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img127.png"
+ ALT="${\bf l}$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">
+using the point projection equation&nbsp;<A HREF="#point-proj-eq">5.3</A>, yielding
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf L}= \mu P^{\top}{\bf l}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="69" HEIGHT="27" BORDER="0"
+ SRC="img161.png"
+ ALT="\begin{displaymath}{\bf L}= \mu P^{\top}{\bf l}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+for a scale factor <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img162.png"
+ ALT="$\mu$">. Separating <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> into columns as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+P = \left(\!\!\begin{array}{ccc} {\bf P}'_1 & {\bf P}'_2 & {\bf P}'_3 \end{array}\!\!\right),
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="151" HEIGHT="30" BORDER="0"
+ SRC="img163.png"
+ ALT="\begin{displaymath}P = \left(\!\!\begin{array}{ccc} {\bf P}'_1 &amp; {\bf P}'_2 &amp; {\bf P}'_3 \end{array}\!\!\right),
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+eliminating <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img162.png"
+ ALT="$\mu$"> from the above equation, and writing
+<!-- MATH
+ ${\bf L}= (L_X\;L_Y\;L_Z)^{\top}$
+ -->
+<IMG
+ WIDTH="134" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img164.png"
+ ALT="${\bf L}= (L_X\;L_Y\;L_Z)^{\top}$">, we obtain the two homogeneous linear equations
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+L_X {\bf P}'_3.{\bf l}= L_Z {\bf P}'_1.{\bf l},\;\;\;
+   L_Y {\bf P}'_3.{\bf l}= L_Z {\bf P}'_2.{\bf l}.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="269" HEIGHT="28" BORDER="0"
+ SRC="img165.png"
+ ALT="\begin{displaymath}L_X {\bf P}'_3.{\bf l}= L_Z {\bf P}'_1.{\bf l},\;\;\;
+L_Y {\bf P}'_3.{\bf l}= L_Z {\bf P}'_2.{\bf l}.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Given correspondence between a known scene line <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img122.png"
+ ALT="${\bf L}$"> and a known image
+line <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img127.png"
+ ALT="${\bf l}$">, the following routine generates these equations and
+accumulates them in the calculation of <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">:
+<PRE>
+         Gan_Vector3 v3L, v3l; /* declare scene line L and image line l */
+
+         /* ... fill L and l with values for corresponding lines ... */
+
+         /* increment matrix using line correspondence */
+         gan_homog33_increment_l ( &amp;SymEigen, &amp;v3L, &amp;v3l, 1.0, &amp;iEqCount );
+</PRE>
+
+<P>
+This is assuming that the endpoints of the scene line are unknown. In practice
+the scene line will normally be created from previous matching of image
+lines, which are line <EM>segments</EM>, so that the endpoints <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img166.png"
+ ALT="${\bf X}_1$"> and
+<IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="${\bf X}_2$"> of the line in scene coordinates will be approximately known.
+Note that we don't depend on locating the actual endpoints of the line
+accurately, which is a notoriously difficult problem. You should think of
+the two points <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img166.png"
+ ALT="${\bf X}_1$"> and <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="${\bf X}_2$"> instead as <EM>representative</EM>
+points on the line. In this case
+there is an alternative way of incorporating the line information which
+seems to give better numerical performance. We note that the scene line
+endpoints <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img166.png"
+ ALT="${\bf X}_1$"> and <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="${\bf X}_2$"> should project onto the image line <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img127.png"
+ ALT="${\bf l}$">,
+so we obtain
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf l}.(P{\bf X}_1) = 0,\;\;\;\;{\bf l}.(P{\bf X}_2) = 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="192" HEIGHT="28" BORDER="0"
+ SRC="img168.png"
+ ALT="\begin{displaymath}{\bf l}.(P{\bf X}_1) = 0,\;\;\;\;{\bf l}.(P{\bf X}_2) = 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+These are homogeneous linear equations in the elements of <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">
+which can be directly fed into the
+accumulated matrix calculation for <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">, using the routine
+<PRE>
+      Gan_Vector3 v3X1, v3X2; /* declare scene line endpoints X1 &amp; X2 */
+      Gan_Vector3 v3l; /* image line homogeneous coordinates l */
+
+      /* ... set X1, X2 and l for corresponding scene line and image line ... */
+
+      /* add equations for two endpoints */
+      gan_homog33_increment_le ( &amp;SymEigen, &amp;v3X1, &amp;v3l, 1.0, &amp;iEqCount );
+      gan_homog33_increment_le ( &amp;SymEigen, &amp;v3X2, &amp;v3l, 1.0, &amp;iEqCount );
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>gan_homog33_init()</TT> returns a pointer to
+the initialised structure, and returns <TT>NULL</TT> on error.
+All the other routines except the <TT>void</TT> routine <TT>gan_homog33_free()</TT>
+return a boolean value, which is <TT>GAN_FALSE</TT> on error.
+The Gandalf error handler is invoked when an error occurs.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1792"
+  HREF="node110.html">Computing a 2D homography from an array of feature matches</A>
+<LI><A NAME="tex2html1793"
+  HREF="node111.html">Computing a 2D affine homography</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1790"
+  HREF="node110.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1786"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1780"
+  HREF="node108.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1788"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1791"
+  HREF="node110.html">Computing a 2D homography</A>
+<B> Up:</B> <A NAME="tex2html1787"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1781"
+  HREF="node108.html">Computing the fundamental/essential matrix</A>
+ &nbsp; <B>  <A NAME="tex2html1789"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

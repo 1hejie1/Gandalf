@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Accessing channels of an image</TITLE>
+<META NAME="description" CONTENT="Accessing channels of an image">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node95.html">
+<LINK REL="up" HREF="node95.html">
+<LINK REL="next" HREF="node97.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1588"
+  HREF="node97.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1584"
+  HREF="node95.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1580"
+  HREF="node95.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1586"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1589"
+  HREF="node97.html">Displaying images</A>
+<B> Up:</B> <A NAME="tex2html1585"
+  HREF="node95.html">Copying/converting the whole or</A>
+<B> Previous:</B> <A NAME="tex2html1581"
+  HREF="node95.html">Copying/converting the whole or</A>
+ &nbsp; <B>  <A NAME="tex2html1587"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00561000000000000000">
+Accessing channels of an image</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/image/image_channel.h&gt;
+</PRE>
+Gandalf stores images with the channels combined for each pixel.
+If you wish to extract a channel of an image as a separate image, Gandalf
+provides the following function:
+<PRE>
+      Gan_Image *pRGBImage; /* declare RGB image */
+      Gan_Image *pRedChannel; /* declare image storing red channel */
+
+      /* ... create and fill RGB image, create red channel image ... */
+
+      /* extract red channel from image */
+      gan_image_extract_channel_q ( pRGBImage, GAN_RED_CHANNEL,
+                                    0, 0, pRGBImage-&gt;height, pRGBImage-&gt;width,
+                                    pRedChannel );
+</PRE>
+The second argument specifies which channel is to be extracted.
+The different options are described by the following enumerated type.
+<PRE>
+      /**
+       * \brief Image channel types for extracting individual channels.
+       */
+      typedef enum
+      {
+         /// for grey-level/alpha images
+         GAN_INTENSITY_CHANNEL,
+
+         ///for RGB and RGB/alpha images
+         GAN_RED_CHANNEL, GAN_GREEN_CHANNEL, GAN_BLUE_CHANNEL,
+
+         /// for grey-level/alpha and RGB/alpha images
+         GAN_ALPHA_CHANNEL,
+
+         /// for 2D and 3D vector field images
+         GAN_X_CHANNEL,
+
+         /// likewise
+         GAN_Y_CHANNEL,
+
+         /// for 3D vector field images
+         GAN_Z_CHANNEL,
+
+         /// all channels
+         GAN_ALL_CHANNELS
+      } Gan_ImageChannelType;
+</PRE>
+The offset (3,4) and dimension (5,6) arguments allow a sub-region to
+be extracted rather than the whole image, and work in the same way
+as with <TT>gan_image_extract_q()</TT>. There is also a version which
+extracts the channel as a new image:
+<PRE>
+      pRedChannel = gan_image_extract_channel_s ( pRGBImage, GAN_RED_CHANNEL,
+                                                  0, 0,
+                                                  pRGBImage-&gt;height, pRGBImage-&gt;width );
+</PRE>
+
+<P>
+There are also functions for filling a channel of an RGB image with
+a constant value. For instance
+<PRE>
+      Gan_Pixel Pixel;
+
+      /* ... fill pRGBImage as an RGB unsigned character image ...*/
+
+      /* fill green channel of pRGBImage with constant value */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_UCHAR;
+      Pixel.data.gl.uc = 128;
+      gan_image_fill_channel_const ( pRGBImage, GAN_GREEN_CHANNEL, &amp;Pixel );
+</PRE>
+sets the all the green pixel components to the value 128. Note that
+the format of the pixel is set to grey-level, so defining a single channel
+pixel. To set the channel to zero there is the macro
+<PRE>
+      gan_image_fill_channel_zero ( pRGBImage, GAN_GREEN_CHANNEL );
+</PRE>
+instead.
+
+<P>
+<B>Error detection:</B> The <TT>gan_image_extract_channel_[qs]()</TT>
+return a pointer to the result image, returning <TT>NULL</TT> and invoking
+the Gandalf error handler on error. <TT>gan_image_fill_channel_const()</TT>
+and
+<BR><TT>gan_image_fill_channel_zero()</TT> return a boolean value, so
+<TT>GAN_FALSE</TT> is returned on error.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1588"
+  HREF="node97.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1584"
+  HREF="node95.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1580"
+  HREF="node95.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1586"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1589"
+  HREF="node97.html">Displaying images</A>
+<B> Up:</B> <A NAME="tex2html1585"
+  HREF="node95.html">Copying/converting the whole or</A>
+<B> Previous:</B> <A NAME="tex2html1581"
+  HREF="node95.html">Copying/converting the whole or</A>
+ &nbsp; <B>  <A NAME="tex2html1587"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

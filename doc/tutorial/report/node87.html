@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Image creation/destruction</TITLE>
+<META NAME="description" CONTENT="Image creation/destruction">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node86.html">
+<LINK REL="up" HREF="node86.html">
+<LINK REL="next" HREF="node88.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1479"
+  HREF="node88.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1475"
+  HREF="node86.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1471"
+  HREF="node86.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1477"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1480"
+  HREF="node88.html">Image file I/O</A>
+<B> Up:</B> <A NAME="tex2html1476"
+  HREF="node86.html">Simple image/pixel routines</A>
+<B> Previous:</B> <A NAME="tex2html1472"
+  HREF="node86.html">Simple image/pixel routines</A>
+ &nbsp; <B>  <A NAME="tex2html1478"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00521000000000000000">
+Image creation/destruction</A>
+</H2>
+In the same manner as the general size matrix/vector package, Gandalf images
+can be represented either using structures or pointers to structures.
+The normal Gandalf convention is to use pointers, because images are
+relatively large objects, and the extra overhead of having to use
+<TT>malloc()</TT> to create the image structure is insignificant relative to
+the computation time needed to process the image. We will follow this
+convention, but bear in mind that either convention is possible.
+To create a grey-level short integer image, use the routine
+<PRE>
+      Gan_Image *pImage;
+
+      pImage = gan_image_alloc_gl_s ( 150, 100 );
+</PRE>
+This creates an image with dimensions 150 (height) by 100 (width).
+The same operation using an image structure rather than a pointer would be
+<PRE>
+      Gan_Image Image;
+
+      gan_image_form_gl_s ( &amp;Image, 150, 100 );
+</PRE>
+To free the image, use
+<PRE>
+      gan_image_free ( pImage ); /* OR */
+      gan_image_free ( &amp;Image );
+</PRE>
+This function can be used universally to free a Gandalf image created in
+any of the ways described here.
+
+<P>
+Sometimes the image data array is already present in memory, and we want
+to create a Gandalf image that points to the data. Let us assume that the
+data for a <IMG
+ WIDTH="71" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img97.png"
+ ALT="$256\times 256$"> pixel grey-level short integer image is available
+in an array <TT>asData</TT>. Assume for now that it is a contiguous array,
+stored with rows following rows consecutively without any gaps, i.e. an
+array of 65536 elements. Then to build a Gandalf image that points into
+this data we might use the code
+<PRE>
+      short asData[65536];
+
+      /* ... set up array asData with image data ... */
+      pImage = gan_image_alloc_data_gl_s ( 256, 256, 256*sizeof(short),
+                                           asData, 65536, NULL, 0 ); /* OR */
+      gan_image_form_data_gl_s ( &amp;Image, 256, 256, 256*sizeof(short),
+                                 asData, 65536, NULL, 0 );
+</PRE>
+After the height and width arguments is a ``stride'' argument, which indicates
+the separation in memory between adjacent rows of the image, as stored in
+the <TT>asData</TT> array. Here it is 256 pixels (the image width), but since
+stride is measured in bytes, we need to multiply by the pixel size, as here.
+The data array <TT>asData</TT> is passed in along with its size in pixels (65536).
+The size is passed mainly as a means of error checking: if the requested
+Gandalf image as defined by the height, width and stride were to exceed the
+size of the data array, it would be an error, the Gandalf error handler
+would be invoked, and <TT>NULL</TT> would be returned. Here the data array size
+and the image size match exactly. The final two arguments allow the programmer
+also to pass in an array of <EM>row pointers</EM> which point into the start
+of each row of the image. Here we pass <TT>NULL</TT> for the row pointers, which
+means that they will be allocated inside the function.
+
+<P>
+Note that the <TT>Gan_Image</TT> structure stores the information concerning
+which parts of the structure were dynamically allocated: the structure itself,
+the image data array and the row pointer array. <TT>gan_image_free()</TT>
+then knows which bits to free.
+
+<P>
+A slightly more complex example is when the rows of the image as stored
+in the data array are not contiguous in memory. This might happen for
+instance in frame-grabber (video) memory, where the hardware might restrict
+the stride to a fixed number of bytes, say 1024. We shall also provide
+an array of row pointers to the image creation function. Then we would have to
+call the above functions as follows:
+<PRE>
+      short *psData, *apRowPointer[256];
+
+      /* ... set psData to point to video memory ... */
+      pImage = gan_image_alloc_data_gl_s ( 256, 256, 1024,
+                                           asData, 65536, apRowPointer, 256 ); /* OR */
+      gan_image_form_data_gl_s ( &amp;Image, 256, 256, 256*sizeof(short),
+                                 asData, 131072, apRowPointer, 256 );
+</PRE>
+Here we assume that <TT>short</TT>s are 2 bytes. These function calls will
+set the Gandalf image to point directly into the video memory, so that
+if desired the image stored may be copied for further processing (see below)
+or processed directly.
+
+<P>
+For RGB unsigned character images, the function calls would be similar:
+<PRE>
+      Gan_Image *pImage, Image;
+      Gan_RGBPixel_uc argbucData[65536];
+
+      pImage = gan_image_alloc_rgb_uc ( 150, 100 ); /* OR */
+      gan_image_form_rgb_uc ( &amp;Image, 150, 100 ); /* OR */
+
+      /* ... set up array aucData with image data ... */
+      pImage = gan_image_alloc_data_rgb_uc ( 256, 256, 256*sizeof(unsigned char),
+                                             argbucData, 65536, NULL, 0 ); /* OR */
+      gan_image_form_data_rgb_uc ( &amp;Image, 256, 256, 256*sizeof(unsigned char),
+                                   argbucData, 65536, NULL, 0 );
+</PRE>
+For RGB and other similar formats, Gandalf assumes that the channels for
+each pixel are grouped in memory, so that a pixel can be represented as
+a structure, rather than the channels being stored in separate arrays.
+For RGB unsigned character images, the pixel structure is
+<TT>Gan_RGBPixel_uc</TT>, as defined in <TT>&lt;gandalf/image/pixel.h&gt;</TT>:
+<PRE>
+      /* Structure defining RGB colour unsigned character pixel
+       */
+      typedef struct Gan_RGBPixel_uc
+      {
+         unsigned char R, G, B;
+      } Gan_RGBPixel_uc;
+</PRE>
+A different structure type is defined for each image format
+(apart from grey-level) and type.
+
+<P>
+There are also higher level functions which create a Gandalf images using
+arguments to determine the format and type. Use these functions only if
+the format/type is determined at run-time. An example emulating the above
+examples for grey-level images is
+<PRE>
+      Gan_Image *pImage, Image;
+
+      pImage = gan_image_alloc ( GAN_GREY_LEVEL_IMAGE, GAN_SHORT, 150, 100 ); /* OR */
+      gan_image_form ( &amp;Image, GAN_GREY_LEVEL_IMAGE, GAN_SHORT, 150, 100 );
+</PRE>
+
+<P>
+<B>Error detection:</B> All the above routines return <TT>NULL</TT> and invoke the
+Gandalf error handler if they fail. The most likely failure modes are failing
+to allocate the data required (i.e. internal <TT>malloc()</TT> or <TT>realloc()</TT>
+calls failing), or passing too small an array into the
+<TT>..._alloc_data...()</TT> or  <TT>..._form_data...()</TT> routines.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1479"
+  HREF="node88.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1475"
+  HREF="node86.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1471"
+  HREF="node86.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1477"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1480"
+  HREF="node88.html">Image file I/O</A>
+<B> Up:</B> <A NAME="tex2html1476"
+  HREF="node86.html">Simple image/pixel routines</A>
+<B> Previous:</B> <A NAME="tex2html1472"
+  HREF="node86.html">Simple image/pixel routines</A>
+ &nbsp; <B>  <A NAME="tex2html1478"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

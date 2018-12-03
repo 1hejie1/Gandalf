@@ -1,0 +1,365 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Filling a general size matrix with values</TITLE>
+<META NAME="description" CONTENT="Filling a general size matrix with values">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node71.html">
+<LINK REL="previous" HREF="node69.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node71.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1264"
+  HREF="node71.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1260"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1254"
+  HREF="node69.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1262"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1265"
+  HREF="node71.html">Accessing the elements of</A>
+<B> Up:</B> <A NAME="tex2html1261"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1255"
+  HREF="node69.html">Adjusting the size of</A>
+ &nbsp; <B>  <A NAME="tex2html1263"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422300000000000000"></A>
+   <A NAME="fill-mat-gen-sec"></A>
+<BR>
+Filling a general size matrix with values
+</H3>
+
+<P>
+To fill a matrix with values, create the matrix and then use the routine
+<TT>gan_mat_fill_va()</TT>. An example is
+<PRE>
+      Gan_Matrix mA;
+
+      /* ... create mA using e.g. gan_mat_form() ... */
+      gan_mat_fill_va ( &amp;mA, 2, 3, 1.0, 2.0, 3.0,
+                                   4.0, 5.0, 6.0 );
+</PRE>
+which sets matrix <TT>mA</TT> to have dimensions 2 rows by 3 columns,
+and sets the value to
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+A = \left(\!\!\begin{array}{ccc} 1 & 2 & 3 \\4 & 5 & 6 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="114" HEIGHT="45" BORDER="0"
+ SRC="img64.png"
+ ALT="\begin{displaymath}A = \left(\!\!\begin{array}{ccc} 1 &amp; 2 &amp; 3 \ 4 &amp; 5 &amp; 6 \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+To fill a matrix with a constant value, you can use
+<PRE>
+      gan_mat_fill_const_q ( &amp;mA, 4, 2, 3.0 );
+</PRE>
+which sets the dimensions of <TT>mA</TT> to four rows by two columns,
+and sets all the elements to three. This gives rise to the matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+A = \left(\!\!\begin{array}{cccc} 3 & 3 & 3 & 3 \\3 & 3 & 3 & 3 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="138" HEIGHT="45" BORDER="0"
+ SRC="img65.png"
+ ALT="\begin{displaymath}A = \left(\!\!\begin{array}{cccc} 3 &amp; 3 &amp; 3 &amp; 3 \ 3 &amp; 3 &amp; 3 &amp; 3 \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+This function is also available in a form which allocates and fills a
+matrix from scratch:
+<PRE>
+      Gan_Matrix *pmA;
+
+      pmA = gan_mat_fill_const_s ( 4, 2, 3.0 );
+</PRE>
+There are special macro routines for setting a matrix to zero:
+<PRE>
+      gan_mat_fill_zero_q ( &amp;mA, 4, 2 ); /* OR */
+      pmA = gan_mat_fill_zero_s ( 4, 2 );
+</PRE>
+
+<P>
+For square matrices there are specific routines for each square matrix
+type. The order in which the elements are passed in the variable argument
+list corresponds to the matrix type. For symmetric matrice, only the
+<EM>lower</EM> triangle is passed (including the diagonal). So for instance
+to create a symmetric matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S = \left(\!\!\begin{array}{ccc} 1 & 2 & 4 \\2 & 3 & 5 \\4 & 5 & 6 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="116" HEIGHT="64" BORDER="0"
+ SRC="img25.png"
+ ALT="\begin{displaymath}S = \left(\!\!\begin{array}{ccc} 1 &amp; 2 &amp; 4 \ 2 &amp; 3 &amp; 5 \ 4 &amp; 5 &amp; 6\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+use the code     
+<PRE>
+      Gan_SquMatrix smS;
+
+      /* ... create smS using e.g. gan_symmat_form() ... */
+      gan_symmat_fill_va ( &amp;smS, 3, 1.0,
+                                    2.0, 3.0,
+                                    4.0, 5.0, 6.0 );
+</PRE>
+For lower and upper triangular matrices pass the elements in the relevant order
+for the corresponding triangle. So for instance
+<PRE>
+      Gan_SquMatrix smL;
+
+      /* ... create smL using e.g. gan_ltmat_form() ... */
+      gan_ltmat_fill_va ( &amp;smL, 3, 1.0,
+                                   2.0, 3.0,
+                                   4.0, 5.0, 6.0 );
+</PRE>
+creates the lower triangular  matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+L = \left(\!\!\begin{array}{ccc} 1 & 0 & 0 \\2 & 3 & 0 \\4 & 5 & 6 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="116" HEIGHT="64" BORDER="0"
+ SRC="img26.png"
+ ALT="\begin{displaymath}L = \left(\!\!\begin{array}{ccc} 1 &amp; 0 &amp; 0 \ 2 &amp; 3 &amp; 0 \ 4 &amp; 5 &amp; 6\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+while
+<PRE>
+      Gan_SquMatrix smU;
+
+      /* ... create smU using e.g. gan_utmat_form() ... */
+      gan_utmat_fill_va ( &amp;smU, 3, 1.0, 2.0, 4.0,
+                                        3.0, 5.0,
+                                             6.0 );
+</PRE>
+creates the upper triangular  matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+U = \left(\!\!\begin{array}{ccc} 1 & 2 & 4 \\0 & 3 & 5 \\0 & 0 & 6 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="117" HEIGHT="64" BORDER="0"
+ SRC="img66.png"
+ ALT="\begin{displaymath}U = \left(\!\!\begin{array}{ccc} 1 &amp; 2 &amp; 4 \ 0 &amp; 3 &amp; 5 \ 0 &amp; 0 &amp; 6 \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The routines for diagonal and scaled identity matrices follow a similar
+pattern, so you can use
+<PRE>
+      Gan_SquMatrix smD;
+
+      /* ... create smD using e.g. gan_diagmat_form() ... */
+      gan_diagmat_fill_va ( &amp;smD, 4, 1.0, 2.0, 3.0, 4.0 );
+</PRE>
+to create the diagonal matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+D = \left(\!\!\begin{array}{cccc} 1 & 0 & 0 & 0 \\0 & 2 & 0 & 0 \\0 & 0 & 3 & 0 \\0 & 0 & 0 & 4 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="142" HEIGHT="83" BORDER="0"
+ SRC="img67.png"
+ ALT="\begin{displaymath}D = \left(\!\!\begin{array}{cccc} 1 &amp; 0 &amp; 0 &amp; 0 \ 0 &amp; 2 &amp; 0 &amp; 0 \ 0 &amp; 0 &amp; 3 &amp; 0 \ 0 &amp; 0 &amp; 0 &amp; 4 \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+or
+<PRE>
+      Gan_SquMatrix smsI;
+
+      /* ... create smsI using e.g. gan_scalImat_form() ... */
+      gan_scalImat_fill_va ( &amp;msI, 4, 2.0 );
+</PRE>
+to create the scaled identity matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+D = \left(\!\!\begin{array}{cccc} 2 & 0 & 0 & 0 \\0 & 2 & 0 & 0 \\0 & 0 & 2 & 0 \\0 & 0 & 0 & 2 \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="142" HEIGHT="83" BORDER="0"
+ SRC="img68.png"
+ ALT="\begin{displaymath}D = \left(\!\!\begin{array}{cccc} 2 &amp; 0 &amp; 0 &amp; 0 \ 0 &amp; 2 &amp; 0 &amp; 0 \ 0 &amp; 0 &amp; 2 &amp; 0 \ 0 &amp; 0 &amp; 0 &amp; 2 \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+There are also routines to fill square matrices with a constant value, with
+a special routine for filling with zero:
+<PRE>
+      Gan_SquMatrix smA;
+
+      /* ... create smA using e.g. gan_squmat_form() ... */
+      gan_symmat_fill_const_q ( &amp;smA, 4, 3.0 ); /* set A as symmetric(4x4), each element 3 */
+      gan_ltmat_fill_const_q ( &amp;smA, 4, 3.0 ); /* set A as l. triang.(4x4), each element 3 */
+      gan_utmat_fill_const_q ( &amp;smA, 4, 3.0 ); /* set A as u. triang.(4x4), each element 3 */
+      gan_diagmat_fill_const_q ( &amp;smA, 4, 3.0 ); /* set A as diagonal(4x4), each element 3 */
+      gan_scalImat_fill_const_q ( &amp;smA, 4, 3.0 ); /* set A as scaled I(4x4), each element 3 */
+      gan_symmat_fill_zero_q ( &amp;smA, 4 ); /* set A as symmetric(4x4), each element zero */
+      gan_ltmat_fill_zero_q ( &amp;smA, 4 ); /* set A as l. triang.(4x4), each element zero */
+      gan_utmat_fill_zero_q ( &amp;smA, 4 ); /* set A as u. triang.(4x4), each element zero */
+      gan_diagmat_fill_zero_q ( &amp;smA, 4 ); /* set A as diagonal(4x4), each element zero */
+      gan_scalImat_fill_zero_q ( &amp;smA, 4 ); /* set A as scaled I(4x4), each element zero */
+</PRE>
+set the type and size of an existing square matrix, and sets all its elements
+to the same value,
+<PRE>
+      Gan_SquMatrix *psmS, *psmL, *psmU, *psmD, *psmsI;
+
+      psmS = gan_symmat_fill_const_s ( 4, 3.0 ); /* create 4x4 symmetric mat., each el. 3 */
+      psmL = gan_ltmat_fill_const_s ( 4, 3.0 ); /* create 4x4 u. tri. mat., each el. 3 */
+      psmU = gan_utmat_fill_const_s ( 4, 3.0 ); /* create 4x4 l. tri. mat., each el. 3 */
+      psmD = gan_diagmat_fill_const_s ( 4, 3.0 ); /* create 4x4 diagonal mat., each el. 3 */
+      psmsI = gan_scalImat_fill_const_s ( 4, 3.0 ); /* create 4x4 scaled I mat., each el. 3 */
+      psmS = gan_symmat_fill_zero_s ( 4 ); /* create 4x4 symmetric mat., each el. zero */
+      psmL = gan_ltmat_fill_zero_s ( 4 ); /* create 4x4 u. tri. mat., each el. zero */
+      psmU = gan_utmat_fill_zero_s ( 4 ); /* create 4x4 l. tri. mat., each el. zero */
+      psmD = gan_diagmat_fill_zero_s ( 4 ); /* create 4x4 diagonal mat., each el. zero */
+      psmsI = gan_scalImat_fill_zero_s ( 4 ); /* create 4x4 scaled I mat., each el. zero */
+</PRE>
+create new matrices with the given type and size, and set all the elements to
+the same value,
+
+<P>
+There are also equivalent routines that work with a variable square
+matrix type:
+<PRE>
+      Gan_SquMatrix smA, *psmA;
+      Gan_SquMatrixType type;
+
+      /* ... create smA using e.g. gan_squmat_form() and set type to
+             desired square matrix type, e.g. GAN_SYMMETRIC_MATRIX ...*/
+
+      /* set up an existing matrix, fill it with a constant value */
+      gan_squmat_fill_const_q ( &amp;smA, type, 4, 3.0 ); /* constant element value 3 */
+      gan_squmat_fill_zero_q ( &amp;smA, type, 4 ); /* fill with zero */
+
+      /* create a matrix from scratch */
+      psmA = gan_squmat_fill_const_s ( type, 4, 3.0 ); /* constant element value 3 */
+      psmA = gan_squmat_fill_const_s ( type, 4, 3.0 ); /* fill with zero */
+</PRE>
+
+<P>
+Note that the dynamic reconfiguration feature of square matrices means again
+that the <TT>..._fill_va()</TT>,
+<BR><TT>.._fill_const_q()</TT> and
+<TT>..._fill_zero_q()</TT> square matrix
+routines do not require the matrix to be set up initially with either
+the same type or size.
+
+<P>
+<B>Error detection:</B> <TT>NULL</TT> is returned and the error handler is
+invoked on failure. The most likely failure mode is failing to reallocate
+the matrix data when the size of the matrix is changed,
+i.e. failure of a call to <TT>realloc()</TT>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1264"
+  HREF="node71.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1260"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1254"
+  HREF="node69.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1262"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1265"
+  HREF="node71.html">Accessing the elements of</A>
+<B> Up:</B> <A NAME="tex2html1261"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1255"
+  HREF="node69.html">Adjusting the size of</A>
+ &nbsp; <B>  <A NAME="tex2html1263"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

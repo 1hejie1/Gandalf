@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Converting a pixel to a given format/type</TITLE>
+<META NAME="description" CONTENT="Converting a pixel to a given format/type">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node91.html">
+<LINK REL="up" HREF="node88.html">
+<LINK REL="next" HREF="node93.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1541"
+  HREF="node93.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1537"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1533"
+  HREF="node91.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1539"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1542"
+  HREF="node93.html">Binary images</A>
+<B> Up:</B> <A NAME="tex2html1538"
+  HREF="node88.html">Image file I/O</A>
+<B> Previous:</B> <A NAME="tex2html1534"
+  HREF="node91.html">Filling an image with</A>
+ &nbsp; <B>  <A NAME="tex2html1540"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00534000000000000000"></A>
+<A NAME="convert-pixel-sec"></A>
+<BR>
+Converting a pixel to a given format/type
+</H2>
+Gandalf routines taking <TT>Gan_Pixel</TT> structure pointers as arguments,
+such as <TT>gan_image_fill_const()</TT>, require that the format and type
+of the pixel and image arguments match. This can be done by using the
+routines in this section. To convert a pixel to a specific format and type
+use the routine
+<PRE>
+      Gan_Pixel Pixel1, Pixel2; /* declare pixels 1 &amp; 2 */
+
+      /* let's initialise pixel 1 to a grey-level unsigned character value */
+      Pixel1.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel1.type = GAN_UCHAR;
+      Pixel1.data.gl.uc = 255;
+
+      /* now convert pixel to RGB format and floating point type */
+      gan_image_convert_pixel_q ( &amp;Pixel1, GAN_RGB_COLOUR_IMAGE, GAN_FLOAT,
+                                  &amp;Pixel2 );
+
+      /* print new pixel value, which should be R=G=B=1 */
+      printf ( "pixel RGB value %f %f %f\n", Pixel2.data.rgb.f.R,
+               Pixel2.data.rgb.f.G, Pixel2.data.rgb.f.B );
+</PRE>
+Another version of this function returns the result as a new pixel:
+<PRE>
+      /* convert pixel to RGB format and floating point type */
+      Pixel2 = gan_image_convert_pixel_s ( &amp;Pixel1, GAN_RGB_COLOUR_IMAGE, GAN_FLOAT );
+</PRE>
+There is also a routine that converts the format and type in-place in the
+input pixel:
+<PRE>
+      /* convert pixel to RGB format and floating point type in-place */
+      gan_image_convert_pixel_i ( &amp;Pixel1, GAN_RGB_COLOUR_IMAGE, GAN_FLOAT );
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

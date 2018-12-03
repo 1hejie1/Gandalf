@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The Gandalf line detector</TITLE>
+<META NAME="description" CONTENT="The Gandalf line detector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node124.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node126.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1990"
+  HREF="node126.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1986"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1982"
+  HREF="node124.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1988"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1991"
+  HREF="node126.html">Representing 3D rotations</A>
+<B> Up:</B> <A NAME="tex2html1987"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1983"
+  HREF="node124.html">Displaying a line map</A>
+ &nbsp; <B>  <A NAME="tex2html1989"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION006710000000000000000">
+The Gandalf line detector</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/orthog_line.h&gt;
+</PRE>
+The Gandalf line detector takes an edge map as input, and automatically
+segments each edge string into line segments.
+Here is an example code fragment using the Harris corner detector.
+<PRE>
+      Gan_EdgeFeatureMap EdgeMap; /* declare edge map */
+      Gan_LineFeatureMap LineMap; /* declare line map */
+
+      /* ... build edge map ... */
+
+      /* initialise line map */
+      gan_line_feature_map_form ( &amp;LineMap,
+                                  1000 ); /* initial limit on number of lines */
+
+      /* compute lines from the edge map */
+      gan_orthog_line_q ( &amp;EdgeMap,
+                          10, /* minimum length of line segment */
+                          2, /* cut size, i.e. amount to shrink line segment */
+                          1.0, /* RMS error threshold on fitted line */
+                          NULL, /* or pointer to local feature map */
+                          GAN_TRUE, /* whether to copy points */
+                          &amp;LineMap );
+
+      /* free line map */
+      gan_line_feature_map_free ( &amp;LineMap );
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

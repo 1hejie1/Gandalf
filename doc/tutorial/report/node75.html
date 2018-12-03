@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size matrix subtraction</TITLE>
+<META NAME="description" CONTENT="General size matrix subtraction">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node76.html">
+<LINK REL="previous" HREF="node74.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node76.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1324"
+  HREF="node76.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1320"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1314"
+  HREF="node74.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1322"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1325"
+  HREF="node76.html">Rescaling a general size</A>
+<B> Up:</B> <A NAME="tex2html1321"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1315"
+  HREF="node74.html">General size matrix addition</A>
+ &nbsp; <B>  <A NAME="tex2html1323"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422800000000000000">
+General size matrix subtraction</A>
+</H3>
+The routines for matrix subtraction follow the scheme of those for
+matrix addition, leading to the options
+<PRE>
+      Gan_Matrix mA, mB, mC; /* declare matrices x, y and z */
+      Gan_Matrix *pmC; /* declare matrix z alternatively as pointer */
+
+      /* ... create and fill mA &amp; mB, create mC ... */
+      gan_mat_sub_q ( &amp;mA, &amp;mB, &amp;mC ); /* compute C = A - B */
+      pmC = gan_mat_sub_s ( &amp;mA, &amp;mB ); /* compute C = A - B */
+      gan_mat_sub_i1 ( &amp;mA, &amp;mB ); /* replace A = A - B */
+      gan_mat_sub_i2 ( &amp;mA, &amp;mB ); /* replace B = A - B */
+      gan_mat_decrement ( &amp;mA, &amp;mB ); /* replace A = A - B */
+</PRE>
+If one of the input matrices is to be implicitly transposed, use instead
+<PRE>
+      Gan_Matrix mA, mB, mC; /* declare matrices x, y and z */
+      Gan_Matrix *pmC; /* declare matrix z alternatively as pointer */
+
+      /* ... create and fill mA &amp; mB, create mC ... */
+
+      /* here B must have the same number of columns as A has rows, and vice versa */
+      gan_mat_subT_q ( &amp;mA, &amp;mB, &amp;mC ); /* compute C = A - B^T */
+      pmC = gan_mat_subT_s ( &amp;mA, &amp;mB ); /* compute C = A - B^T */
+      gan_mat_decrementT ( &amp;mA, &amp;mB ); /* replace A = A - B^T */
+</PRE>
+
+<P>
+There are equivalent functions for square matrices. Firstly the simple
+routines for subtracting two matrices:
+<PRE>
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B &amp; C */
+
+      /* ... create and fill smA &amp; smB, create smC ... */
+      gan_squmat_sub_q ( &amp;smA, &amp;smB, &amp;smC ); /* compute C = A - B, OR */
+      gan_squmat_sub_i1 ( &amp;smA, &amp;smB ); /* replace A = A - B, OR */
+      gan_squmat_sub_i2 ( &amp;smA, &amp;smB ); /* replace B = A - B, OR */
+      gan_squmat_decrement ( &amp;smA, &amp;smB ); /* replace A = A - B, OR */
+      psmC = gan_squmat_sub_s ( &amp;smA, &amp;smB ); /* compute C = A - B as new matrix */
+</PRE>
+Other routines implicitly transpose one of the input matrices:
+<PRE>
+      Gan_SquMatrix smA, smB, smC, *psmC; /* declare matrices A, B &amp; C */
+
+      /* ... create and fill smA &amp; smB, create smC ... */
+      gan_squmat_subT_q ( &amp;smA, &amp;smB, &amp;smC ); /* compute C = A - B^T, OR */
+      gan_squmat_decrementT ( &amp;smA, &amp;smB ); /* replace A = A - B^T, OR */
+      psmC = gan_squmat_subT_s ( &amp;smA, &amp;smB ); /* compute C = A - B^T as new matrix */
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>NULL</TT> is returned and the Gandalf error handler
+invoked if the matrix addition fails.
+The most likely failure modes are failing to create/set the result matrix,
+or size/type incompatibility between the input matrices.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

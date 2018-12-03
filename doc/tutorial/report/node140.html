@@ -1,0 +1,368 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Calculating the Intersection of a Plane and a Sphere</TITLE>
+<META NAME="description" CONTENT="Calculating the Intersection of a Plane and a Sphere">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node141.html">
+<LINK REL="previous" HREF="node139.html">
+<LINK REL="up" HREF="node139.html">
+<LINK REL="next" HREF="node141.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2185"
+  HREF="node141.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2181"
+  HREF="node139.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2175"
+  HREF="node139.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2183"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2186"
+  HREF="node141.html">Calculating the Plane Parameters</A>
+<B> Up:</B> <A NAME="tex2html2182"
+  HREF="node139.html">Example: Plane Fitting</A>
+<B> Previous:</B> <A NAME="tex2html2176"
+  HREF="node139.html">Example: Plane Fitting</A>
+ &nbsp; <B>  <A NAME="tex2html2184"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006112100000000000000">
+Calculating the Intersection of a Plane and a Sphere</A>
+</H3>
+  The perpendicular, and therefore nearest, distance from the plane to the
+  centre of the cube is calculated. If it is smaller than the radius
+  of the circumscribing sphere, the plane intersects the sphere,
+  otherwise it misses. The distance is normalised by dividing it by
+  the side length of the cube. The normalised distance of a plane
+  from the centre of a child cube can be calculated simply from the
+  normalised distance of the plane from it's parent's centre, as shown below.
+  The plane is defined by the following equation:
+  <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+a_0 + a_1 X_1 + a_2 X_2 + a_3 X_3 = 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="209" HEIGHT="26" BORDER="0"
+ SRC="img320.png"
+ ALT="\begin{displaymath}
+a_0 + a_1 X_1 + a_2 X_2 + a_3 X_3 = 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <!-- MATH
+ $a_1^2 + a_2^2 + a_3^2 = 1$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img321.png"
+ ALT="$a_1^2 + a_2^2 + a_3^2 = 1$">. Let the child cube have indices
+  <!-- MATH
+ $[b_1, b_2, b_3]$
+ -->
+<IMG
+ WIDTH="69" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img322.png"
+ ALT="$[b_1, b_2, b_3]$">, centre <IMG
+ WIDTH="86" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img323.png"
+ ALT="$(C_1,C_2,C_3)$"> and side length <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img324.png"
+ ALT="$L_{\rm child}$">.
+  The radius of the circumscribing sphere is
+  <!-- MATH
+ $\frac{\sqrt{3} L_{\rm child}}{2}$
+ -->
+<IMG
+ WIDTH="57" HEIGHT="42" ALIGN="MIDDLE" BORDER="0"
+ SRC="img325.png"
+ ALT="$\frac{\sqrt{3} L_{\rm child}}{2}$">. The perpendicular distance
+  of the plane to the centre of the child cube is
+  <BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+\rm {perpendicular\;distance} & = &
+      \frac{a_0 + a_1 C_1 + a_2 C_2 + a_3 C_3}{\sqrt{a_1^2 + a_2^2 + a_3^2}}
+      \nonumber \\
+     & = & a_0 + a_1 C_1 + a_2 C_2 + a_3 C_3. \nonumber
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="161" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img326.png"
+ ALT="$\displaystyle \rm {perpendicular\;distance}$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img191.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="184" HEIGHT="53" ALIGN="MIDDLE" BORDER="0"
+ SRC="img327.png"
+ ALT="$\displaystyle \frac{a_0 + a_1 C_1 + a_2 C_2 + a_3 C_3}{\sqrt{a_1^2 + a_2^2 + a_3^2}}$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img191.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="185" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img328.png"
+ ALT="$\displaystyle a_0 + a_1 C_1 + a_2 C_2 + a_3 C_3.$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+When normalised this becomes
+  <BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+R_{\rm child} = \frac{a_0 + a_1 C_1 + a_2 C_2 + a_3 C_3}{L_{\rm child}}.
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="child_norm_dist"></A><IMG
+ WIDTH="195" HEIGHT="61" BORDER="0"
+ SRC="img329.png"
+ ALT="\begin{displaymath}
+R_{\rm child} = \frac{a_0 + a_1 C_1 + a_2 C_2 + a_3 C_3}{L_{\rm child}}.
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.16)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+The normalised distance of the centre of the parent from the plane,
+  where the parent has centre <IMG
+ WIDTH="76" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img330.png"
+ ALT="$(p_1,p_2,p_3)$"> and side length
+  <!-- MATH
+ $L_{\rm parent}$
+ -->
+<IMG
+ WIDTH="51" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img331.png"
+ ALT="$L_{\rm parent}$">, is
+  <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+R_{\rm parent} = \frac{a_0 + a_1 p_1 + a_2 p_2 + a_3 p_3}{L_{\rm parent}}.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="242" HEIGHT="42" BORDER="0"
+ SRC="img332.png"
+ ALT="\begin{displaymath}
+R_{\rm parent} = \frac{a_0 + a_1 p_1 + a_2 p_2 + a_3 p_3}{L_{\rm parent}}.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The child is half the size of the parent, so
+  <!-- MATH
+ $L_{\rm parent} = 2 L_{\rm child}$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img333.png"
+ ALT="$L_{\rm parent} = 2 L_{\rm child}$">. Also the centres of the cubes are
+  related by the following equation:
+  <BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+C_i = p_i + \frac{b_i L_{\rm child}}{2}.
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="pc_centres"></A><IMG
+ WIDTH="120" HEIGHT="59" BORDER="0"
+ SRC="img334.png"
+ ALT="\begin{displaymath}
+C_i = p_i + \frac{b_i L_{\rm child}}{2}.
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.17)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+and substituting the RHS into equation&nbsp;<A HREF="#child_norm_dist">5.16</A> yields
+  <BR>
+<DIV ALIGN="CENTER"><A NAME="recurs_dist"></A>
+<!-- MATH
+ \begin{eqnarray}
+R_{\rm child} & = & \frac{a_0 + a_1 p_1 + a_2 p_2 + a_3 p_3 +
+		               \frac{L_{\rm child}}{2}
+			       (a_1 b_1 + a_2 b_2 + a_3 b_3)}
+			      {L_{\rm child}} \nonumber \\
+     & = & 2 R_{\rm parent} + \frac{1}{2} (a_1 b_1 + a_2 b_2 + a_3 b_3) .
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="44" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img335.png"
+ ALT="$\displaystyle R_{\rm child}$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img191.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="370" HEIGHT="60" ALIGN="MIDDLE" BORDER="0"
+ SRC="img336.png"
+ ALT="$\displaystyle \frac{a_0 + a_1 p_1 + a_2 p_2 + a_3 p_3 +
+\frac{L_{\rm child}}{2}
+(a_1 b_1 + a_2 b_2 + a_3 b_3)}
+{L_{\rm child}}$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img191.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="236" HEIGHT="50" ALIGN="MIDDLE" BORDER="0"
+ SRC="img337.png"
+ ALT="$\displaystyle 2 R_{\rm parent} + \frac{1}{2} (a_1 b_1 + a_2 b_2 + a_3 b_3) .$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.18)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+This <A NAME="lookup_table"></A> formula is used to calculate the normalised
+  distance for a child in terms of that of it's parent, and is fast because
+  the <IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"> values of the term
+  <!-- MATH
+ $\frac{1}{2} (a_1 b_1 + a_2 b_2 + a_3 b_3)$
+ -->
+<IMG
+ WIDTH="154" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img338.png"
+ ALT="$\frac{1}{2} (a_1 b_1 + a_2 b_2 + a_3 b_3)$"> can be stored as a look-up
+  table for each set of coefficients <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img296.png"
+ ALT="$a_{ij}$"> (i.e. each disparity point).
+
+<P>
+The normalised distance of the plane from the root cube, which has side
+  length one and centre <!-- MATH
+ $(0,0, \frac{d_{\rm peak}}{w})$
+ -->
+<IMG
+ WIDTH="80" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img339.png"
+ ALT="$(0,0, \frac{d_{\rm peak}}{w})$">, is
+  <BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+R_{\rm root} = a_0 + a_3 \frac{d_{\rm peak}}{w}.
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="root_distance"></A><IMG
+ WIDTH="150" HEIGHT="39" BORDER="0"
+ SRC="img340.png"
+ ALT="\begin{displaymath}
+R_{\rm root} = a_0 + a_3 \frac{d_{\rm peak}}{w}.
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.19)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+The normalised distances are calculated initially
+  from equation&nbsp;<A HREF="#root_distance">5.19</A> and from
+  then on using the formula&nbsp;<A HREF="#recurs_dist">5.18</A>.
+  The normalised distances are compared with <!-- MATH
+ $\frac{\sqrt{3}}{2}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="43" ALIGN="MIDDLE" BORDER="0"
+ SRC="img341.png"
+ ALT="$\frac{\sqrt{3}}{2}$">,
+  the radius of the circumscribing sphere of a cube with side length one.
+  This is equivalent to comparing the un-normalised distance with the
+  circumscribing sphere of the original cube.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2185"
+  HREF="node141.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2181"
+  HREF="node139.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2175"
+  HREF="node139.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2183"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2186"
+  HREF="node141.html">Calculating the Plane Parameters</A>
+<B> Up:</B> <A NAME="tex2html2182"
+  HREF="node139.html">Example: Plane Fitting</A>
+<B> Previous:</B> <A NAME="tex2html2176"
+  HREF="node139.html">Example: Plane Fitting</A>
+ &nbsp; <B>  <A NAME="tex2html2184"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

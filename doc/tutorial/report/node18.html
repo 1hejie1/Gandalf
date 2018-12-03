@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Bit arrays</TITLE>
+<META NAME="description" CONTENT="Bit arrays">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node19.html">
+<LINK REL="previous" HREF="node17.html">
+<LINK REL="up" HREF="node12.html">
+<LINK REL="next" HREF="node19.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html494"
+  HREF="node19.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html490"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html484"
+  HREF="node17.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html492"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html495"
+  HREF="node19.html">Memory allocation</A>
+<B> Up:</B> <A NAME="tex2html491"
+  HREF="node12.html">The Common Package</A>
+<B> Previous:</B> <A NAME="tex2html485"
+  HREF="node17.html">Linked lists</A>
+ &nbsp; <B>  <A NAME="tex2html493"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00330000000000000000"></A> <A NAME="bit-array-sec"></A>
+<BR>
+Bit arrays
+</H1>
+<PRE>
+      #include &lt;gandalf/common/bit_array.h&gt;
+</PRE>
+Gandalf bit arrays are a compact representation of binary flags.
+They are used both directly and as the foundation of binary images in Gandalf
+(see Section&nbsp;<A HREF="node93.html#binary-image-sec">4.4</A>).
+They allow compact storage of an array of boolean values.
+The architecture of the computer determines how the boolean values are stored,
+so for instance on 32 bit machines, the boolean values are packed as 32 values
+in a single word.
+To create a bit array use the following code:
+<PRE>
+      Gan_BitArray BitArray;
+
+      gan_bit_array_form ( &amp;BitArray, 200 );
+</PRE>
+for an array of 200 bits.
+
+<P>
+A bit array may be initialised to zero by calling
+<PRE>
+      gan_bit_array_fill ( &amp;BitArray, GAN_FALSE );
+</PRE>
+or to one (all bits set) by passing <TT>GAN_TRUE</TT> instead of
+<TT>GAN_FALSE</TT>. To set a bit to one, use
+<PRE>
+      gan_bit_array_set_bit ( &amp;BitArray, pos );
+</PRE>
+where <TT>pos</TT> is the bit you want to set, from zero to <IMG
+ WIDTH="46" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$N-1$"> for a bit
+array of <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img12.png"
+ ALT="$N$"> bits. Similarly use
+<BR><TT>gan_bit_array_clear_bit()</TT> to
+clear a bit to zero. To return the value of a particular bit use
+<PRE>
+      Gan_Bool bBit;
+
+      bBit = gan_bit_array_get_bit ( &amp;BitArray, pos );
+</PRE>
+
+<P>
+Several boolean operations are supported on bit arrays. Given two bit arrays,
+the operation
+<PRE>
+      gan_bit_array_and_i ( &amp;BitArray1, &amp;BitArray2 );
+</PRE>
+performs the bitwise AND operation on each bit of the bit arrays, overwriting
+<TT>BirArray1</TT> with the result. Bitwise OR, exclusive-OR (EOR) and not-AND
+(NAND) are also supported, as well as inversion (NOT).
+
+<P>
+To free a bit array after you have finished using it, call
+<PRE>
+      gan_bit_array_free ( &amp;BitArray );
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html494"
+  HREF="node19.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html490"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html484"
+  HREF="node17.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html492"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html495"
+  HREF="node19.html">Memory allocation</A>
+<B> Up:</B> <A NAME="tex2html491"
+  HREF="node12.html">The Common Package</A>
+<B> Previous:</B> <A NAME="tex2html485"
+  HREF="node17.html">Linked lists</A>
+ &nbsp; <B>  <A NAME="tex2html493"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

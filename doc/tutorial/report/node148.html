@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Adding new tests</TITLE>
+<META NAME="description" CONTENT="Adding new tests">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node147.html">
+<LINK REL="up" HREF="node147.html">
+<LINK REL="next" HREF="node149.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2277"
+  HREF="node149.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2273"
+  HREF="node147.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2269"
+  HREF="node147.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2275"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2278"
+  HREF="node149.html">Bibliography</A>
+<B> Up:</B> <A NAME="tex2html2274"
+  HREF="node147.html">The Test Framework</A>
+<B> Previous:</B> <A NAME="tex2html2270"
+  HREF="node147.html">The Test Framework</A>
+ &nbsp; <B>  <A NAME="tex2html2276"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00710000000000000000">
+Adding new tests</A>
+</H1>
+New code written for Gandalf should come with a test harness that tests
+the functionality of the module. Currently there is only one module-specific
+test harness in Gandalf, that for linked lists in
+<TT>common/linked_list.[ch]</TT>, the rest of the test programs combining
+tests over several modules in a package.
+In the future we wish to push Gandalf
+in the direction of Extreme Programming, with test harnesses for each module
+and for testing interactions between modules.
+
+<P>
+Let us say we have written a new module <TT>histogram.[ch]</TT> in a
+(currently fictitious) <TT>statistics</TT> package. We now wish
+to add a test harness <TT>statistics/histogram_test.[ch]</TT>
+(actually we should write the test harness <EM>first</EM> according to
+Extreme Programming principles). The first thing is to copy another test
+program, say <TT>common/list_test.[ch]</TT>. Remove the test code and change
+the names of all the definitions and strings to correspond to the new
+test program, leaving the following template files.
+Firstly <TT>histogram_test.h</TT> should like like this:
+<PRE>
+      /**
+       * File:          $RCSfile: testing.tex,v $
+       * Module:        Histogram test program
+       * Part of:       Gandalf Library
+       *
+       * Revision:      $Revision: 1.3 $
+       * Last edited:   $Date: 2003/02/24 10:06:15 $
+       * Author:        $Author: pm $
+       * Copyright:     (c) 2002 YOUR INSTITUTION
+       *
+       * Notes:         Tests the histogram functions
+       */
+
+      /* This library is free software; you can redistribute it and/or
+         modify it under the terms of the GNU Lesser General Public
+         License as published by the Free Software Foundation; either
+         version 2.1 of the License, or (at your option) any later version.
+
+         This library is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser General Public
+         License along with this library; if not, write to the Free Software
+         Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+      */
+
+      #include &lt;gandalf/TestFramework/cUnit.h&gt;
+
+      #ifndef CUNIT_HISTOGRAM_TEST_H
+      #define CUNIT_HISTOGRAM_TEST_H
+
+      cUnit_test_suite * histogram_test_build_suite(void);
+
+      #endif
+</PRE>
+Make sure you keep the header and license sections. The <TT>histogram_test.c</TT>
+file should be:
+<PRE>
+      /**
+       * File:          $RCSfile: testing.tex,v $
+       * Module:        Histogram test program
+       * Part of:       Gandalf Library
+       *
+       * Revision:      $Revision: 1.3 $
+       * Last edited:   $Date: 2003/02/24 10:06:15 $
+       * Author:        $Author: pm $
+       * Copyright:     (c) 2002 YOUR INSTITUTION
+       *
+       * Notes:         Tests the histogram functions
+       */
+
+      /* This library is free software; you can redistribute it and/or
+         modify it under the terms of the GNU Lesser General Public
+         License as published by the Free Software Foundation; either
+         version 2.1 of the License, or (at your option) any later version.
+
+         This library is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser General Public
+         License along with this library; if not, write to the Free Software
+         Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+      */
+
+      #include &lt;stdlib.h&gt;
+      #include &lt;stdio.h&gt;
+
+      #include &lt;gandalf/TestFramework/cUnit.h&gt;
+      #include &lt;gandalf/statistics/histogram_test.h&gt;
+      #include &lt;gandalf/statistics/histogram.h&gt;
+
+      static Gan_Bool setup_test(void)
+      {
+         printf("\nSetup for histogram_test completed.\n\n");
+         return GAN_TRUE;
+      }
+
+      static Gan_Bool teardown_test(void)
+      {
+         printf("\nTeardown for histogram_test completed.\n\n");
+         return GAN_TRUE;
+      }
+
+      /* Tests all the histogram functions */
+      static Gan_Bool run_test(void)
+      {  
+         return GAN_TRUE;
+      }
+
+      #ifdef HISTOGRAM_TEST_MAIN
+
+      int main ( int argc, char *argv[] )
+      {
+         /* set default Gandalf error handler without trace handling */ 
+         gan_err_set_reporter ( gan_err_default_reporter );
+         gan_err_set_trace ( GAN_ERR_TRACE_OFF );
+
+         setup_test();
+         if ( run_test() )
+            printf ( "Tests ran successfully!\n" );
+         else
+            printf ( "At least one test failed\n" );
+
+         teardown_test();
+         gan_heap_report(NULL);
+         return 0;
+      }
+
+      #else
+
+      /* This function registers the unit tests to a cUnit_test_suite. */
+      cUnit_test_suite *histogram_test_build_suite(void)
+      {
+         cUnit_test_suite *sp;
+
+         /* Get a new test session */
+         sp = cUnit_new_test_suite("histogram_test suite");
+      
+         cUnit_add_test(sp, "histogram_test", run_test);
+
+         /* register a setup and teardown on the test suite 'histogram_test' */
+         if (cUnit_register_setup(sp, setup_test) != GAN_TRUE)
+            printf("Error while setting up test suite histogram_test");
+
+         if (cUnit_register_teardown(sp, teardown_test) != GAN_TRUE)
+            printf("Error while tearing down test suite histogram_test");
+
+         return( sp );
+      }
+
+      #endif /* #ifdef HISTOGRAM_TEST_MAIN */
+</PRE>
+There are now three functions, <TT>setup_test()</TT>, <TT>teardown_test()</TT>
+and <TT>run_test()</TT> for you to fill with your test code.
+<TT>setup_test()</TT> should create any data structures to be used multiple
+times by the tests. Then <TT>run_test()</TT> performs the tests, and
+<TT>teardown_test()</TT> frees the memory allocated by <TT>setup_test()</TT>.
+You can leave <TT>setup_test()</TT> and <TT>teardown_test()</TT> blank if you
+like, and allocate &amp; free the memory in <TT>run_test()</TT>.
+It is up to you.
+
+<P>
+The next stage is to add a rule in the package <TT>Makefile.in</TT> program to
+make your test program. Add <TT>histogram-test</TT> as a target to the
+<TT>all:</TT> line in <TT>statistics/Makefile.in</TT>. Then add the following lines
+to <TT>statistics/Makefile.in</TT>:
+<PRE>
+      histogram-test:
+              $(LIBTOOL) $(CC) -I$(TOPLEVEL)/.. $(CFLAGS) -DHISTOGRAM_TEST_MAIN histogram_test.c $(PATH_BUILDER_C) -o histogram_test $(LDFLAGS) $(LIB) $(LIBS)
+</PRE>
+Remember that there must be a tab character at the start of the
+<TT>$(LIBTOOL)</TT> line. Note the predefined symbol <TT>HISTOGRAM_TEST_MAIN</TT>.
+This is to make sure that the section of <TT>histogram_test.c</TT> with the
+<TT>main()</TT> function is compiled in. The other section of the code is
+for when the test functions are linked against the Gandalf test harness.
+For now, rerun <TT>./configure</TT> from the <TT>gandalf</TT> directory to
+recreate <TT>statistics/Makefile</TT> with the new rules, and make the
+test program with the commands:
+<PRE>
+      cd statistics
+      make histogram-test
+      ./histogram_test
+</PRE>
+(or <TT>make all</TT>). The tests should be designed so that if the data is
+successfully allocated and all the tests pass, <TT>setup_test()</TT>,
+<TT>run_test()</TT> and <TT>teardown_test()</TT> should all return <TT>GAN_TRUE</TT>.
+There is a special macro <TT>cu_assert()</TT>, which operates like <TT>assert()</TT>
+in the sense that it tests an expression and fails if zero is returned.
+In the <TT>cu_assert()</TT> either <TT>GAN_TRUE</TT> (one, success) is returned
+if the expression is non-zero, and <TT>GAN_FALSE</TT> (zero, failure) is returned
+if the expression is zero. In the latter case an error message is also
+printed, providing the line at which failure occurs. This provides a
+convenient shorthand for testing the results of the tests.
+
+<P>
+The next stage is to incorporate the test into the main Gandalf test
+harness. To do this, first edit <TT>gandalf/TestFramework/Makefile.in</TT>
+and add the following:
+
+<OL>
+<LI>Add <TT>histogram_test.o</TT> to the <TT>OBJS</TT> list.
+</LI>
+<LI>Add the line
+<PRE>
+      HISTOGRAM_TEST_C  = $(TOPLEVEL)/statistics/hisogram_test.c
+</PRE>
+	to the list below the <TT>OBJS</TT> list.
+</LI>
+<LI>Add the rule
+<PRE>
+      histogram_test.o: $(HISTOGRAM_TEST_C)
+              $(LIBTOOL) $(CC) -I$(TOPLEVEL)/.. $(CFLAGS) -c $(HISTOGRAM_TEST_C)
+</PRE>
+(remember the tab character again before <TT>$(LIBTOOL)</TT>).
+</LI>
+</OL>
+Now you will need to edit <TT>TestFramework/cUnit.c</TT>. Add the header file
+declaration
+<PRE>
+      #include &lt;gandalf/statistics/histogram_test.h&gt;
+</PRE>
+among the other <TT>#include</TT> declarations. Find the line
+which has <TT>#define maxAutoTests</TT> in it and add one to the number
+you see there. You will also need to add a line
+<PRE>
+         auto_tests[iIndex++] = "histogram_test";
+</PRE>
+in the list of similar lines below, and finally the lines
+<PRE>
+         pSuite = cUnit_add_test_suite(auto_tests[iIndex++],
+                                       histogram_test_build_suite);
+         gan_list_insert_last(glstAutoSuiteList, pSuite);
+</PRE>
+at the corresponding place in the next set of similar lines.
+You will need to run <TT>configure</TT> again to recreate the
+<TT>TestFramework/Makefile</TT> file, and then typing
+<PRE>
+      cd TestFramework
+      make
+      ./cUnit -menu
+</PRE>
+should give you the extended menu of test programs with your new test
+as one of the options.
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2277"
+  HREF="node149.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2273"
+  HREF="node147.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2269"
+  HREF="node147.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2275"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2278"
+  HREF="node149.html">Bibliography</A>
+<B> Up:</B> <A NAME="tex2html2274"
+  HREF="node147.html">The Test Framework</A>
+<B> Previous:</B> <A NAME="tex2html2270"
+  HREF="node147.html">The Test Framework</A>
+ &nbsp; <B>  <A NAME="tex2html2276"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

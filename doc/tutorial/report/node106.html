@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Building the camera calibration matrix</TITLE>
+<META NAME="description" CONTENT="Building the camera calibration matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node107.html">
+<LINK REL="previous" HREF="node105.html">
+<LINK REL="up" HREF="node102.html">
+<LINK REL="next" HREF="node107.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1756"
+  HREF="node107.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1752"
+  HREF="node102.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1746"
+  HREF="node105.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1754"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1757"
+  HREF="node107.html">Converting cameras between precisions</A>
+<B> Up:</B> <A NAME="tex2html1753"
+  HREF="node102.html">Cameras</A>
+<B> Previous:</B> <A NAME="tex2html1747"
+  HREF="node105.html">Adding/removing camera distortion</A>
+ &nbsp; <B>  <A NAME="tex2html1755"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00614000000000000000">
+Building the camera calibration matrix</A>
+</H2>
+The camera calibration matrix <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img109.png"
+ ALT="$K$"> is triangular. Gandalf provides a
+routine to build <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img109.png"
+ ALT="$K$"> from the calibration structure. The double precision
+version is
+<PRE>
+      Gan_Camera CameraD; /* declare camera structure */
+      Gan_SquMatrix33 sm33K; /* declare camera calibration matrix K */
+
+      /* ... build camera using e.g. gan_camera_build_linear() ... */
+
+      /* build camera calibration matrix K */
+      sm33K = gan_camera_fill_matrix_s ( &amp;CameraD );
+</PRE>
+and the single precision version is
+<PRE>
+      Gan_Camera_f CameraF; /* declare camera structure */
+      Gan_SquMatrix33_f sm33K; /* declare camera calibration matrix K */
+
+      /* ... build camera using e.g. gan_cameraf_build_linear() ... */
+
+      /* build camera calibration matrix K */
+      sm33K = gan_cameraf_fill_matrix_s ( &amp;CameraF );
+</PRE>
+Note that although <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img109.png"
+ ALT="$K$"> is an upper triangular matrix, the routines above
+produce a <EM>lower</EM> triangular matrix, since that is the only form of
+fixed size triangular matrix supported by Gandalf. As explained in
+Section&nbsp;<A HREF="node41.html#fixed-size-mat-sec">3.1.2</A>, Any operations involving upper triangular
+matrices can be implemented using implicit transpose of a lower triangular
+matrix.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size matrix inverse</TITLE>
+<META NAME="description" CONTENT="Fixed size matrix inverse">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node52.html">
+<LINK REL="previous" HREF="node50.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node52.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html993"
+  HREF="node52.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html989"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html983"
+  HREF="node50.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html991"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html994"
+  HREF="node52.html">Determinant, trace, norms of</A>
+<B> Up:</B> <A NAME="tex2html990"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html984"
+  HREF="node50.html">Fixed size matrix/matrix multiplication</A>
+ &nbsp; <B>  <A NAME="tex2html992"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004121000000000000000">
+Fixed size matrix inverse</A>
+</H3>
+All types of square matrices can be inverted in Gandalf.
+If the matrix is singular, <TT>NULL</TT>
+is normally returned and an error condition set using
+<TT>gan_err_register()</TT> (see Section&nbsp;<A HREF="node24.html#error-handling-sec">2.9</A>).
+The routines to invert a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix are
+<PRE>
+      Gan_Matrix33 m33A, m33B;
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_invert_q ( &amp;m33A, &amp;m33B ); /* B = A^-1, OR */
+      m33B = gan_mat33_invert_s ( &amp;m33A ); /* B = A^-1, OR */
+      gan_mat33_invert_i ( &amp;m33A ); /* A = A^-1, in-place in A */
+</PRE>
+Note that the routine <TT>gan_mat33_invert_s()</TT> returns the structure,
+rather than a pointer value, so cannot return an error condition.
+Do not use it unless you are SURE that your matrix is non-singular!
+The basic routines <TT>gan_mat33_invert_[qs]()</TT> are implemented as
+functions rather than macros, because they require temporary variables.
+There are similar routines for symmetric matrices
+<PRE>
+      Gan_SquMatrix33 sm33Sa, sm33Sb;
+
+      /* ... set up sm33Sa using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_invert_q ( &amp;sm33Sa, &amp;sm33Sb ); /* Sb = Sa^-1, OR */
+      sm33Sb = gan_symmat33_invert_s ( &amp;sm33Sa ); /* Sb = Sa^-1, OR */
+      gan_symmat33_invert_i ( &amp;sm33Sa ); /* Sa = Sa^-1, in-place in Sa */
+</PRE>
+and for triangular matrices
+<PRE>
+      Gan_SquMatrix33 sm33La, sm33Lb;
+
+      /* ... set up sm33La using e.g. gan_ltmat33_fill_q() ... */
+      gan_ltmat33_invert_q ( &amp;sm33La, &amp;sm33Lb ); /* Lb = La^-1, OR */
+      sm33Lb = gan_ltmat33_invert_s ( &amp;sm33La ); /* Lb = La^-1, OR */
+      gan_ltmat33_invert_i ( &amp;sm33La ); /* La = La^-1, in-place in La */
+</PRE>
+
+<P>
+If you don't want to invoke the error package when inversion is attempted
+on a singular matrix, there is a set of routines which allows to instead to
+return the error condition as part of the result. For instance the code
+fragment
+<PRE>
+      Gan_Matrix33 m33A, m33B;
+      int error_code;
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      if ( gan_mat33_invert ( &amp;m33A, &amp;m33B, &amp;error_code ) == NULL )
+      {
+         /* error found, act on it ... */
+      }
+
+      /* no error found */
+</PRE>
+attempts to invert matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">, and if an error is found, returns NULL,
+with the error condition returned in the <TT>error_code</TT> variable.
+For singular matrices the error condition is
+<TT>GAN_ERROR_SINGULAR_MATRIX</TT>. There are similar routines
+<TT>gan_symmat33_invert()</TT> and <TT>gan_ltmat33_invert()</TT> for
+symmetric and triangular matrices respectively.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html993"
+  HREF="node52.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html989"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html983"
+  HREF="node50.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html991"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html994"
+  HREF="node52.html">Determinant, trace, norms of</A>
+<B> Up:</B> <A NAME="tex2html990"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html984"
+  HREF="node50.html">Fixed size matrix/matrix multiplication</A>
+ &nbsp; <B>  <A NAME="tex2html992"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

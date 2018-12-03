@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Displaying a corner map</TITLE>
+<META NAME="description" CONTENT="Displaying a corner map">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node122.html">
+<LINK REL="previous" HREF="node120.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node122.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1944"
+  HREF="node122.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1940"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1934"
+  HREF="node120.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1942"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1945"
+  HREF="node122.html">The Harris corner detector</A>
+<B> Up:</B> <A NAME="tex2html1941"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1935"
+  HREF="node120.html">Corner detection</A>
+ &nbsp; <B>  <A NAME="tex2html1943"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00676000000000000000">
+Displaying a corner map</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/corner_disp.h&gt;
+</PRE>
+There are functions to display both whole corner maps and individual corners,
+the latter being used, for instance, to highlight corners in a different
+colour. The functions invoke OpenGL routines, and the OpenGL display window
+must be set up beforehand. Also you will need to set up some colours as single
+precision floating point RGB pixel structures. We can use the colour
+structures set up for the edge detector in Section&nbsp;<A HREF="node118.html#edge-disp-sec">5.7.3</A>.
+Then an example call to display an corner map is
+<PRE>
+      /* display a whole corner map using OpenGL */
+      gan_corner_feature_map_display ( &amp;CornerMap, 0.0F /* displayed size of a corner */,
+                                       NULL, /* affine transformation of coordinates */
+                                       &amp;red, /* corner colour */
+                                       &amp;green ); /* colour of bounding box */
+</PRE>
+The second argument is the size of the square box used to display each
+corner point. If it is passed as zero, as is the case here, a single point is
+drawn on the image. The third argument is an affine transformation
+of coordinates that allows additional freedom in positioning and scaling
+the corner map on the display window.<TT>vision_test.c</TT> has some example code
+using this routine.
+
+<P>
+To highlight a single corner, use instead
+<PRE>
+      Gan_CornerFeature *pCorner;
+
+      /* ... set pCorner to point to a Gan_CornerFeature structure ... */
+
+      /* display a single corner using OpenGL */
+      gan_corner_feature_display ( pCorner, 0.0F /* displayed size of each corner */,
+                                   NULL, /* affine transformation of coordinates */
+                                   &amp;yellow ); /* colour to highlight corner */
+</PRE>
+Note that the <TT>NULL</TT> passed for the affine coordinate transformation
+indicates an identity transformation.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1944"
+  HREF="node122.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1940"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1934"
+  HREF="node120.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1942"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1945"
+  HREF="node122.html">The Harris corner detector</A>
+<B> Up:</B> <A NAME="tex2html1941"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1935"
+  HREF="node120.html">Corner detection</A>
+ &nbsp; <B>  <A NAME="tex2html1943"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

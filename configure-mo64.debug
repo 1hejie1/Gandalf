@@ -1,0 +1,2 @@
+env CFLAGS="-m64 -g -Wall -I/usr/X11R6/include" ./configure --without-lapack
+# --without-glut

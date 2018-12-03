@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Complexity Comparison of FHT and MFHT</TITLE>
+<META NAME="description" CONTENT="Complexity Comparison of FHT and MFHT">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node145.html">
+<LINK REL="up" HREF="node143.html">
+<LINK REL="next" HREF="node147.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2254"
+  HREF="node147.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2250"
+  HREF="node143.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2246"
+  HREF="node145.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2252"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2255"
+  HREF="node147.html">The Test Framework</A>
+<B> Up:</B> <A NAME="tex2html2251"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Previous:</B> <A NAME="tex2html2247"
+  HREF="node145.html">Comparision of Speed and</A>
+ &nbsp; <B>  <A NAME="tex2html2253"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006113300000000000000">
+Complexity Comparison of FHT and MFHT</A>
+</H3>
+   As the dimensionality <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img156.png"
+ ALT="$k$"> of parameter space increases, the MFHT becomes
+   slower than the FHT. This is because the computational work at each
+   hypercube subdivision increases faster for the MFHT as <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img156.png"
+ ALT="$k$"> increases
+   than for the FHT.
+
+<P>
+Most of the work in the subdivision procedures (<IMG
+ WIDTH="83" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img372.png"
+ ALT="$divide\_cube$"> for the
+   FHT and <!-- MATH
+ $divide\_rectangle$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img459.png"
+ ALT="$divide\_rectangle$"> for the MFHT) goes into two stages.
+   Firstly, arrays are calculated that are to be passed on to children.
+   For the FHT plane finder these are the eight (<IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"> in general)
+   <!-- MATH
+ ${\bf R}_{\bf b}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img378.png"
+ ALT="${\bf R}_{\bf b}$"> normalised distance arrays, whereas for the MFHT
+   line finder, <!-- MATH
+ ${\bf I}^{\rm av}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img466.png"
+ ALT="${\bf I}^{\rm av}$"> is the only such array
+   (there are <!-- MATH
+ $3^{k-1} - 2^{k-1}$
+ -->
+<IMG
+ WIDTH="88" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img489.png"
+ ALT="$3^{k-1} - 2^{k-1}$"> arrays in general).
+   In both cases the calculation of an array element involves two calculations:
+   an addition and multiplication by two in the FHT, an addition and a division
+   by two in the MFHT. The second time consuming part is the voting, i.e.
+   the test for intersection of hyperplane with hypersphere/hypercube.
+   For the FHT plane finder this is just a single comparison for each of
+   the eight child cubes (<IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"> comparisons generally) whereas for the MFHT
+   line finder, 9/2 comparisons (on average) and four boolean
+   expressions are evaluated (for general <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img156.png"
+ ALT="$k$"> these figures become
+   <IMG
+ WIDTH="36" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img490.png"
+ ALT="$3^k/2$"> and <IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"> respectively). All these figures are summarised in
+   table&nbsp;<A HREF="#FHT_MFHT_complexity">5.1</A>.
+   <BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="6301"></A>
+<TABLE>
+<CAPTION><STRONG>Table 5.1:</STRONG>
+Complexity comparison of FHT and MFHT. The figures are the number
+	     of calculations at each hypercube subdivision,
+	     for each hyperplane.</CAPTION>
+<TR><TD>
+    <DIV ALIGN="CENTER">
+    <TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">FHT</TD>
+<TD ALIGN="CENTER">MFHT</TD>
+</TR>
+<TR><TD ALIGN="LEFT">multiplications/divisions</TD>
+<TD ALIGN="CENTER"><IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"></TD>
+<TD ALIGN="CENTER"><!-- MATH
+ $3^{k-1} - 2^{k-1}$
+ -->
+<IMG
+ WIDTH="88" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img489.png"
+ ALT="$3^{k-1} - 2^{k-1}$"></TD>
+</TR>
+<TR><TD ALIGN="LEFT">additions</TD>
+<TD ALIGN="CENTER"><IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"></TD>
+<TD ALIGN="CENTER"><!-- MATH
+ $3^{k-1} - 2^{k-1}$
+ -->
+<IMG
+ WIDTH="88" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img489.png"
+ ALT="$3^{k-1} - 2^{k-1}$"></TD>
+</TR>
+<TR><TD ALIGN="LEFT">comparisons</TD>
+<TD ALIGN="CENTER"><IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"></TD>
+<TD ALIGN="CENTER"><IMG
+ WIDTH="36" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img490.png"
+ ALT="$3^k/2$"></TD>
+</TR>
+<TR><TD ALIGN="LEFT">boolean expressions</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER"><IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"></TD>
+</TR>
+</TABLE>
+    
+    <A NAME="FHT_MFHT_complexity"></A>
+   </DIV></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+Since <IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img491.png"
+ ALT="$3^k$"> increases faster than <IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$">, the FHT will overtake the MFHT for
+  speed as <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img156.png"
+ ALT="$k$"> increases. In fact tests have shown the MFHT plane fitter
+  to be about 25% slower than the FHT. The memory space
+  advantage of the MFHT is also reduced, since <IMG
+ WIDTH="83" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img492.png"
+ ALT="$3^2 - 2^2 = 5$">
+  new arrays are required at each subdivision as against eight for the FHT
+  (which again could be altered so as to require only one array, at the
+  cost of some loss of speed).
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2254"
+  HREF="node147.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2250"
+  HREF="node143.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2246"
+  HREF="node145.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2252"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2255"
+  HREF="node147.html">The Test Framework</A>
+<B> Up:</B> <A NAME="tex2html2251"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Previous:</B> <A NAME="tex2html2247"
+  HREF="node145.html">Comparision of Speed and</A>
+ &nbsp; <B>  <A NAME="tex2html2253"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Copying a general size vector</TITLE>
+<META NAME="description" CONTENT="Copying a general size vector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node64.html">
+<LINK REL="previous" HREF="node62.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node64.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1167"
+  HREF="node64.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1163"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1157"
+  HREF="node62.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1165"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1168"
+  HREF="node64.html">General size vector addition</A>
+<B> Up:</B> <A NAME="tex2html1164"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1158"
+  HREF="node62.html">Accessing the elements of</A>
+ &nbsp; <B>  <A NAME="tex2html1166"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00421500000000000000">
+Copying a general size vector</A>
+</H3>
+To copy a vector <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> to another vector <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$">, both vectors must have
+been created, and <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> should be filled with values. <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$"> can be
+created with arbitrary initial size (for instance zero), since Gandalf will
+if necessary reallocate <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$"> to the same size as <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> if necessary.
+So for instance the following code is perfectly valid:
+<PRE>
+      Gan_Vector vx, vy; /* declare vectors x &amp; y */
+
+      gan_vec_form ( &amp;vx, 0 ); /* create vector x */
+      gan_vec_form ( &amp;vy, 0 ); /* create vector y */
+      gan_vec_fill_va ( &amp;vx, 5, 11.0, 9.0, 7.0, 5.0, 3.0 ); /* reallocate &amp; initialise x */
+      gan_vec_copy_q ( &amp;vx, &amp;vy ); /* set y = x, reallocating y */
+</PRE>
+The last two lines reallocate first <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> and then <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$">, because both
+were created with zero size. Note that <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$"> may have previously been
+filled with other values, which are now lost.
+
+<P>
+There is also a version that creates a copy of a vector from scratch:
+<PRE>
+      Gan_Vector *pvy; /* declare vector y */
+
+      pvy = gan_vec_copy_s ( &amp;vx ); /* create y and set y = x */
+</PRE>
+
+<P>
+<B>Error detection:</B> The vector copy routines return <TT>NULL</TT> and
+invoke the Gandalf error handler upon failure.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Rescaling a general size matrix</TITLE>
+<META NAME="description" CONTENT="Rescaling a general size matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node77.html">
+<LINK REL="previous" HREF="node75.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node77.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1336"
+  HREF="node77.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1332"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1326"
+  HREF="node75.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1334"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1337"
+  HREF="node77.html">General size matrix/vector multiplication</A>
+<B> Up:</B> <A NAME="tex2html1333"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1327"
+  HREF="node75.html">General size matrix subtraction</A>
+ &nbsp; <B>  <A NAME="tex2html1335"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422900000000000000">
+Rescaling a general size matrix</A>
+</H3>
+Multiplying or dividing a matrix by a scalar value follows the scheme of the
+above copy, addition and subtraction operations. To multiply a matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">
+by a scalar <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$">, <IMG
+ WIDTH="58" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img72.png"
+ ALT="$B=sA$">, use for example
+<PRE>
+      Gan_Matrix mA, mB; /* declare matrices A &amp; B */
+
+      /* ... create &amp; fill mA, create (&amp; optionally fill) mB ... */
+      gan_mat_scale_q ( &amp;mA, 5.0, &amp;mB ); /* B = 5*A */
+</PRE>
+to multiply all the elements in matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> by five, writing the result
+into matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$">.
+Alternatively you can create the rescaled matrix from scratch as in
+<PRE>
+      Gan_Matrix *pmB; /* declare matrix B */
+
+      /* ... create &amp; fill mA ... */
+      pmB = gan_mat_scale_s ( &amp;mA, 5.0 ); /* B = 5*A */
+</PRE>
+or overwrite <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> with the result
+<PRE>
+      gan_mat_scale_i ( &amp;mA, 5.0 ); /* replace A = 5*A */
+</PRE>
+
+<P>
+There are similar routines for dividing a general size matrix by a scalar
+value:
+<PRE>
+      gan_mat_divide_q ( &amp;mA, 5.0, &amp;mB ); /* B = A/5 */
+      pmB = gan_mat_divide_s ( &amp;mA, 5.0 ); /* B = A/5 */
+      gan_mat_divide_i ( &amp;mA, 5.0 ); /* replace A = A/5 */
+</PRE>
+
+<P>
+There are specific routines to negate a matrix, i.e. multiply it by -1,
+as follows:
+<PRE>
+      gan_mat_negate_q ( &amp;mA, &amp;mB ); /* B = -A */
+      pmB = gan_mat_negate_s ( &amp;mA ); /* B = -A */
+      gan_mat_negate_i ( &amp;mA ); /* replace A = -A */
+</PRE>
+
+<P>
+The equivalent routines for square matrices are
+<PRE>
+      Gan_SquMatrix smA, smB, *psmB; /* declare matrices A &amp; B */
+
+      /* ... create &amp; fill smA, create (&amp; optionally fill) smB ... */
+
+      /* scale a square matrix */
+      gan_squmat_scale_q ( &amp;smA, 5.0, &amp;smB ); /* B = 5*A, B an existing matrixOR */
+      psmB = gan_squmat_scale_s ( &amp;smA, 5.0 ); /* B = 5*A, B a new matrix, OR */
+      gan_squmat_scale_i ( &amp;smA, 5.0 ); /* replace A = 5*A */
+
+      /* divide a square matrix by a scalar */
+      gan_squmat_divide_q ( &amp;smA, 5.0, &amp;smB ); /* B = A/5, B an existing matrix, OR */
+      psmB = gan_squmat_divide_s ( &amp;smA, 5.0 ); /* B = A/5, B a new matrix, OR */
+      gan_squmat_divide_i ( &amp;smA, 5.0 ); /* replace A = A/5 */
+
+      /* negate a square matrix */
+      gan_squmat_negate_q ( &amp;smA, &amp;smB ); /* B = -A, B an existing matrix, OR */
+      psmB = gan_squmat_negate_s ( &amp;smA ); /* B = -A, B a new matrix, OR */
+      gan_squmat_negate_i ( &amp;smA ); /* replace A = -A */
+</PRE>
+Passing zero as the scalar value to the <TT>gan_mat_divide_[qsi]()</TT>
+or <TT>gan_squmat_divide_[qsi]()</TT> routines invokes the error handler,
+with a division by zero error
+(error code <TT>GAN_ERROR_DIVISION_BY_ZERO</TT>),
+and <TT>NULL</TT> is returned.
+
+<P>
+<TT>Error detection:</TT> The Gandalf error handler is invoked and <TT>NULL</TT>
+is returned if an error occurs. The most likely failure modes are
+(i) failing to create the result matrix; (ii) division by zero.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1336"
+  HREF="node77.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1332"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1326"
+  HREF="node75.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1334"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1337"
+  HREF="node77.html">General size matrix/vector multiplication</A>
+<B> Up:</B> <A NAME="tex2html1333"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1327"
+  HREF="node75.html">General size matrix subtraction</A>
+ &nbsp; <B>  <A NAME="tex2html1335"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

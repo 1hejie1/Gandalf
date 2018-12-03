@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Symmetric matrix eigendecomposition</TITLE>
+<META NAME="description" CONTENT="Symmetric matrix eigendecomposition">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node82.html">
+<LINK REL="previous" HREF="node80.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node82.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1396"
+  HREF="node82.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1392"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1386"
+  HREF="node80.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1394"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1397"
+  HREF="node82.html">Accumulated symmetric matrix eigendecomposition</A>
+<B> Up:</B> <A NAME="tex2html1393"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1387"
+  HREF="node80.html">Cholesky factorising a general</A>
+ &nbsp; <B>  <A NAME="tex2html1395"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004221400000000000000">
+Symmetric matrix eigendecomposition</A>
+</H3>
+<PRE>
+      #include &lt;gandalf/linalg/mat_symmetric.h&gt;
+</PRE>
+Gandalf has a routine for computing the real eigenvalues and eigenvectors of
+a general size symmetric matrix, based on either the
+CLAPACK routine <TT>dspev()</TT> or the CCMath routine <TT>eigval()</TT>.
+A symmetric matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"> can be written as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S Z = Z W
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="73" HEIGHT="24" BORDER="0"
+ SRC="img87.png"
+ ALT="\begin{displaymath}S Z = Z W
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img49.png"
+ ALT="$W$"> is a diagonal matrix of real eigenvalues and <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img88.png"
+ ALT="$Z$"> is a square
+matrix of orthognal eigenvectors, unique if the eigenvalues are distinct.
+If the matrix is positive definite (or semi-definite) then all the eigenvalues
+will be <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img89.png"
+ ALT="$&gt; 0$"> (or <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img90.png"
+ ALT="$\geq 0$">). Here is an example code fragment using the
+Gandalf routine to compute <IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img49.png"
+ ALT="$W$"> and (optionally) <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img88.png"
+ ALT="$Z$">.
+<PRE>
+      Gan_SquMatrix smS; /* declare symmetric matrix */
+      Gan_SquMatrix smW; /* declare matrix of eigenvalues W */
+      Gan_Matrix mZ; /* declare matrix of eigenvectors */
+
+      /* create and fill S */
+      gan_symmat_form ( &amp;smS, 5 );
+      gan_symmat_fill_va ( &amp;smS, 5,
+                            1.0,
+                            2.0,  3.0,
+                            4.0,  5.0,  6.0,
+                            7.0,  8.0,  9.0, 10.0,
+                           11.0, 12.0, 13.0, 14.0, 15.0 );
+
+      /* create Z and W */
+      gan_mat_form ( &amp;mZ, 5, 5 );
+      gan_diagmat_form ( &amp;smW, 0 );
+
+      /* compute sigenvalues and eigenvectors of S */
+      gan_symmat_eigen ( &amp;smS, &amp;smW, &amp;mZ, GAN_TRUE, NULL, 0 );
+</PRE>
+After calling this routine <TT>smW</TT> will contain the computed eigenvalues,
+and <TT>mZ</TT> the eigenvectors. If the eigenvector matrix is passed as
+<TT>NULL</TT>, the eigenvectors are not computed. The boolean fourth argument
+indicates whether the eigenvectors should be sorted into ascending order.
+The fifth and sixth arguments define a workspace array of <TT>double</TT>s,
+and the size of the array, which can be used by LAPACK. If passed as
+<TT>NULL, 0</TT> as above, the workspace is allocated inside the function.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1396"
+  HREF="node82.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1392"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1386"
+  HREF="node80.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1394"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1397"
+  HREF="node82.html">Accumulated symmetric matrix eigendecomposition</A>
+<B> Up:</B> <A NAME="tex2html1393"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1387"
+  HREF="node80.html">Cholesky factorising a general</A>
+ &nbsp; <B>  <A NAME="tex2html1395"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

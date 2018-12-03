@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Accumulated symmetric matrix eigendecomposition</TITLE>
+<META NAME="description" CONTENT="Accumulated symmetric matrix eigendecomposition">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node81.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node83.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1406"
+  HREF="node83.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1402"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1398"
+  HREF="node81.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1404"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1407"
+  HREF="node83.html">Single precision general size</A>
+<B> Up:</B> <A NAME="tex2html1403"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1399"
+  HREF="node81.html">Symmetric matrix eigendecomposition</A>
+ &nbsp; <B>  <A NAME="tex2html1405"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004221500000000000000"></A>
+<A NAME="acc-symeigen-sec"></A>
+<BR>
+Accumulated symmetric matrix eigendecomposition
+</H3>
+<PRE>
+      #include &lt;gandalf/linalg/symmat_eigen.h&gt;
+</PRE>
+There is also a specific module in Gandalf to compute the eigenvalues and
+eigenvectors of a positive semi-definite matrix accumulated as a sum of
+outer products of vectors. This is useful for instance when solving
+homogeneous linear equations; for an example see the computation of the
+fundamental &amp; essential matrix in Section&nbsp;<A HREF="node108.html#fun-ess-sec">5.2</A>.
+The symmetric matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"> is constructed as
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+S = \sum_{i=1}^n \sigma_i {\bf x}_i {\bf x}_i^{\top}
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="acc-eigen-sum"></A><IMG
+ WIDTH="105" HEIGHT="53" BORDER="0"
+ SRC="img91.png"
+ ALT="\begin{displaymath}
+S = \sum_{i=1}^n \sigma_i {\bf x}_i {\bf x}_i^{\top}
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(3.2)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+given the <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img61.png"
+ ALT="$n$"> vectors <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img92.png"
+ ALT="${\bf x}_i$"> and weighting factors <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img93.png"
+ ALT="$s_i$">, <IMG
+ WIDTH="84" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img94.png"
+ ALT="$i=1,\ldots,n$">.
+
+<P>
+There is a structure to hold the accumulated matrix and the resulting
+eigendecomposition matrices:
+<PRE>
+      /* structure to hold accumulated symmetric matrix and resulting
+       * eigendecomposition of a sum of vector outer products
+       */
+      typedef struct
+      {
+         Gan_SquMatrix SxxT; /* accumulated sum of vector outer products */
+         Gan_SquMatrix W;    /* diagonal matrix of eigenvalues */
+         Gan_Matrix    Z;    /* matrix of eigenvectors */
+         Gan_Vector    work; /* workspace vector for computing eigendecomposition */
+
+         /* whether this structure was dynamically allocated */
+         Gan_Bool alloc;
+      } Gan_SymMatEigenStruct;
+</PRE>
+To start the computation, create an instance of the structure using
+<PRE>
+      Gan_SymMatEigenStruct SymEigen;
+
+      /* create structure for computing eigenvalues and eigenvectors,
+         initialising accumulated matrix S (here 5x5) to zero */
+      gan_symeigen_form ( &amp;SymEigen, 5 );
+</PRE>
+This routine creates the structure and its constituent matrices, and
+initialises the outer product sum matrix, in this case a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img63.png"
+ ALT="$5\times 5$"> matrix,
+to zero. You can then add a term to the sum in Equation&nbsp;<A HREF="#acc-eigen-sum">3.2</A>
+using the routine
+<PRE>
+      /* increment matrix S by 
+      gan_symeigen_increment ( &amp;SymEigen, 2.0, /* weighting factor s */
+                               3.4, 1.0, 9.7, 3.4, 2.1 ); /* elements of vector x */
+</PRE>
+Here the first value <IMG
+ WIDTH="25" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img95.png"
+ ALT="$2.0$"> is the weighting factor <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img96.png"
+ ALT="$\sigma$"> for this vector,
+and the elements of the vector <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> are passed into a variable argument
+list (and hence have to be explicitly <TT>double</TT> type).
+You should call <TT>gan_symeigen_increment()</TT> once for each of the
+<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img61.png"
+ ALT="$n$"> vectors. Then solve for the eigenvalues &amp; eigenvectors using the routine
+<PRE>
+      /* solve for eigenvalues and eigenvectors */
+      gan_symeigen_solve ( &amp;SymEigen );
+</PRE>
+after which the eigenvalues can be read back from <TT>SymEigen.W</TT> and the
+eigenvectors from <TT>SymEigen.Z</TT>.
+If you want to reuse the structure on a new eigendecomposition computation,
+call the routine
+<PRE>
+      /* reset accumulated symmetric to zero, optionally changing size of matrix */
+      gan_symeigen_reset ( &amp;SymEigen, 5 );
+</PRE>
+where the last argument allows you to change the size of the matrix if
+desired. Finally to free the structure use
+<PRE>
+      /* free eigensystem structure and constituent matrices */
+      gan_symeigen_free ( &amp;SymEigen );
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>sym_symeigen_form()</TT> returns a pointer to
+the eigensystem structure (<TT>&amp;SymEigen</TT>), and so returns <TT>NULL</TT> on
+error. <TT>sym_symeigen_increment()</TT>, <TT>sym_symeigen_solve()</TT> and
+<TT>sym_symeigen_reset()</TT> return boolean values, so <TT>GAN_FALSE</TT>
+indicates an error. In all cases the Gandalf error handler is invoked.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1406"
+  HREF="node83.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1402"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1398"
+  HREF="node81.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1404"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1407"
+  HREF="node83.html">Single precision general size</A>
+<B> Up:</B> <A NAME="tex2html1403"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1399"
+  HREF="node81.html">Symmetric matrix eigendecomposition</A>
+ &nbsp; <B>  <A NAME="tex2html1405"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

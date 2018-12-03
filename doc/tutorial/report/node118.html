@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Displaying an edge map</TITLE>
+<META NAME="description" CONTENT="Displaying an edge map">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node119.html">
+<LINK REL="previous" HREF="node117.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node119.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1908"
+  HREF="node119.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1904"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1898"
+  HREF="node117.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1906"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1909"
+  HREF="node119.html">The Canny edge detector</A>
+<B> Up:</B> <A NAME="tex2html1905"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1899"
+  HREF="node117.html">Edge detection</A>
+ &nbsp; <B>  <A NAME="tex2html1907"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00673000000000000000"></A><A NAME="edge-disp-sec"></A>
+<BR>
+Displaying an edge map
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/edge_disp.h&gt;
+</PRE>
+There are functions to display both whole edge maps and individual edges,
+the latter being used, for instance, to highlight edges in a different colour.
+The functions invoke OpenGL routines, and the OpenGL display window must be
+set up beforehand. Also you will need to set up some colours as single
+precision floating point RGB pixel structures.
+For instance the following will create primary colours for you:
+<PRE>
+      Gan_RGBPixel_f blue = {0.0F, 0.0F, 1.0F}, green = {0.0F, 1.0F, 0.0F},
+                     yellow = {1.0F, 1.0F, 0.0F}, red = {1.0F, 0.0F, 0.0F};
+</PRE>
+Once this is done, an example call to display an edge map is
+<PRE>
+      /* display a whole edge map using OpenGL */
+      gan_edge_feature_map_display ( &amp;EdgeMap, 0.0F /* displayed size of each edge */,
+                                     NULL, /* affine transformation of coordinates */
+                                     &amp;red,     /* colour of below-threshold edges */
+                                     &amp;green,   /* colour of edge strings */
+                                     &amp;blue,    /* colour of first edge in string */
+                                     &amp;yellow,  /* colour of last edge in string */
+                                     &amp;green ); /* colour of bounding box */
+</PRE>
+The second argument is the size of the square box used to display each
+edge point. If it is passed as zero, as is the case here, a single point is
+drawn on the image. The third argument is an affine transformation
+of coordinates that allows additional freedom in positioning and scaling
+the edge map on the display window.<TT>vision_test.c</TT> has some example code
+using this routine.
+
+<P>
+To highlight a single edgel, use instead
+<PRE>
+      Gan_EdgeFeature *pEdge;
+
+      /* ... set pEdge to point to a Gan_EdgeFeature structure ... */
+
+      /* display a single edgel using OpenGL */
+      gan_edge_feature_display ( pEdge, 0.0F /* displayed size of each edge */,
+                                 NULL, /* affine transformation of coordinates */
+                                 &amp;yellow ); /* colour to highlight edgel */
+</PRE>
+Note that the <TT>NULL</TT> passed for the affine coordinate transformation
+indicates an identity transformation.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1908"
+  HREF="node119.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1904"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1898"
+  HREF="node117.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1906"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1909"
+  HREF="node119.html">The Canny edge detector</A>
+<B> Up:</B> <A NAME="tex2html1905"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1899"
+  HREF="node117.html">Edge detection</A>
+ &nbsp; <B>  <A NAME="tex2html1907"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

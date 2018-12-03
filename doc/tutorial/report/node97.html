@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Displaying images</TITLE>
+<META NAME="description" CONTENT="Displaying images">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node98.html">
+<LINK REL="previous" HREF="node95.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node98.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1600"
+  HREF="node98.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1596"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1590"
+  HREF="node96.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1598"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1601"
+  HREF="node98.html">Image pyramids</A>
+<B> Up:</B> <A NAME="tex2html1597"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1591"
+  HREF="node96.html">Accessing channels of an</A>
+ &nbsp; <B>  <A NAME="tex2html1599"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00570000000000000000">
+Displaying images</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/image/image_display.h&gt;
+</PRE>
+Gandalf uses OpenGL to display images. It assumes that as well as the
+standard OpenGL libraries, the GL user toolkit (GLUT) is also installed.
+Because GLUT is event-driven, program control needs to be passed to the
+GLUT event handler by calling <TT>glutMainLoop()</TT> after creating the
+initial windows you want. Remember that creating a window using the
+<TT>gan_display_new_window()</TT> function (see below) will not make it
+appear immediately. The window creation event needs to be processed by GLUT.
+This needs to be borne in mind when reading the description of the functions
+below. The simplest example using the functions is in
+<TT>gandalf/image/bitmap_test.c</TT>.
+
+<P>
+Once an OpenGL window has been set up and a Gandalf image <TT>pImage</TT>
+created, calls to
+<PRE>
+      glRasterPos2i ( 0, 0 );
+      gan_image_display ( pImage );
+</PRE>
+will display the image using the OpenGL function <TT>glDrawPixels</TT>.
+This involves a fair amount of OpenGL calls to set the display windows up.
+To simply create an OpenGL window and display a Gandalf image in it,
+Gandalf provides functions to make this easy for you. You can use the code
+<PRE>
+      Gan_Image *pImage;
+      int iWindowID;
+
+      /* create OpenGL window to display image/graphics with coordinates
+         in the range (0-200) vertically and (0-300) horizontally, using a
+         zoom factor of 2 so that the size on the screen will be 400x600.
+         The window is placed at offset 100,100 from the corner of the screen.
+       */
+      gan_display_new_window ( 200, 300, 2.0, "Graphics", 100, 100,
+                               &amp;iWindowID );
+
+      /* ... create and fill image pImage ... */
+
+      /* display image with top-left pixel at position (0,0) */
+      gan_image_display ( pImage );
+</PRE>
+The image is drawn so that if its dimensions match those passed as the first
+two arguments to
+<BR><TT>gan_display_new_window()</TT>, the displayed image will
+completely fill the window. If you want the image displayed at a position
+offset from the top-left corner of the window you will need
+an appropriate call to <TT>glRasterPos2i()</TT>, such as
+<PRE>
+      /* set position in OpenGL window as top-left position in image drawn
+       * subsequently by gan_image_display() */
+      glRasterPos2i ( 30, 40 );
+</PRE>
+The window is available for the standard
+OpenGL graphics functions. The name of the window ("Graphics" in the above
+example) is shown in the bar at the top of the graphics window.
+If the graphics window changes, the window
+identifier <TT>iWindowID</TT> can be used to switch back to the created
+window using
+<PRE>
+      glutSetWindow ( iWindowID );
+</PRE>
+To create several identically sized graphics windows, use this routine:
+<PRE>
+      int iWindowID, *aiWindowID;
+
+      /* create an OpenGL window containing 2 rows and 3 columns of
+         sub-windows, each containing a 300x200 graphics window, each of
+         which contains a (0-900) by (0-600) coordinate frame shrunk to
+         300x200 using a zoom factor of 1/3 */
+      gan_display_new_window_array ( 2, 3, 900, 600, 1.0/3.0, "Graphics",
+                                     100, 100, &amp;iWindowID, &amp;aiWindowID );
+</PRE>
+The sub-windows are created using the function <TT>glutCreateSubWindow()</TT>.
+In this case there is both a window identifier for the main display window
+and an array of window identifiers for the sub-windows, stored in the
+array in raster-scan order.
+
+<P>
+Gandalf also provides a routine that creates a window and displays the
+image all in one, determining the graphics window size from a zoom factor
+passed in:
+<PRE>
+      /* create display window and display image zoomed to double its size */
+      gan_image_display_new_window ( pImage, 2.0, "Graphics", 100, 100, &amp;iWindowID );
+</PRE>
+This is useful for debugging purposes as the easiest way to display an image.
+
+<P>
+The <TT>gan_display_new_window()</TT> function stores the windows
+created in a list, so that the images displayed in the windows can be
+automatically refreshed. When you have finished with the graphics windows
+created by <TT>gan_display_new_window()</TT>, remove them using
+the function
+<PRE>
+      gan_image_display_free_windows();
+</PRE>
+Note that this free function only applies to windows created by
+<TT>gan_display_new_window()</TT>. Graphics windows created using
+the other functions in this section are refreshed using standard
+OpenGL routines (<TT>glutDisplayFunc()</TT> etc.).
+
+<P>
+<B>Error detection:</B> All the routines except
+<TT>gan_image_display_free_windows()</TT> return a boolean result,
+which is <TT>GAN_FALSE</TT> if an error occurs, invoking the Gandalf
+error handler.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1600"
+  HREF="node98.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1596"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1590"
+  HREF="node96.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1598"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1601"
+  HREF="node98.html">Image pyramids</A>
+<B> Up:</B> <A NAME="tex2html1597"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1591"
+  HREF="node96.html">Accessing channels of an</A>
+ &nbsp; <B>  <A NAME="tex2html1599"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,380 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Representing 3D rotations</TITLE>
+<META NAME="description" CONTENT="Representing 3D rotations">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node129.html">
+<LINK REL="previous" HREF="node115.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node127.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2002"
+  HREF="node127.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1998"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1992"
+  HREF="node125.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2000"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2003"
+  HREF="node127.html">Quaternion routines</A>
+<B> Up:</B> <A NAME="tex2html1999"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1993"
+  HREF="node125.html">The Gandalf line detector</A>
+ &nbsp; <B>  <A NAME="tex2html2001"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00680000000000000000">
+Representing 3D rotations</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/vision/rotate3D.h&gt;
+</PRE>
+Gandalf has an extensive set of routines for handling 3D rotations.
+Four different representations are available, defined by the following
+enumerated type:
+<PRE>
+      /* types of rotation handled by Gandalf */
+      typedef enum { GAN_ROT3D_QUATERNION, GAN_ROT3D_EXPONENTIAL,
+                     GAN_ROT3D_ANGLE_AXIS, GAN_ROT3D_MATRIX }
+         Gan_Rot3D_Type;
+</PRE>
+These representations are now described in turn.
+<DL>
+<DT></DT>
+<DD>The <B>quaternion</B> representation uses the following structure:
+	<PRE>
+      /* quaternion structure */
+      typedef struct Gan_Quaternion
+      {
+         double q0, q1, q2, q3;
+      } Gan_Quaternion;
+</PRE>
+	The relationship between a quaternion <!-- MATH
+ ${\bf q}=(q_0\;q_1\;q_2\;q_3)^{\top}$
+ -->
+<IMG
+ WIDTH="128" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img186.png"
+ ALT="${\bf q}=(q_0\;q_1\;q_2\;q_3)^{\top}$">
+	and the equivalent rotation matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img145.png"
+ ALT="$R$"> is
+	<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+R = \left(\!\!\begin{array}{ccc} q_0 q_0 + q_1 q_1-q_2 q_2 - q_3 q_3 & 2(q_1 q_2 - q_0 q_3) & 2(q_1 q_3 + q_0 q_2) \\
+	               2(q_2 q_1 + q_0 q_3) & q_0 q_0 - q_1 q_1 + q_2 q_2 - q_3 q_3 & 2(q_2 q_3 - q_0 q_1) \\
+	               2(q_3 q_1 - q_0 q_2) & 2(q_3 q_2 + q_0 q_1) & q_0 q_0 - q_1 q_1 - q_2 q_2 + q_3 q_3
+	     \end{array}\!\!\right).
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="621" HEIGHT="64" BORDER="0"
+ SRC="img187.png"
+ ALT="\begin{displaymath}
+R = \left(\!\!\begin{array}{ccc} q_0 q_0 + q_1 q_1-q_2 q_2...
+... q_0 - q_1 q_1 - q_2 q_2 + q_3 q_3
+\end{array}\!\!\right).
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Here the quaternion is assumed to have been scaled to unit length,
+	i.e. <IMG
+ WIDTH="59" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img188.png"
+ ALT="$\vert{\bf q}\vert^2=1$">.
+
+<P>
+</DD>
+<DT></DT>
+<DD>The <B>exponential</B> representation uses a 3-vector <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img189.png"
+ ALT="${\bf r}$">
+	related to the equivalent rotation matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img145.png"
+ ALT="$R$"> according to
+	<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+R &=& e^{[{\bf r}]_{\times}} \nonumber \\
+	   &=& I + \frac{\sin \theta}{\theta} [{\bf r}]_{\times} +
+		 \frac{(1-\cos\theta)}{\theta^2} ({\bf r}{\bf r}^{\top}- \|{\bf r}\|^2 I)
+		\nonumber
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img190.png"
+ ALT="$\displaystyle R$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img191.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="35" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img192.png"
+ ALT="$\displaystyle e^{[{\bf r}]_{\times}}$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img191.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="284" HEIGHT="55" ALIGN="MIDDLE" BORDER="0"
+ SRC="img193.png"
+ ALT="$\displaystyle I + \frac{\sin \theta}{\theta} [{\bf r}]_{\times} +
+\frac{(1-\cos\theta)}{\theta^2} ({\bf r}{\bf r}^{\top}- \Vert{\bf r}\Vert^2 I)$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+where <!-- MATH
+ $\theta = \|{\bf r}\|$
+ -->
+<IMG
+ WIDTH="57" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img194.png"
+ ALT="$\theta = \Vert{\bf r}\Vert$"> is the rotation angle, and the cross-product
+	matrix <!-- MATH
+ $[{\bf r}]_{\times}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img195.png"
+ ALT="$[{\bf r}]_{\times}$"> is explained in Section&nbsp;<A HREF="node108.html#fun-ess-sec">5.2</A>.
+
+<P>
+</DD>
+<DT></DT>
+<DD>The <B>angle/axis</B> representation <IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img196.png"
+ ALT="$a/{\bf a}$"> is strongly related to a
+	quaternion, according to the formula
+	<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf q}= \left(\!\!\begin{array}{c} \cos(a/2) \\a_x\sin(a/2) \\a_y\sin(a/2) \\a_z\sin(a/2) \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="133" HEIGHT="83" BORDER="0"
+ SRC="img197.png"
+ ALT="\begin{displaymath}{\bf q}= \left(\!\!\begin{array}{c} \cos(a/2) \ a_x\sin(a/2) \ a_y\sin(a/2) \ a_z\sin(a/2) \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where the rotation axis <!-- MATH
+ ${\bf a}=(a_x\;a_y\;a_z)^{\top}$
+ -->
+<IMG
+ WIDTH="114" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img198.png"
+ ALT="${\bf a}=(a_x\;a_y\;a_z)^{\top}$"> is assumed to be
+	scaled to <IMG
+ WIDTH="58" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img199.png"
+ ALT="$\vert{\bf a}\vert^2=1$">. The rotation angle <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img200.png"
+ ALT="$a$"> is measured in radians.
+
+<P>
+</DD>
+<DT></DT>
+<DD>The <B>matrix</B> representation uses a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img145.png"
+ ALT="$R$"> as
+	above to represent a rotation
+</DD>
+</DL>
+This variety of representations is necessary because of the corresponding
+variety of operations that can be applied. For instance, quaternions are
+perhaps the most natural representation, and are a good representation
+when combining rotations, because quaternion product has a simply linear
+formula. Given two quaternions <!-- MATH
+ ${\bf q}_1=(q_{10}\;q_{11}\;q_{12}\;q_{13})$
+ -->
+<IMG
+ WIDTH="150" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img201.png"
+ ALT="${\bf q}_1=(q_{10}\;q_{11}\;q_{12}\;q_{13})$">
+and <!-- MATH
+ ${\bf q}_2=(q_{20}\;q_{21}\;q_{22}\;q_{23})$
+ -->
+<IMG
+ WIDTH="150" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img202.png"
+ ALT="${\bf q}_2=(q_{20}\;q_{21}\;q_{22}\;q_{23})$">, with corresponding rotation
+matrices <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img203.png"
+ ALT="$R_1$">, <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img204.png"
+ ALT="$R_2$">, the product
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf q}_3 = \left(\!\!\begin{array}{c}
+               q_{10} q_{20} - q_{11} q_{21} - q_{12} q_{22} - q_{13} q_{23}\\
+               q_{10} q_{21} + q_{11} q_{20} + q_{12} q_{23} - q_{13} q_{22}\\
+               q_{10} q_{22} + q_{12} q_{20} + q_{13} q_{21} - q_{11} q_{23}\\
+               q_{10} q_{23} + q_{13} q_{20} + q_{11} q_{22} - q_{12} q_{21}
+   \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="289" HEIGHT="83" BORDER="0"
+ SRC="img205.png"
+ ALT="\begin{displaymath}{\bf q}_3 = \left(\!\!\begin{array}{c}
+q_{10} q_{20} - q_{1...
+...{20} + q_{11} q_{22} - q_{12} q_{21}
+\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+is equivalent to the rotation matrix product
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+R_3 = R_1 R_2
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="78" HEIGHT="26" BORDER="0"
+ SRC="img206.png"
+ ALT="\begin{displaymath}R_3 = R_1 R_2
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+You should always use quaternions for combining rotations in this way, because
+if you use matrices the rounding error will accumulate over repeated
+matrix multiplications, and cause the matrix to become non-orthogonal.
+With quaternions the scale will drift slightly, but it is much easier to fix
+the scale of a quaternion than to correct the matrix representation.
+The angle/axis form is mainly useful as an intuitive way of defining
+rotations. It has the problem of having no unique representation of
+zero rotations, since in this case the axis is arbitrary.
+The exponential representation is unique in being a <TT>minimal</TT>
+representation with its three parameters. It is mainly useful however only
+for <TT>small</TT> rotations, since it has severe singularity problems for
+large rotations. For optimisation purposes, you can use the exponential
+form of rotation to represent a small change in the estimated rotation,
+with a quaternion used to represent the latest rotation estimate.
+Similar <EM>local coordinate</EM> forms of optimisation have been
+employed in 3D reconstruction by Taylor &amp;
+Kriegman&nbsp;[<A
+ HREF="node149.html#Taylor:Kriegman:PAMI95">14</A>]. A local rotation
+representation has also been developed independently by Pennec &amp;
+Thirion&nbsp;[<A
+ HREF="node149.html#Pennec:Thirion:IJCV97">11</A>]
+
+<P>
+First we describe some routines specific to the quaternion representation.
+Then we provide details of how the Gandalf structure <TT>Gan_Rot3D</TT>
+is used to create and manipulate rotations of any of the currently
+supported representations.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html2004"
+  HREF="node127.html">Quaternion routines</A>
+<LI><A NAME="tex2html2005"
+  HREF="node128.html">General rotation routines</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2002"
+  HREF="node127.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1998"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1992"
+  HREF="node125.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2000"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2003"
+  HREF="node127.html">Quaternion routines</A>
+<B> Up:</B> <A NAME="tex2html1999"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1993"
+  HREF="node125.html">The Gandalf line detector</A>
+ &nbsp; <B>  <A NAME="tex2html2001"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

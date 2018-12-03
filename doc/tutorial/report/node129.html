@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Representing 3D Euclidean transformations</TITLE>
+<META NAME="description" CONTENT="Representing 3D Euclidean transformations">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node130.html">
+<LINK REL="previous" HREF="node126.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node130.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2038"
+  HREF="node130.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2034"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2028"
+  HREF="node128.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2036"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2039"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+<B> Up:</B> <A NAME="tex2html2035"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html2029"
+  HREF="node128.html">General rotation routines</A>
+ &nbsp; <B>  <A NAME="tex2html2037"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00690000000000000000">
+Representing 3D Euclidean transformations</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/vision/euclid3D.h&gt;
+</PRE>
+This module allows you to manipulate 3D Euclidean transformations, to
+represent for instance camera pose relative to a 3D scene. The basic
+structure contains a rotation and a translation:
+<PRE>
+      /* 3D pose */
+      typedef struct
+      {
+         Gan_Rot3D   rot;   /* rotation parameters */
+         Gan_Vector3 trans; /* translation parameters */
+      } Gan_Euclid3D;
+</PRE>
+
+<P>
+To build a Euclidean transformation structure, you need to decide on a
+representation for the rotation, and then call one of the following routines:
+<PRE>
+      Gan_Euclid3D Euc; /* Euclidean transformation structure */
+      double TX, TY, TZ; /* translation vector */
+      double q0, q1, q2, q3; /* quaternion parameters */
+      double rx, ry, rz; /* exponential rotation vector parameters */
+      double angle, ax, ay, az; /* angle/axis parameters */
+      double Rxx, Rxy, Rxz, Ryx, Ryy, Ryz, Rzx, Rzy, Rzz; /* matrix rotation parameters */
+
+      /* ... set up translation and rotation parameters ... */
+
+      /* build Euclidean transformation structure using quaternion rotation */
+      gan_euclid3D_build_quaternion ( &amp;Euc, TX, TY, TZ, q0, q1, q2, q3 );
+
+      /* build Euclidean transformation structure using exponential rotation */
+      gan_euclid3D_build_exponential ( &amp;Euc, TX, TY, TZ, rx, ry, rz );
+
+      /* build Euclidean transformation structure using angle/axis rotation */
+      gan_euclid3D_build_angle_axis ( &amp;Euc, TX, TY, TZ, angle, ax, ay, az );
+
+      /* build Euclidean transformation structure using matrix rotation */
+      gan_euclid3D_build_matrix ( &amp;Euc, TX, TY, TZ,
+                                  Rxx, Rxy, Rxz, Ryx, Ryy, Ryz, Rzx, Rzy, Rzz );
+</PRE>
+
+<P>
+There is a pair of routines to set up a null Euclidean transformation
+(zero translation and rotation):
+<PRE>
+      Gan_Euclid3D Euc; /* declare Euclidean transformation structure */
+
+      /* set a null Euclidean transformation structure using a quaternion
+         representation of rotation */
+      gan_euclid3D_ident_q ( &amp;Euc, GAN_ROT3D_QUATERNION ); /* OR */
+      Euc = gan_euclid3D_ident_s ( GAN_ROT3D_QUATERNION );
+</PRE>
+
+<P>
+There is also a set of arithmetical routines. For binary arithmetical
+operations, both structures  must have the same rotation representation,
+and the operation is a pure parameter addition/subtraction etc.,
+without rescaling or otherwise adjusting the translation &amp;
+rotation parameters to conform to an actual rotation.
+This is often required when implementing optimisation, for instance computing
+derivatives numerically.
+Firstly there are routines for multiplying or dividing transformation
+parameters by a scalar:
+<PRE>
+      Gan_Euclid3D Euc1, Euc2; /* declare Euclidean pose parameters T1,R1 and T2,R2 */
+
+      /* ... fill T1,R1 with translation &amp; rotation parameters ... */
+
+      /* multiply the T1,R1 parameters by 3, writing them into T2,R2 */
+      gan_euclid3D_scale_q ( &amp;Euc1, 3.0, &amp;Euc2 ); /* T2 = 3*T1, R2 = 3*R1, OR */
+      R2 = gan_euclid3D_scale_s ( &amp;Euc1, 3.0 ); /* T2 = 3*T1, R2 = 3*R1, OR */
+      gan_euclid3D_scale_i ( &amp;Euc1, 3.0 ); /* replace T1 = 3*T1, R1 = 3*R1 */
+
+      /* divide the rotation parameters R1 by 3, writing them into R2 */
+      gan_euclid3D_divide_q ( &amp;Euc1, 3.0, &amp;Euc2 ); /* T2 = T1/3, R2 = R1/3, OR */
+      R2 = gan_euclid3D_divide_s ( &amp;Euc1, 3.0 ); /* T2 = T1/3, R2 = R1/3, OR */
+      gan_euclid3D_divide_i ( &amp;Euc1, 3.0 ); /* replace T1 = T1/3, R1 = R1/3 */
+</PRE>
+
+<P>
+Next a set of routines each for adding and subtracting Euclidean transformation
+parameters:
+<PRE>
+      Gan_Euc3D Euc1, Euc2, Euc3; /* declare rotations T1,R1, T2,R2 &amp; T3,R3 */
+
+      /* ... fill T1,R1 and T2,R2 with translation &amp; rotation parameters ... */
+
+      /* add the translation/rotation parameters T1,R1 and T2,R2 */
+      gan_euclid3D_add_q ( &amp;Euc1, &amp;Euc2, &amp;Euc3 ); /* T3 = T1 + T2, R3 = R1 + R2 */
+
+      /* subtract the rotation parameters R1 and R2 */
+      gan_euclid3D_sub_q ( &amp;Euc1, &amp;Euc2, &amp;Euc3 ); /* T3 = T1 - T2, R3 = R1 - R2 */
+</PRE>
+
+<P>
+For statistical optimisation purposes there is a structure designed to hold
+covariance information for 3D pose parameters. Writing the rotation
+parameters as a vector <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img207.png"
+ ALT="${\bf R}$"> (which could be a 4-parameter quaternion vector
+or a 3-parameter exponential vector, for instance), we can write the
+covariance as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\rm Cov\left(\!\!\begin{array}{c} {\bf R}\\{\bf T}\end{array}\!\!\right)
+   = \left(\!\!\begin{array}{cc} \rm Cov_{{\bf R}{\bf R}} & \rm Cov_{{\bf T}{\bf R}}^{\top}\\
+                 \rm Cov_{{\bf T}{\bf R}} & \rm Cov_{{\bf T}{\bf T}}^{\top}\end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="232" HEIGHT="45" BORDER="0"
+ SRC="img208.png"
+ ALT="\begin{displaymath}\rm Cov\left(\!\!\begin{array}{c} {\bf R}\ {\bf T}\end{array...
+...f R}} &amp; \rm Cov_{{\bf T}{\bf T}}^{\top}\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<PRE>
+      /* covariance of 3D pose */
+      typedef struct
+      {
+         Gan_Rot3D_Cov      Crr; /* covariance of rotation parameters */
+         Gan_Euclid3D_TRCov Ctr; /* cross-covariance between translation and rotation */
+         Gan_SquMatrix33    Ctt; /* covariance of translation parameters */
+      } Gan_Euclid3r_Cov;
+</PRE>
+The cross-covariance structure between <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img146.png"
+ ALT="${\bf T}$"> and <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img207.png"
+ ALT="${\bf R}$"> is
+<PRE>
+      /* cross-covariance between rotation and translation */
+      typedef struct Gan_Euclid3D_TRCov
+      {
+         Gan_Rot3D_Type type;
+         union
+         {
+            Gan_Matrix34 q;  /* quaternion representation (4 parameters) */
+            Gan_Matrix33 le; /* exponential representation (3 parameters) */
+         } d;
+      } Gan_Euclid3D_TRCov;
+</PRE>
+
+<P>
+<B>Error detection:</B> The <TT>gan_euclid3D_build_...()</TT> and all the
+<TT>gan_euclid3D_..._[qi]()</TT> routines return a boolean value,
+and return <TT>GAN_FALSE</TT> on error, invoking the Gandalf error handler.
+The main error modes are difference of the representations between two
+rotation parts of the structures for the arithmetic and combination routines,
+and illegal parameter values.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2038"
+  HREF="node130.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2034"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2028"
+  HREF="node128.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2036"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2039"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+<B> Up:</B> <A NAME="tex2html2035"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html2029"
+  HREF="node128.html">General rotation routines</A>
+ &nbsp; <B>  <A NAME="tex2html2037"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Creating and accessing fixed size matrices</TITLE>
+<META NAME="description" CONTENT="Creating and accessing fixed size matrices">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node44.html">
+<LINK REL="previous" HREF="node42.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node44.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html897"
+  HREF="node44.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html893"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html887"
+  HREF="node42.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html895"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html898"
+  HREF="node44.html">Fixed size matrix addition</A>
+<B> Up:</B> <A NAME="tex2html894"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html888"
+  HREF="node42.html">Definitions of fixed size</A>
+ &nbsp; <B>  <A NAME="tex2html896"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412200000000000000">
+Creating and accessing fixed size matrices</A>
+</H3>
+Single fixed size matrices are such simple objects, it makes sense to
+normally use declare structure variables directly, rather than use pointers
+to structures created by <TT>malloc()</TT>. So to create a double precision
+<IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix, use the declaration
+<PRE>
+      Gan_Matrix34 m34A;
+</PRE>
+From now on, we shall describe the routines for double precision matrices
+only. Single precision functions are very similar and will be explained below.
+Setting the coordinates of a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix can be achieved by one of
+
+<OL>
+<LI>Initialising the <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix when it is created, as in
+<PRE>
+      Gan_Matrix34 m34A = {1.0,  2.0,  3.0,  4.0,
+                           5.0,  6.0,  7.0,  8.0,
+                           9.0, 10.0, 11.0, 12.0};
+</PRE>
+
+<P>
+</LI>
+<LI>Accessing the structure elements directly:
+<PRE>
+      m34A.xx = 1.0; m34A.xy = 2.0; m34A.xz = 3.0; /* etc. */
+</PRE>
+</LI>
+<LI>Using the macro call
+<PRE>
+      gan_mat34_fill_q ( &amp;m34A, 1.0,  2.0,  3.0,  4.0,
+                                5.0,  6.0,  7.0,  8.0,
+                                9.0, 10.0, 11.0, 12.0 );
+</PRE>
+Note that the Gnu C compiler prints a warning when the above call is compiled,
+and also for most other similar calls in the linear algebra package.
+This warning can be avoided by inserting an initial <TT>(void)</TT> cast:
+<PRE>
+      (void)gan_mat34_fill_q ( &amp;m34A, 1.0,  2.0,  3.0,  4.0,
+                                      5.0,  6.0,  7.0,  8.0,
+                                      9.0, 10.0, 11.0, 12.0 );
+</PRE>
+We omit this cast in the following to keep the exposition simple.
+</LI>
+<LI>The equivalent function call
+<PRE>
+      m34A = gan_mat34_fill_s ( 1.0,  2.0,  3.0,  4.0,
+                                5.0,  6.0,  7.0,  8.0,
+                                9.0, 10.0, 11.0, 12.0 );
+</PRE>
+</LI>
+</OL>
+
+<P>
+The methods of initialising a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix follow those listed above
+for <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices, for instance
+<PRE>
+      Gan_Matrix33 m33A;
+
+      gan_mat33_fill_q ( &amp;m33A, 1.0, 2.0, 3.0,
+                                4.0, 5.0, 6.0,
+                                7.0, 8.0, 9.0 ); /* OR */
+      m33A = gan_mat33_fill_s ( 1.0, 2.0, 3.0,
+                                4.0, 5.0, 6.0,
+                                7.0, 8.0, 9.0 );
+</PRE>
+For a symmetric or lower triangular
+<TT>Gan_SquMatrix33</TT> matrix, direct initialisation (options 1 and 2 above) is
+not advisable, because of the <TT>type</TT> field of the structure whose
+presence depends on <TT>NDEBUG</TT>, Instead use the macro calls
+<PRE>
+      Gan_SquMatrix33 sm33S, sm33L;
+
+      /* symmetric matrix */
+      gan_symmat33_fill_q ( &amp;sm33S, 1.0,
+                                    2.0, 3.0,
+                                    4.0, 5.0, 6.0 );
+
+      /* lower triangular matrix */
+      gan_ltmat33_fill_q ( &amp;sm33L, 1.0,
+                                   2.0, 3.0,
+                                   4.0, 5.0, 6.0 );
+</PRE>
+The first of these fills the matrix without specifying the values above the
+diagonal, and actually builds the matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S = \left(\!\!\begin{array}{ccc} 1 & 2 & 4 \\2 & 3 & 5 \\4 & 5 & 6\end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="116" HEIGHT="64" BORDER="0"
+ SRC="img25.png"
+ ALT="\begin{displaymath}S = \left(\!\!\begin{array}{ccc} 1 &amp; 2 &amp; 4 \ 2 &amp; 3 &amp; 5 \ 4 &amp; 5 &amp; 6\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The second builds the lower triangular matrix
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+L = \left(\!\!\begin{array}{ccc} 1 & 0 & 0 \\2 & 3 & 0 \\4 & 5 & 6\end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="116" HEIGHT="64" BORDER="0"
+ SRC="img26.png"
+ ALT="\begin{displaymath}L = \left(\!\!\begin{array}{ccc} 1 &amp; 0 &amp; 0 \ 2 &amp; 3 &amp; 0 \ 4 &amp; 5 &amp; 6\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Setting a fixed-size matrix to zero can be accomplished using one of the calls
+<PRE>
+      gan_mat34_zero_q ( &amp;m34A ); /* OR */ m34A = gan_mat34_zero_s();
+      gan_mat33_zero_q ( &amp;m33A ); /* OR */ m33A = gan_mat33_zero_s();
+      gan_symmat33_zero_q ( &amp;sm33S ); /* OR */ sm33S = gan_symmat33_zero_s();
+      gan_ltmat33_zero_q ( &amp;sm33L ); /* OR */ sm33L = gan_ltmat33_zero_s();
+</PRE>
+
+<P>
+Setting a square matrix to identity is achieved using
+<PRE>
+      gan_mat33_ident_q ( &amp;m33A ); /* OR */ m33A = gan_mat33_ident_s();
+      gan_symmat33_ident_q ( &amp;sm33S ); /* OR */ sm33S = gan_symmat33_ident_s();
+      gan_ltmat33_ident_q ( &amp;sm33L ); /* OR */ sm33L = gan_ltmat33_ident_s();
+</PRE>
+
+<P>
+Copying <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices can be accomplished either by direct assignment
+<PRE>
+      Gan_Matrix34 m34B;
+
+      m34B = m34A;
+</PRE>
+or by use of one of the routines
+<PRE>
+      gan_mat34_copy_q ( &amp;m34A, &amp;m34B ); /* macro, OR */
+      m34B = gan_mat34_copy_s ( &amp;m34A ); /* function call */
+</PRE>
+The methods of copying general, symmetric and lower triangular matrices follow
+that of <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html897"
+  HREF="node44.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html893"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html887"
+  HREF="node42.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html895"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html898"
+  HREF="node44.html">Fixed size matrix addition</A>
+<B> Up:</B> <A NAME="tex2html894"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html888"
+  HREF="node42.html">Definitions of fixed size</A>
+ &nbsp; <B>  <A NAME="tex2html896"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

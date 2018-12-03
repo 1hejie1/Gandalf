@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Conversion from general to fixed size matrix</TITLE>
+<META NAME="description" CONTENT="Conversion from general to fixed size matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node56.html">
+<LINK REL="previous" HREF="node54.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node56.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1041"
+  HREF="node56.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1037"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1031"
+  HREF="node54.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1039"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1042"
+  HREF="node56.html">Single precision fixed size</A>
+<B> Up:</B> <A NAME="tex2html1038"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1032"
+  HREF="node54.html">Fixed size matrix file</A>
+ &nbsp; <B>  <A NAME="tex2html1040"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004121400000000000000">
+Conversion from general to fixed size matrix</A>
+</H3>
+Functions are provided to convert a general matrix <TT>Gan_Matrix</TT>
+<TT>Gan_Matrix34</TT>, provided that the general matrix has actually been
+created with size three. So for instance
+<PRE>
+      Gan_Matrix *pmMatrix;
+
+      pmMatrix = gan_mat_alloc(3,4);
+      gan_mat_fill_va ( pmMatrix, 3, 4, 1.0,  2.0,  3.0,  4.0,
+                                        5.0,  6.0,  7.0,  8.0,
+                                        9.0, 10.0, 11.0, 12.0 );
+      gan_mat34_from_mat_q ( pmMatrix, &amp;m34A );
+</PRE>
+or
+<PRE>
+      m34A = gan_mat34_from_mat_s ( pmMatrix );
+</PRE>
+fill <TT>m34A</TT> with the same values as the general matrix.
+Calling these functions with a general matrix <TT>pmMatrix</TT> not having
+the same size as the fixed size matrix is an error.
+
+<P>
+<TT>Error detection:</TT> The conversion routines return the pointer to the
+filled fixed size matrix, or <TT>NULL</TT> on failure, invoking the Gandalf
+error handle in the latter case.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,267 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Projecting points and lines</TITLE>
+<META NAME="description" CONTENT="Projecting points and lines">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node105.html">
+<LINK REL="previous" HREF="node103.html">
+<LINK REL="up" HREF="node102.html">
+<LINK REL="next" HREF="node105.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1732"
+  HREF="node105.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1728"
+  HREF="node102.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1722"
+  HREF="node103.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1730"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1733"
+  HREF="node105.html">Adding/removing camera distortion</A>
+<B> Up:</B> <A NAME="tex2html1729"
+  HREF="node102.html">Cameras</A>
+<B> Previous:</B> <A NAME="tex2html1723"
+  HREF="node103.html">Building cameras</A>
+ &nbsp; <B>  <A NAME="tex2html1731"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00612000000000000000">
+Projecting points and lines</A>
+</H2>
+Routines for projecting points and lines into an image are provided.
+The double precision routines are
+<PRE>
+      Gan_Vector3 v3X, v3x; /* declare camera/scene points X, x */
+      Gan_Vector3 v3L, v3l; /* declare camera/scene lines L, l */
+
+      /* fill camera point X &amp; line L with values */
+      gan_vec3_fill_q ( &amp;v3X, 1.5, -0.8, 1.2 );
+      gan_vec3_fill_q ( &amp;v3L, 2.7,  3.9, 3.6 );
+
+      /* project point from camera 3D coordinates onto the image X --&gt; x */
+      gan_camera_project_point_q ( &amp;CameraD, &amp;v3X, &amp;v3x );
+
+      /* project line from camera 3D coordinates onto the image L --&gt; l */
+      gan_camera_project_line_q ( &amp;CameraD, &amp;v3L, &amp;v3l );
+</PRE>
+The point projection function implements the projection
+equations&nbsp;<A HREF="node102.html#linear-camera-model">5.1</A> and&nbsp;<A HREF="node102.html#radial-distortion-model">5.2</A>.
+The lines are represented in homogeneous 2D coordinates, so that
+the line <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img122.png"
+ ALT="${\bf L}$"> in camera coordinates actually describes a <EM>plane</EM>
+in 3D space intersecting the origin (optical centre). If <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img123.png"
+ ALT="${\bf X}$"> is a
+point in camera <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$X,Y,Z$"> space, the line in the homogeneous 2D space of
+camera ``rays'' is defined by the equation
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf L}.{\bf X}= 0\;\;\;\;\mbox{or}\;\;\;\; L_X X + L_Y Y + L_Z Z = 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="280" HEIGHT="26" BORDER="0"
+ SRC="img124.png"
+ ALT="\begin{displaymath}{\bf L}.{\bf X}= 0\;\;\;\;\mbox{or}\;\;\;\; L_X X + L_Y Y + L_Z Z = 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The line in image coordinates <!-- MATH
+ ${\bf x}=(x\;y\;z_h)^{\top}$
+ -->
+<IMG
+ WIDTH="100" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img125.png"
+ ALT="${\bf x}=(x\;y\;z_h)^{\top}$"> is similarly defined as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf l}.{\bf x}= 0\;\;\;\;\mbox{or}\;\;\;\; l_x x + l_y y + l_z z_h = 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="236" HEIGHT="29" BORDER="0"
+ SRC="img126.png"
+ ALT="\begin{displaymath}{\bf l}.{\bf x}= 0\;\;\;\;\mbox{or}\;\;\;\; l_x x + l_y y + l_z z_h = 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Projection of lines is only available for linear cameras, since when there
+is distortion lines in 3D space project to curves on the image.
+For a linear camera the relationship between <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img122.png"
+ ALT="${\bf L}$"> and <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img127.png"
+ ALT="${\bf l}$"> is
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf l}= K^{-\top}{\bf L}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="72" HEIGHT="24" BORDER="0"
+ SRC="img128.png"
+ ALT="\begin{displaymath}{\bf l}= K^{-\top}{\bf L}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+There are also versions of the above routines which perform the projection
+in-place in the input vector. So for instance
+<PRE>
+      Gan_Vector3 v3Xx; /* declare point */
+      Gan_Vector3 v3Ll; /* declare line */
+
+      /* fill camera point X &amp; line L with values */
+      gan_vec3_fill_q ( &amp;v3Xx, 1.5, -0.8, 1.2 );
+      gan_vec3_fill_q ( &amp;v3Ll, 2.7,  3.9, 3.6 );
+
+      /* project point from camera 3D coordinates onto the image in-place */
+      gan_camera_project_point_i ( &amp;CameraD, &amp;v3Xx );
+
+      /* project line from camera 3D coordinates onto the image in-place */
+      gan_camera_project_line_i ( &amp;CameraD, &amp;v3Ll );
+</PRE>
+
+<P>
+Back-projection from image to camera coordinates operates similarly.
+To back-project a point and a line you can use
+<PRE>
+      Gan_Vector3 v3X, v3x; /* declare camera/scene points X, x */
+      Gan_Vector3 v3L, v3l; /* declare camera/scene lines L, l */
+
+      /* fill image point x &amp; line l with values */
+      gan_vec3_fill_q ( &amp;v3x, 1.5, -0.8, 1.2 );
+      gan_vec3_fill_q ( &amp;v3l, 2.7,  3.9, 3.6 );
+
+      /* back-project point from the image into camera 3D coordinates x --&gt; X */
+      gan_camera_backproject_point_q ( &amp;CameraD, &amp;v3x, &amp;v3X ); /* OR */
+      gan_camera_backproject_point_i ( &amp;CameraD, &amp;v3x ); /* in-place */
+
+      /* backproject line from the image into camera 3D coordinates l --&gt; L */
+      gan_camera_backproject_line_q ( &amp;CameraD, &amp;v3l, &amp;v3L ); /* OR */
+      gan_camera_backproject_line_i ( &amp;CameraD, &amp;v3l ); /* in-place */
+</PRE>
+
+<P>
+The single precision versions of these functions operate similarly.
+The single precision camera to image projection functions are
+<PRE>
+      Gan_Vector3_f v3X, v3x; /* declare camera/scene points X, x */
+      Gan_Vector3_f v3L, v3l; /* declare camera/scene lines L, l */
+
+      /* fill camera point X &amp; line L with values */
+      gan_vec3f_fill_q ( &amp;v3X, 1.5F, -0.8F, 1.2F );
+      gan_vec3f_fill_q ( &amp;v3L, 2.7F,  3.9F, 3.6F );
+
+      /* project point from camera 3D coordinates onto the image X --&gt; x */
+      gan_cameraf_project_point_q ( &amp;CameraF, &amp;v3X, &amp;v3x ); /* OR */
+      gan_cameraf_project_point_i ( &amp;CameraF, &amp;v3X ); /* in-place */
+
+      /* project line from camera 3D coordinates onto the image L --&gt; l */
+      gan_cameraf_project_line_q ( &amp;CameraF, &amp;v3L, &amp;v3l ); /* OR */
+      gan_cameraf_project_line_i ( &amp;CameraF, &amp;v3L ); /* in-place */
+</PRE>
+The single precision image to camera back-projection functions are
+<PRE>
+      Gan_Vector3_f v3X, v3x; /* declare camera/scene points X, x */
+      Gan_Vector3_f v3L, v3l; /* declare camera/scene lines L, l */
+
+      /* fill image point x &amp; line l with values */
+      gan_vec3f_fill_q ( &amp;v3x, 1.5F, -0.8F, 1.2F );
+      gan_vec3f_fill_q ( &amp;v3l, 2.7F,  3.9F, 3.6F );
+
+      /* project point from camera 3D coordinates onto the image X --&gt; x */
+      gan_cameraf_backproject_point_q ( &amp;CameraF, &amp;v3x, &amp;v3X ); /* OR */
+      gan_cameraf_backproject_point_i ( &amp;CameraF, &amp;v3x ); /* in-place */
+
+      /* project line from camera 3D coordinates onto the image L --&gt; l */
+      gan_cameraf_backproject_line_q ( &amp;CameraF, &amp;v3l, &amp;v3L ); /* OR */
+      gan_cameraf_backproject_line_i ( &amp;CameraF, &amp;v3l ); /* in-place */
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1732"
+  HREF="node105.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1728"
+  HREF="node102.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1722"
+  HREF="node103.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1730"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1733"
+  HREF="node105.html">Adding/removing camera distortion</A>
+<B> Up:</B> <A NAME="tex2html1729"
+  HREF="node102.html">Cameras</A>
+<B> Previous:</B> <A NAME="tex2html1723"
+  HREF="node103.html">Building cameras</A>
+ &nbsp; <B>  <A NAME="tex2html1731"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

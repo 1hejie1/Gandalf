@@ -1,0 +1,510 @@
+\chapter{The Common Package} \label{common-chapter}
+The {\bf common} package defines general purpose types and routines used
+extensively elsewhere in Gandalf, and also available to other application
+code using Gandalf. To use any function or structure in the common package
+use the declaration
+\begin{verbatim}
+      #include <gandalf/common.h>
+\end{verbatim}
+but including individual module header files instead will speed up program
+compilation.
+We describe each module in the common package below.
+
+\section{Miscellaneous definitions} \label{common-misc-sec}
+\begin{verbatim}
+      #include <gandalf/common/misc_defs.h>
+\end{verbatim}
+The module {\tt misc\_defs.[ch]} defines basic types used in Gandalf.
+
+\subsection{Simple types} \label{simple-types-sec}
+A boolean type {\tt GAN\_BOOL} is defined:
+\begin{verbatim}
+      typedef enum { GAN_FALSE=0, GAN_TRUE=1 } Gan_Bool;
+\end{verbatim}
+The boolean type is the standard type returned by a Gandalf function,
+where a return type of {\tt GAN\_TRUE} indicates success, {\tt GAN\_FALSE}
+failure. Another use for the {\tt Gan\_Bool} type is with bit arrays and
+binary images. See Sections~\ref{bit-array-sec} and~\ref{binary-image-sec}.
+
+The {\tt Gan\_Type} enumerated type is used extensively to indicated
+different kinds of simple objects:
+\begin{verbatim}
+      /// labels for simple types used throughout Gandalf
+      typedef enum
+      {
+         GAN_CHAR,       /**< signed character */
+         GAN_UCHAR,      /**< unsigned character */
+         GAN_SHORT,      /**< signed short integer */
+         GAN_USHORT,     /**< unsigned short integer */
+         GAN_INT,        /**< signed integer */
+         GAN_UINT,       /**< unsigned integer */
+         GAN_LONG,       /**< signed long integer */
+         GAN_ULONG,      /**< unsigned long integer */
+      #if (SIZEOF_LONG_LONG != 0)
+         GAN_LONGLONG,   /**< signed extra-long integer */
+      #endif
+         GAN_FLOAT,      /**< single precision floating point */
+         GAN_DOUBLE,     /**< double precision floating point */
+         GAN_LONGDOUBLE, /**< long double precision floating point */
+         GAN_STRING,     /**< string (array of characters) */
+         GAN_BOOL,       /**< boolean */
+         GAN_POINTER     /**< generic pointer */
+      } Gan_Type;
+\end{verbatim}
+Note that the {\tt GAN\_LONGLONG} value is only defined if the {\tt configure}
+program finds the {\tt long~long} C type, and is able to determine its size.
+The array {\tt gan\_type\_sizes[]} holds the sizes of each {\tt Gan\_Type}
+value:
+\begin{verbatim}
+      /// array of sizeof()'s of each Gandalf type, one for each value in a Gan_Type
+      extern const size_t gan_type_sizes[];
+\end{verbatim}
+{\tt gan\_type\_sizes} and the {\tt gan\_debug} boolean flag
+(see below) are the only global variables in Gandalf.\\{\tt gan\_type\_sizes[]}
+is a constant array, so it is thread-safe.
+
+Gandalf also provides single and double precision floating point versions
+of the integer limit values found in {\tt <limits.h>}. For instance
+{\tt GAN\_INT\_MAXF} and {\tt GAN\_INT\_MAXD} are the {\tt float} and
+{\tt double} versions of {\tt INT\_MAX}.
+
+\subsection{Types with specific bit sizes}
+Gandalf builds unsigned integer types with specific bit sizes, so that
+the types {\tt GAN\_UINT8}, {\tt GAN\_UINT16}, {\tt GAN\_UINT32} and
+{\tt GAN\_UINT64} are {\tt \#define}'d to the relevant {\tt Gan\_Type}
+value, using the information on the sizes of architecture-dependent
+C object sizes provided by {\tt configure}. You can also define your
+own variables with specific sizes using the {\tt typedef}s {\tt gan\_ui8}
+etc. For instance a declaration
+\begin{verbatim}
+      gan_ui16 val;
+\end{verbatim}
+declares a 16-bit variable. {\tt gan\_ui32} and {\tt gan\_ui64} are 
+also defined, the latter only on 64-bit architectures.
+
+\subsection{Debugging tools} \label{debugging-tools-sec}
+The macro {\tt gan\_assert()} provides a mechanism similar to {\tt assert()}
+except that it allows a user-defined message to be printed when the test
+fails. When {\tt NDEBUG} is {\tt \#define}'d {\tt gan\_assert()} will have
+no effect. The global variable {\tt gan\_debug} determines whether to
+print certain debugging messages. It is only available when {\tt NDEBUG}
+is not defined.
+
+\section{Linked lists} \label{linked-list-sec}
+\begin{verbatim}
+      #include <gandalf/common/linked_list.h>
+\end{verbatim}
+Gandalf linked lists are stored in {\tt Gan\_List} structures.
+The underlying structure is a doubly-linked list, so Gandalf lists can be
+traversed both forwards and backwards.
+A new empty list can be created using
+\begin{verbatim}
+      Gan_List List;
+
+      gan_list_form(&List);
+\end{verbatim}
+Note that to detect errors the return value of {\tt gan\_list\_form()}
+should be compared with {\tt NULL}, invoking the Gandalf error package
+(see Sections~\ref{error-sec} and~\ref{error-handling-sec})
+and returning an error condition
+if {\tt NULL} is returned. Here and elsewhere we omit these tests for
+the sake of clarity, but many examples of this testing can be found in
+the Gandalf source.
+
+To insert a new list node at the start of the list, use
+\begin{verbatim}
+      gan_list_insert_first ( &List, ptr );
+\end{verbatim}
+where {\tt ptr} is the data item (pointer) to be stored. By repetitively
+called this function, a list can be built up, with the last item added as
+the first node in the list.
+A Gandalf list stores pointers in an ordered way, while still transparently
+allowing pseudo-random access to the list nodes. As well as the stored
+data, the list maintains a state variable indicating a position within the
+list, from 0 to $N-1$ for a list of $N$ nodes. The normal way to traverse
+a list is to use the following sequence:
+\begin{verbatim}
+      int iCount;
+      Gan_Matrix *pMatrix;
+
+      gan_list_goto_head ( &List );
+      for ( iCount = gan_list_get_size(&List)-1; iCount >= 0; iCount-- )
+      {
+         pMatrix = gan_list_get_next ( &List, Gan_Matrix );
+         ... [ do something with pMatrix ] ...
+      }
+\end{verbatim}
+{\tt gan\_list\_goto\_head()} sets the position state variable to -1,
+i.e. the position just before the start of the list.
+{\tt gan\_list\_get\_size()} returns the number of nodes in a list.
+So the above loop runs through each node of the list, calling
+{\tt gan\_list\_get\_next()} to provide each data item in turn, in this
+case matrix structure pointers. {\tt gan\_list\_get\_next()} increments
+the position state variable by one each time it is called, so on the
+first call in the above loop, the position is increment from -1 to 0,
+and the node at position 0 returned.
+
+To free the list use
+\begin{verbatim}
+      gan_list_free ( &List, NULL );
+\end{verbatim}
+which frees the list nodes but not the data they point to. If you wanted to
+free the data as well, for the above list you would use
+\begin{verbatim}
+      gan_list_free ( &List, (Gan_FreeFunc) gan_mat_free );
+\end{verbatim}
+which calls {\tt gan\_mat\_free()} on each matrix in the list.
+
+Note that pointers to lists may be used instead of directly using the
+structures. To create a list using pointers use
+\begin{verbatim}
+      Gan_List *pList;
+
+      pList = gan_list_new();
+\end{verbatim}
+and at the end call
+\begin{verbatim}
+      gan_list_free ( pList, NULL );
+\end{verbatim}
+In this and other examples Gandalf keeps track of which parts of a structure
+were dynamically allocated, and only frees those which were.
+
+Other ways to build and access linked lists are provided in the reference
+documentation.
+
+\section{Bit arrays} \label{bit-array-sec}
+\begin{verbatim}
+      #include <gandalf/common/bit_array.h>
+\end{verbatim}
+Gandalf bit arrays are a compact representation of binary flags.
+They are used both directly and as the foundation of binary images in Gandalf
+(see Section~\ref{binary-image-sec}).
+They allow compact storage of an array of boolean values.
+The architecture of the computer determines how the boolean values are stored,
+so for instance on 32 bit machines, the boolean values are packed as 32 values
+in a single word.
+To create a bit array use the following code:
+\begin{verbatim}
+      Gan_BitArray BitArray;
+
+      gan_bit_array_form ( &BitArray, 200 );
+\end{verbatim}
+for an array of 200 bits.
+
+A bit array may be initialised to zero by calling
+\begin{verbatim}
+      gan_bit_array_fill ( &BitArray, GAN_FALSE );
+\end{verbatim}
+or to one (all bits set) by passing {\tt GAN\_TRUE} instead of
+{\tt GAN\_FALSE}. To set a bit to one, use
+\begin{verbatim}
+      gan_bit_array_set_bit ( &BitArray, pos );
+\end{verbatim}
+where {\tt pos} is the bit you want to set, from zero to $N-1$ for a bit
+array of $N$ bits. Similarly use\\ {\tt gan\_bit\_array\_clear\_bit()} to
+clear a bit to zero. To return the value of a particular bit use
+\begin{verbatim}
+      Gan_Bool bBit;
+
+      bBit = gan_bit_array_get_bit ( &BitArray, pos );
+\end{verbatim}
+
+Several boolean operations are supported on bit arrays. Given two bit arrays,
+the operation
+\begin{verbatim}
+      gan_bit_array_and_i ( &BitArray1, &BitArray2 );
+\end{verbatim}
+performs the bitwise AND operation on each bit of the bit arrays, overwriting
+{\tt BirArray1} with the result. Bitwise OR, exclusive-OR (EOR) and not-AND
+(NAND) are also supported, as well as inversion (NOT).
+
+To free a bit array after you have finished using it, call
+\begin{verbatim}
+      gan_bit_array_free ( &BitArray );
+\end{verbatim}
+
+\section{Memory allocation} \label{allocation-sec}
+\begin{verbatim}
+      #include <gandalf/common/allocate.h>
+\end{verbatim}
+Gandalf provides some macros to simplify access to the standard {\tt malloc()}
+and {\tt realloc()} functions. So for instance to allocate an array of
+a hundred integers you can use
+\begin{verbatim}
+      int *aiArray;
+
+      aiArray = gan_malloc_array ( int, 100 );
+\end{verbatim}
+instead of the usual
+\begin{verbatim}
+      int *aiArray;
+
+      aiArray = (int *) malloc ( 100*sizeof(int) );
+\end{verbatim}
+
+\section{Array fill/copy} \label{array-sec}
+\begin{verbatim}
+      #include <gandalf/common/array.h>
+\end{verbatim}
+There are two sets of functions in this module, one set dealing with
+filling an array of numbers or pointers with a constant value, the other
+dealing with copying an array into another array. To fill an array of
+{\tt float}s with the value five, for instance, use
+\begin{verbatim}
+      float afArray[100];
+
+      gan_fill_array_f ( afArray, 100, 1, 5.0F );
+\end{verbatim}
+The third {\tt stride} argument will be one for filling a simple contiguous
+array. A different value indicates the number of elements of the array to
+skip when filling each value. A value of three, for instance, indicates that
+only every third element of the array is to be filled.
+
+To copy one array into another, each having arbitrary stride, use
+\begin{verbatim}
+      float afArray1[100], float afArray2[100];
+
+      /* fill array afArray1 with values */
+      ...
+
+      gan_copy_array_f ( afArray1, 1, 100, afArray2, 1 );
+\end{verbatim}
+This copies array {\tt afArray1} into {\tt afArray2}.
+
+\section{Complex numbers} \label{complex-sec}
+\begin{verbatim}
+      #include <gandalf/common/complex.h>
+\end{verbatim}
+Complex numbers are defined here, used 
+
+\section{Numerical routines} \label{numerics-sec}
+\begin{verbatim}
+      #include <gandalf/common/numerics.h>
+\end{verbatim}
+This contains a few useful numerical routines not often included in
+C libraries, such as square (e.g. {\tt gan\_sqr\_d()} or the macro
+{\tt gan\_sqr()}),
+cube-root {\tt gan\_cbrt()} and various flavours of random number
+generators. There are functions {\tt gan\_solve\_quadratic ()} and
+{\tt gan\_solve\_cubic()} for finding the real and complex roots
+of quadratic and cubic equations,
+and also a function {\tt gan\_normal\_sample()} for
+generating samples from a normal distribution.
+
+
+\section{Comparison routines} \label{compare-sec}
+\begin{verbatim}
+      #include <gandalf/common/compare.h>
+\end{verbatim}
+This is a set of functions to compute the maximum or minimum of up to
+six numbers, either as macros (e.g. {\tt gan\_min3()} for the minumum of
+three numbers) or as functions such as {\tt gan\_max4\_d()} to return the
+maximum of four double precision floating point numbers.
+
+\section{Error handling} \label{error-handling-sec}
+\begin{verbatim}
+      #include <gandalf/common/gan_err.h>
+\end{verbatim}
+The purpose of the error module is to provide a
+mechanism by which generic reusable code (typically a software library) can
+report errors to a variety of applications without the need to
+modify the library code for each new application context. That is,
+the error reporting mechanism of the library is highly decoupled
+from that of the application. Communication of error information
+from library to application is performed using a small and well
+defined interface.
+
+The role of the library is to communicate full and
+unprocessed error information to the application. The role of the
+application is to access the error information and act on it, whether
+reporting the error back to the user, ignore it or perform some other action.
+This demarcation of roles allows the application to use its
+own error reporting mechanism, without any need to embed application
+specific code in the library. The library achieves generality
+because it plays no role in reporting the error information, which
+usually requires system and application specific facilities.
+Specifically, the library writes (registers) error information into
+a LIFO stack (error trace) which is built up as the error unwinds
+through the nested calls. When the library function called by the
+application finally returns, with an error code, the application
+uses an error reporter to access the errors details and processes
+that information in any way it chooses (e.g. displays an error
+dialogue box, logs the error in a database).
+
+The library function at which a new error occurs must first flush
+the error trace before registering the error.
+
+When using the error handling code the following definitions are useful.
+\begin{description}
+  \item{{\bf Error record:}} a struct holding error code, file name, line
+	number, and text message for one error.
+  \item{{\bf Error trace:}} a LIFO stack of error records, which allows
+	temporary storage of error information until defered retrieval by
+	application.
+  \item{{\bf Top record:}} The most recent error stored in trace.
+  \item{{\bf Error detection:}} Code that detects occurrence of an error.
+  \item{{\bf Error handling:}} Action undertaken as a result of detecting an
+	error. In library this typically involves registering the error and
+	returning from current function with an error status. In application
+        this typically involves invoking the reporter function.
+  \item{{\bf Registering:}} The process of placing an error into the trace
+  \item{{\bf Flushing:}} The clearing of the error trace
+  \item{{\bf Reporter:}} A function provided by the application to access error
+        stored in trace and then communicating that information
+        to the user or to a log. The reporter function must then
+        flush the error trace.
+\end{description}
+
+To illustrate the use of the error handling package, consider an example
+application which calls library (Gandalf or other) function A, which itself
+calls library function B, which has an error that is detected.
+Function B ``flushes'' the ``error trace'' (because it is
+the last function called that uses the facilities of the error package),
+and then ``registers'' the error details into the error trace and unwinds
+to function A with a return value that indicates an error has occurred.
+Function A tests the return value and detects the error, and then registers
+an error into the trace and unwinds to the application with a return value
+which indicates that an error has occurred. The application tests the return
+value and detects that an error has occurred, so calls a facility in the
+error package to report the error. The error report function in
+turn calls an application-supplied error ``reporter'' function with
+a pointer to the error trace as an argument. The address of the
+error trace is stored as a module scoped variable in the error package
+The reporter accesses the information contained in
+the error trace using accessor functions, and communicates the
+error details to the user or to a log in some application specific way
+(or it may ignore the error or perform some other action).
+
+Consequences and liabilities:
+\begin{enumerate}
+  \item The application is able to:
+    \begin{itemize}
+       \item control when errors are reported to the user interface 
+             (the library should not itself report errors to the user)
+       \item provide its own error reporting mechanism 
+             (to suit its own user interface).
+       \item extract sufficient information from the library to
+             enable sufficient error reporting to be performed.
+    \end{itemize}
+ \item The library can be used with many applications, without modification.
+ \item Interactive resolution of errors occurring in library is problematic.
+      Essentially the library is a black box to the application.
+\end{enumerate}
+
+Usage notes for application writer: No
+code is needed to initialise the error trace. But a error reporting
+function is optionally installed in the error module using
+{\tt gan\_err\_set\_reporter()}. The reporter is an application function of
+type {\tt Gan\_ErrorReporterFunc}, which is defined in {\tt gan\_err.h}. The
+reporter must get the error count using {\tt gan\_err\_get\_error\_count()}
+and then sequentially access the errors stored in the trace using
+{\tt gan\_err\_get\_error(n)}, where {\tt n} is the {\tt n}-th error,
+and {\tt n=1} is the most
+recent error. If no error reporter is installed, then the error
+module provides a default reporter {\tt gan\_err\_default\_reporter()}, whose
+action is to print the error details into {\tt stderr}. The function call
+{\tt gan\_err\_set\_reporter(GAN\_ERR\_DFL)} causes the default error reporter
+to be used, and the call {\tt gan\_err\_set\_reporter(GAN\_ERR\_IGN)} inhibits
+the error reporter from being called. {\tt gan\_err\_set\_reporter()} returns
+the address of the error reporter that was replaced so that it can
+be reinstalled later.
+
+When the application tests the return value of a library function
+and detects that an error has occurred, it should call {\tt gan\_err\_report()}
+which invokes the error reporter.
+
+The application writer can choose not to buffer the error details in
+a trace, but instead have the library function report errors
+immediately, by automatically calling {\tt gan\_err\_report()} inside
+{\tt gan\_err\_register()}. No error trace is built up. If the application
+calls {\tt gan\_err\_report()}, no errors are reported because the trace will
+be empty. Usage of the trace is controlled by {\tt gan\_err\_set\_trace()} with
+arguments {\tt GAN\_ERR\_TRACE\_ON} or {\tt GAN\_ERR\_TRACE\_OFF}.
+
+Usage notes for library writer: When a
+error is detected at the deepest function call that uses the
+facilities of the error module, then {\tt gan\_err\_flush\_trace()} should be
+called, followed by {\tt gan\_err\_register()}. As the subsequent library
+function unwinds, they should call {\tt gan\_err\_register()} (but not
+{\tt gan\_err\_flush\_trace()}), and return with an error code. This
+continues until the call stack unwinds into the applicaton.
+
+Multi-thread safe: A programmer attempting to use this module in a
+multithreaded system must heed all precautions attendent with using
+fully share memory address spaces. To make this module multithread
+safe, global locks must used to prevent concurrent access to the
+error trace.
+
+\subsection{More on the error trace}
+\begin{verbatim}
+      #include <gandalf/common/gan_err_trace.h>
+\end{verbatim}
+This module implements the error trace used in {\tt gan\_err.[ch]}.
+The header file would not normally be included explicitly in library or
+application code. An error trace is a last-in first-out (LIFO) stack for
+temporarily holding details of multiple error events
+until an application is ready to read the stack.
+
+The stack is usually flushed by the function in a
+sequence of nested calls that initially detects an
+error. As the call stack unwinds the successive
+functions also register errors, but they should not
+flush the error trace.
+
+The stack is implemented as a linked list of error
+records. If in the process of allocating heap memory
+for a new error record a memory error occurs, then
+this is refered to as a deep error.
+
+The stack always maintains two preallocated and unused
+error records for storing the details of the deep
+error and the error that was in the process of being
+registered when the deep error occured.
+
+Even if the top of the stack holds a deep error record
+and the two preallocated records are used, new errors
+can still be registered into the trace. These attempts
+may lead to repeated deep errors, in which case the
+top deep error serves as an indicator of the deep
+continuing error state. However, if the registration
+process is successful (because in the intervening
+time, some external agent has {\tt free}'d heap memory) the
+old deep error record is left on the stack and the new
+errors are registered on top of it.
+
+To ensure that the stack has at least two preallocated
+records at process startup time, the bottom and second
+to bottom records of the stack use statically
+allocated memory. These can never be dynamically {\tt free}'d.
+
+To do this, an external module must define two static
+error records. In {\tt gan\_err.c}, this is implemented as:
+\begin{verbatim}
+      /* The error trace */
+
+      /* Statically allocate last and 2nd to last records for error trace */
+      static Gan_ErrorTrace record_last = { NULL, GAN_ET_YES, GAN_ET_NO,
+                                            GAN_ET_YES, NULL,
+                                            GAN_EC_DFT_SPARE, NULL, 0, NULL };
+      static Gan_ErrorTrace record_2nd_last = { &record_last, GAN_ET_YES, GAN_ET_NO,
+                                                GAN_ET_YES, NULL,
+                                                GAN_EC_DFT_SPARE, NULL, 0, NULL};
+
+      /* Address of error trace (i.e. top of LIFO stack) */
+      static Gan_ErrorTrace * gan_err_trace_top = &record_2nd_last;
+\end{verbatim}
+The symbol {\tt gan\_et\_get\_record\_first()} refers to the current top
+of stack and is passed into the functions defined in this module as argument 1.
+
+NB. A statically allocated string containing the deep error text message must
+also exist, but this is defined in {\tt gan\_err\_trace.c}.
+
+\section{Error tests and codes} \label{error-sec}
+\begin{verbatim}
+      #include <gandalf/common/misc_error.h>
+\end{verbatim}
+The Gandalf error package itself is described in
+Section~\ref{error-handling-sec}.  The {\tt misc\_error.[ch]}
+defines some Gandalf-specific error codes.
+%The test macros should be used only to test for error that indicate
+%program bugs, since they are deactivated when {\tt NDEBUG} is set.

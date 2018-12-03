@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Computing a 2D affine homography</TITLE>
+<META NAME="description" CONTENT="Computing a 2D affine homography">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node110.html">
+<LINK REL="up" HREF="node109.html">
+<LINK REL="next" HREF="node112.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1814"
+  HREF="node112.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1810"
+  HREF="node109.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1806"
+  HREF="node110.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1812"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1815"
+  HREF="node112.html">Computing a homography between</A>
+<B> Up:</B> <A NAME="tex2html1811"
+  HREF="node109.html">Computing a homography between</A>
+<B> Previous:</B> <A NAME="tex2html1807"
+  HREF="node110.html">Computing a 2D homography</A>
+ &nbsp; <B>  <A NAME="tex2html1813"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00632000000000000000">
+Computing a 2D affine homography</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/affine33_fit.h&gt;
+</PRE>
+If the region of the scene in which a homography is to be computed is small,
+or a long focal length lens is being used, an affine 2D model of motion is
+usually adequate, and indeed computing a full projective model can become
+unstable. The function defined in this module is a version of
+<TT>gan_homog33_fit()</TT> for computing an affine 2D homography,
+which can be formed from a full projective homography by imposing the
+constraints <!-- MATH
+ $P_{31}=P_{32}=0$
+ -->
+<IMG
+ WIDTH="102" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img169.png"
+ ALT="$P_{31}=P_{32}=0$">, <IMG
+ WIDTH="57" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img170.png"
+ ALT="$P_{33}=1$">. To fit an affine 2D homography
+replace the call to <TT>gan_homog33_fit()</TT> in the above code fragment with
+<PRE>
+      /* fit affine 2D homography */
+      gan_affine33_fit ( aMatch, uiNoMatches, &amp;m33P );
+</PRE>
+
+<P>
+<TT>Error detection:</TT> <TT>gan_affine33_fit()</TT> returns a boolean value;
+hence <TT>GAN_FALSE</TT> is returned on error and the Gandalf error handler
+is invoked.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

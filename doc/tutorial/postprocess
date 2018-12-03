@@ -1,0 +1,11 @@
+#!/bin/sh
+lst=`echo report/node*.html report/index.html report/report.html`
+
+for x in `echo $lst`
+do
+  	if sed -e 's@file:/usr/local/lib/latex2html/icons/\([a-z_]*\).png@../\1.png@g' $x > /tmp/rgb42hj; then
+        /bin/mv /tmp/rgb42hj $x
+	else
+	/bin/rm /tmp/rgb42hj
+	fi
+done

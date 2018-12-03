@@ -1,0 +1,374 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Computing the fundamental/essential matrix</TITLE>
+<META NAME="description" CONTENT="Computing the fundamental/essential matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node109.html">
+<LINK REL="previous" HREF="node102.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node109.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1778"
+  HREF="node109.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1774"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1768"
+  HREF="node107.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1776"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1779"
+  HREF="node109.html">Computing a homography between</A>
+<B> Up:</B> <A NAME="tex2html1775"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1769"
+  HREF="node107.html">Converting cameras between precisions</A>
+ &nbsp; <B>  <A NAME="tex2html1777"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00620000000000000000"></A> <A NAME="fun-ess-sec"></A>
+<BR>
+Computing the fundamental/essential matrix
+</H1>
+<PRE>
+      #include &lt;gandalf/vision/fundamental.h&gt;
+      #include &lt;gandalf/vision/essential.h&gt;
+</PRE>
+The fundamental matrix&nbsp;[<A
+ HREF="node149.html#Luong:Faugeras:IJCV96">8</A>] encodes all the
+geometrical constraints available given two images of a rigid scene.
+Given two images with point locations <!-- MATH
+ ${\bf x}_1=(x_1\;y_1\;z_h)^{\top}$
+ -->
+<IMG
+ WIDTH="121" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img129.png"
+ ALT="${\bf x}_1=(x_1\;y_1\;z_h)^{\top}$"> and
+<!-- MATH
+ ${\bf x}_2=(x_2\;y_2\;z_h)^{\top}$
+ -->
+<IMG
+ WIDTH="121" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img130.png"
+ ALT="${\bf x}_2=(x_2\;y_2\;z_h)^{\top}$"> in homogeneous coordinates,
+the relationship between image points projected from the same scene point is
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf x}_2^{\top}F {\bf x}_1 = 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="78" HEIGHT="28" BORDER="0"
+ SRC="img131.png"
+ ALT="\begin{displaymath}{\bf x}_2^{\top}F {\bf x}_1 = 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img132.png"
+ ALT="$F$"> is the <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> fundamental matrix. To compute <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img132.png"
+ ALT="$F$"> you can use
+multiple point matches to solve the above homogeneous linear equations.
+The standard technique is to use pre-conditioning followed by
+symmetric matrix eigendecomposition to solve for the nine elements of
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img132.png"
+ ALT="$F$"> up to an undetermined scale factor. 
+
+<P>
+<PRE>
+      Gan_SymMatEigenStruct SymEigen;
+      Gan_Vector3 *av3Point1, *av3Point2; /* arrays of image points */
+      Gan_Matrix33 m33F;
+
+      /* allocate arrays of image coordinates, one array for each image */
+      av3Point1 = gan_malloc_array ( Gan_Vector3, 100 );
+      av3Point2 = gan_malloc_array ( Gan_Vector3, 100 );
+
+      /* ... fill arrays av3Point1 and av3Point2 with point correspondence
+             data for 100 points ... */
+
+      /* create structure for computing eigenvalues and eigenvectors,
+         initialising accumulated matrix S (here 9x9) to zero */
+      gan_symeigen_form ( &amp;SymEigen, 9 );
+
+      /* solve for fundamental matrix */
+      gan_fundamental_matrix_fit ( av3Point1, av3Point2, 100, &amp;SymEigen, &amp;m33F );
+
+      /* free stuff */
+      gan_symeigen_free ( &amp;SymEigen );
+      gan_free_va ( av3Point2, av3Point1, NULL );
+</PRE>
+
+<P>
+The essential matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img133.png"
+ ALT="$E$"> is the equivalent of the fundamental matrix in the
+case of known camera calibration parameters. In this case the rotation between
+the cameras can be computed, and also the translation vector between them
+up to an unknown scale factor. The mathematical model is that the images
+are related by the equation
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{{\bf x}_2'}^{\top}E {\bf x}_1' = 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="86" HEIGHT="28" BORDER="0"
+ SRC="img134.png"
+ ALT="\begin{displaymath}{{\bf x}_2'}^{\top}E {\bf x}_1' = 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+involving the essential matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img133.png"
+ ALT="$E$">, where <IMG
+ WIDTH="21" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img135.png"
+ ALT="${\bf x}_1'$">, <IMG
+ WIDTH="21" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img136.png"
+ ALT="${\bf x}_2'$"> are
+<EM>ideal</EM> image coordinates for images 1 &amp; 2, transformed from the
+original image coordinates <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img137.png"
+ ALT="${\bf x}_1$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img138.png"
+ ALT="${\bf x}_2$"> so that <IMG
+ WIDTH="21" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img135.png"
+ ALT="${\bf x}_1'$"> and
+<IMG
+ WIDTH="21" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img136.png"
+ ALT="${\bf x}_2'$"> are the projected coordinates for an <EM>ideal camera</EM>, which
+is to say a linear camera with focal distances <IMG
+ WIDTH="86" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img139.png"
+ ALT="$f_x=f_y=1$">, image
+centre <IMG
+ WIDTH="86" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img140.png"
+ ALT="$x_0=y_0=0$">, and homogeneous <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img141.png"
+ ALT="$z$">-coordinate <IMG
+ WIDTH="49" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img142.png"
+ ALT="$z_h=1$">.
+The camera calibration matrix for an ideal camera is <!-- MATH
+ $K=I_{3\times 3}$
+ -->
+<IMG
+ WIDTH="70" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img143.png"
+ ALT="$K=I_{3\times 3}$">.
+This means that the 3D camera coordinate frame can be identified with
+the ideal image frame (up to scale as usual).
+The essential matrix can be written as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+E = R[{\bf T}]_\times
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="76" HEIGHT="28" BORDER="0"
+ SRC="img144.png"
+ ALT="\begin{displaymath}E = R[{\bf T}]_\times
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img145.png"
+ ALT="$R$"> is the rotation matrix, <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img146.png"
+ ALT="${\bf T}$"> is the translation vector
+between the camera positions and <!-- MATH
+ $[{\bf T}]_\times$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img147.png"
+ ALT="$[{\bf T}]_\times$"> is the ``cross product
+matrix'' of <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img146.png"
+ ALT="${\bf T}$">, defined as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf T}= \left(\!\!\begin{array}{c} T_X \\T_Y \\T_Z \end{array}\!\!\right),\;\;\;\;
+   [{\bf T}]_\times = \left(\!\!\begin{array}{ccc} 0 & -T_Z & T_Y \\T_Z & 0 & -T_X \\
+   -T_Y & T_X & 0 \end{array}\!\!\right).
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="337" HEIGHT="64" BORDER="0"
+ SRC="img148.png"
+ ALT="\begin{displaymath}{\bf T}= \left(\!\!\begin{array}{c} T_X \ T_Y \ T_Z \end{ar...
+... T_Z &amp; 0 &amp; -T_X \\
+-T_Y &amp; T_X &amp; 0 \end{array}\!\!\right).
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+It is termed the cross product matrix because given any 3-vectors <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$">
+and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$">, <!-- MATH
+ $[{\bf x}]_\times {\bf y}= {\bf x}\times {\bf y}$
+ -->
+<IMG
+ WIDTH="104" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img149.png"
+ ALT="$[{\bf x}]_\times {\bf y}= {\bf x}\times {\bf y}$">.
+For more details of the essential matrix see&nbsp;[<A
+ HREF="node149.html#Faugeras:93">4</A>].
+
+<P>
+The main difference in Gandalf between computing the fundamental and essential
+matrices is in the computation of the ideal image coordinates.
+These can be computed by back-projecting the original image coordinates
+out into 3D camera (ideal image) coordinates, using the Gandalf
+back-projection function described in Section&nbsp;<A HREF="node102.html#camera-sec">5.1</A>.
+Here is a code fragment to compute the essential matrix, represented
+by the rotation <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img145.png"
+ ALT="$R$"> and translation <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img146.png"
+ ALT="${\bf T}$">.
+<PRE>
+      Gan_SymMatEigenStruct SymEigen;
+      Gan_Vector3 *av3Point1, *av3Point2; /* arrays of image points */
+      Gan_Camera Camera;
+      Gan_Euclid3D Pose;
+
+      /* allocate arrays of image coordinates, one array for each image */
+      av3Point1 = gan_malloc_array ( Gan_Vector3, 100 );
+      av3Point2 = gan_malloc_array ( Gan_Vector3, 100 );
+
+      /* ... fill arrays av3Point1 and av3Point2 with point correspondence
+             data for 100 points ... */
+
+      /* build a camera with two radial distortion parameters */
+      gan_camera_build_radial_distortion_2 ( &amp;Camera,
+                                             100.0, 700.0, 500.0, 150.0, 100.0,
+                                             0.001, 1.0e-7 );
+      
+      /* create structure for computing eigenvalues and eigenvectors,
+         initialising accumulated matrix S (here 9x9) to zero */
+      gan_symeigen_form ( &amp;SymEigen, 9 );
+
+      /* compute essential matrix */
+      gan_essential_matrix_fit ( av3Point1, av3Point2, 100, &amp;Camera, &amp;Camera,
+                                 &amp;SymEigen, &amp;Pose );
+
+      /* free stuff */
+      gan_symeigen_free ( &amp;SymEigen );
+      gan_free_va ( av3Point2, av3Point1, NULL );
+</PRE>
+The Gandalf 3D Euclidean transformation structure <TT>Gan_Euclid3D</TT> is
+used to store the result rotation and translation.
+
+<P>
+<B>Error detection:</B> Both fundamental and essential matrix routines return
+a boolean value, which is <TT>GAN_FALSE</TT> on error, invoking the Gandalf
+error handler.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1778"
+  HREF="node109.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1774"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1768"
+  HREF="node107.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1776"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1779"
+  HREF="node109.html">Computing a homography between</A>
+<B> Up:</B> <A NAME="tex2html1775"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1769"
+  HREF="node107.html">Converting cameras between precisions</A>
+ &nbsp; <B>  <A NAME="tex2html1777"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

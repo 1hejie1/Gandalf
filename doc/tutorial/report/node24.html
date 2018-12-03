@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Error handling</TITLE>
+<META NAME="description" CONTENT="Error handling">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node26.html">
+<LINK REL="previous" HREF="node23.html">
+<LINK REL="up" HREF="node12.html">
+<LINK REL="next" HREF="node25.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html566"
+  HREF="node25.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html562"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html556"
+  HREF="node23.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html564"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html567"
+  HREF="node25.html">More on the error</A>
+<B> Up:</B> <A NAME="tex2html563"
+  HREF="node12.html">The Common Package</A>
+<B> Previous:</B> <A NAME="tex2html557"
+  HREF="node23.html">Comparison routines</A>
+ &nbsp; <B>  <A NAME="tex2html565"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00390000000000000000"></A> <A NAME="error-handling-sec"></A>
+<BR>
+Error handling
+</H1>
+<PRE>
+      #include &lt;gandalf/common/gan_err.h&gt;
+</PRE>
+The purpose of the error module is to provide a
+mechanism by which generic reusable code (typically a software library) can
+report errors to a variety of applications without the need to
+modify the library code for each new application context. That is,
+the error reporting mechanism of the library is highly decoupled
+from that of the application. Communication of error information
+from library to application is performed using a small and well
+defined interface.
+
+<P>
+The role of the library is to communicate full and
+unprocessed error information to the application. The role of the
+application is to access the error information and act on it, whether
+reporting the error back to the user, ignore it or perform some other action.
+This demarcation of roles allows the application to use its
+own error reporting mechanism, without any need to embed application
+specific code in the library. The library achieves generality
+because it plays no role in reporting the error information, which
+usually requires system and application specific facilities.
+Specifically, the library writes (registers) error information into
+a LIFO stack (error trace) which is built up as the error unwinds
+through the nested calls. When the library function called by the
+application finally returns, with an error code, the application
+uses an error reporter to access the errors details and processes
+that information in any way it chooses (e.g. displays an error
+dialogue box, logs the error in a database).
+
+<P>
+The library function at which a new error occurs must first flush
+the error trace before registering the error.
+
+<P>
+When using the error handling code the following definitions are useful.
+<DL>
+<DT></DT>
+<DD><B>Error record:</B> a struct holding error code, file name, line
+	number, and text message for one error.
+  
+</DD>
+<DT></DT>
+<DD><B>Error trace:</B> a LIFO stack of error records, which allows
+	temporary storage of error information until defered retrieval by
+	application.
+  
+</DD>
+<DT></DT>
+<DD><B>Top record:</B> The most recent error stored in trace.
+  
+</DD>
+<DT></DT>
+<DD><B>Error detection:</B> Code that detects occurrence of an error.
+  
+</DD>
+<DT></DT>
+<DD><B>Error handling:</B> Action undertaken as a result of detecting an
+	error. In library this typically involves registering the error and
+	returning from current function with an error status. In application
+        this typically involves invoking the reporter function.
+  
+</DD>
+<DT></DT>
+<DD><B>Registering:</B> The process of placing an error into the trace
+  
+</DD>
+<DT></DT>
+<DD><B>Flushing:</B> The clearing of the error trace
+  
+</DD>
+<DT></DT>
+<DD><B>Reporter:</B> A function provided by the application to access error
+        stored in trace and then communicating that information
+        to the user or to a log. The reporter function must then
+        flush the error trace.
+</DD>
+</DL>
+
+<P>
+To illustrate the use of the error handling package, consider an example
+application which calls library (Gandalf or other) function A, which itself
+calls library function B, which has an error that is detected.
+Function B ``flushes'' the ``error trace'' (because it is
+the last function called that uses the facilities of the error package),
+and then ``registers'' the error details into the error trace and unwinds
+to function A with a return value that indicates an error has occurred.
+Function A tests the return value and detects the error, and then registers
+an error into the trace and unwinds to the application with a return value
+which indicates that an error has occurred. The application tests the return
+value and detects that an error has occurred, so calls a facility in the
+error package to report the error. The error report function in
+turn calls an application-supplied error ``reporter'' function with
+a pointer to the error trace as an argument. The address of the
+error trace is stored as a module scoped variable in the error package
+The reporter accesses the information contained in
+the error trace using accessor functions, and communicates the
+error details to the user or to a log in some application specific way
+(or it may ignore the error or perform some other action).
+
+<P>
+Consequences and liabilities:
+
+<OL>
+<LI>The application is able to:
+
+<UL>
+<LI>control when errors are reported to the user interface 
+             (the library should not itself report errors to the user)
+</LI>
+<LI>provide its own error reporting mechanism 
+             (to suit its own user interface).
+</LI>
+<LI>extract sufficient information from the library to
+             enable sufficient error reporting to be performed.
+    
+</LI>
+</UL>
+</LI>
+<LI>The library can be used with many applications, without modification.
+</LI>
+<LI>Interactive resolution of errors occurring in library is problematic.
+      Essentially the library is a black box to the application.
+</LI>
+</OL>
+
+<P>
+Usage notes for application writer: No
+code is needed to initialise the error trace. But a error reporting
+function is optionally installed in the error module using
+<TT>gan_err_set_reporter()</TT>. The reporter is an application function of
+type <TT>Gan_ErrorReporterFunc</TT>, which is defined in <TT>gan_err.h</TT>. The
+reporter must get the error count using <TT>gan_err_get_error_count()</TT>
+and then sequentially access the errors stored in the trace using
+<TT>gan_err_get_error(n)</TT>, where <TT>n</TT> is the <TT>n</TT>-th error,
+and <TT>n=1</TT> is the most
+recent error. If no error reporter is installed, then the error
+module provides a default reporter <TT>gan_err_default_reporter()</TT>, whose
+action is to print the error details into <TT>stderr</TT>. The function call
+<TT>gan_err_set_reporter(GAN_ERR_DFL)</TT> causes the default error reporter
+to be used, and the call <TT>gan_err_set_reporter(GAN_ERR_IGN)</TT> inhibits
+the error reporter from being called. <TT>gan_err_set_reporter()</TT> returns
+the address of the error reporter that was replaced so that it can
+be reinstalled later.
+
+<P>
+When the application tests the return value of a library function
+and detects that an error has occurred, it should call <TT>gan_err_report()</TT>
+which invokes the error reporter.
+
+<P>
+The application writer can choose not to buffer the error details in
+a trace, but instead have the library function report errors
+immediately, by automatically calling <TT>gan_err_report()</TT> inside
+<TT>gan_err_register()</TT>. No error trace is built up. If the application
+calls <TT>gan_err_report()</TT>, no errors are reported because the trace will
+be empty. Usage of the trace is controlled by <TT>gan_err_set_trace()</TT> with
+arguments <TT>GAN_ERR_TRACE_ON</TT> or <TT>GAN_ERR_TRACE_OFF</TT>.
+
+<P>
+Usage notes for library writer: When a
+error is detected at the deepest function call that uses the
+facilities of the error module, then <TT>gan_err_flush_trace()</TT> should be
+called, followed by <TT>gan_err_register()</TT>. As the subsequent library
+function unwinds, they should call <TT>gan_err_register()</TT> (but not
+<TT>gan_err_flush_trace()</TT>), and return with an error code. This
+continues until the call stack unwinds into the applicaton.
+
+<P>
+Multi-thread safe: A programmer attempting to use this module in a
+multithreaded system must heed all precautions attendent with using
+fully share memory address spaces. To make this module multithread
+safe, global locks must used to prevent concurrent access to the
+error trace.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html568"
+  HREF="node25.html">More on the error trace</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html566"
+  HREF="node25.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html562"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html556"
+  HREF="node23.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html564"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html567"
+  HREF="node25.html">More on the error</A>
+<B> Up:</B> <A NAME="tex2html563"
+  HREF="node12.html">The Common Package</A>
+<B> Previous:</B> <A NAME="tex2html557"
+  HREF="node23.html">Comparison routines</A>
+ &nbsp; <B>  <A NAME="tex2html565"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

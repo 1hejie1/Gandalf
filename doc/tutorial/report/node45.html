@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size matrix subtraction</TITLE>
+<META NAME="description" CONTENT="Fixed size matrix subtraction">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node46.html">
+<LINK REL="previous" HREF="node44.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node46.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html921"
+  HREF="node46.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html917"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html911"
+  HREF="node44.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html919"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html922"
+  HREF="node46.html">Rescaling a fixed size</A>
+<B> Up:</B> <A NAME="tex2html918"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html912"
+  HREF="node44.html">Fixed size matrix addition</A>
+ &nbsp; <B>  <A NAME="tex2html920"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412400000000000000">
+Fixed size matrix subtraction</A>
+</H3>
+To subtract <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrices use the equivalent macros and functions
+<PRE>
+      gan_mat34_sub_q ( &amp;m34A, &amp;m34B, &amp;m34C ); /* macro */
+      m34C = gan_mat34_sub_s ( &amp;m34A, &amp;m34B ); /* function call */
+      gan_mat34_sub_i1 ( &amp;m34A, &amp;m34B ); /* result in-place in m34A */
+      gan_mat34_sub_i2 ( &amp;m34A, &amp;m34B ); /* result in-place in m34B */
+      gan_mat34_decrement ( &amp;m34A, &amp;m34B ); /* result in-place in m34A */
+</PRE>
+For general <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices we have the options
+<PRE>
+      Gan_Matrix33 m33A, m33B, m33C;
+
+      /* ... set up m33A, m33B using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_sub_q ( &amp;m33A, &amp;m33B, &amp;m33C ); /* macro, OR */
+      m33C = gan_mat33_sub_s ( &amp;m33A, &amp;m33B ); /* function call */
+      gan_mat33_sub_i1 ( &amp;m33A, &amp;m33B ); /* macro, result in-place in m33A */
+      gan_mat33_sub_i2 ( &amp;m33A, &amp;m33B ); /* macro, result in-place in m33B */
+      gan_mat33_decrement ( &amp;m33A, &amp;m33B ); /* equivalent to gan_mat33_sub_i1() */
+</PRE>
+For symmetric <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices we have
+<PRE>
+      Gan_SquMatrix33 sm33Sa, sm33Sb, sm33Sc;
+
+      /* ... set up sm33Sa, sm33Sb using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_sub_q ( &amp;sm33Sa, &amp;sm33Sb, &amp;sm33Sc ); /* macro, OR */
+      sm33Sc = gan_symmat33_sub_s ( &amp;sm33Sa, &amp;sm33Sb ); /* function call */
+      gan_symmat33_sub_i1 ( &amp;sm33Sa, &amp;sm33Sb ); /* macro, result in-place in sm33Sa */
+      gan_symmat33_sub_i2 ( &amp;sm33Sa, &amp;sm33Sb ); /* macro, result in-place in sm33Sb */
+      gan_symmat33_decrement ( &amp;sm33Sa, &amp;sm33Sb ); /* equivalent to gan_symmat33_sub_i1() */
+</PRE>
+Finally for lower triangular <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices we have
+<PRE>
+      Gan_SquMatrix33 sm33La, sm33Lb, sm33Lc;
+
+      /* ... set up sm33La, sm33Lb using e.g. gan_ltmat33_fill_q() ... */
+      gan_ltmat33_sub_q ( &amp;sm33La, &amp;sm33Lb, &amp;sm33Lc ); /* macro, OR */
+      sm33Lc = gan_ltmat33_sub_s ( &amp;sm33La, &amp;sm33Lb ); /* function call */
+      gan_ltmat33_sub_i1 ( &amp;sm33La, &amp;sm33Lb ); /* macro, result in-place in sm33La */
+      gan_ltmat33_sub_i2 ( &amp;sm33La, &amp;sm33Lb ); /* macro, result in-place in sm33Lb */
+      gan_ltmat33_decrement ( &amp;sm33La, &amp;sm33Lb ); /* equivalent to gan_ltmat33_sub_i1() */
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

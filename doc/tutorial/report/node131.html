@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Robust observations</TITLE>
+<META NAME="description" CONTENT="Robust observations">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node132.html">
+<LINK REL="previous" HREF="node130.html">
+<LINK REL="up" HREF="node130.html">
+<LINK REL="next" HREF="node132.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2065"
+  HREF="node132.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2061"
+  HREF="node130.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2055"
+  HREF="node130.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2063"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2066"
+  HREF="node132.html">Generalised observations</A>
+<B> Up:</B> <A NAME="tex2html2062"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+<B> Previous:</B> <A NAME="tex2html2056"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+ &nbsp; <B>  <A NAME="tex2html2064"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION006101000000000000000">
+Robust observations</A>
+</H2>
+An important drawback of standard least-squares algorithm such as
+Levenberg-Marquardt is that they assume that all observations are correct.
+Various types of estimators have been successfully used to deal with
+the presence of outliers in the data.
+Examples are least median-of-squares, RANSAC and Hough transform estimators.
+These estimators involve a radical redesign of the measurement error model.
+We employ what is probably
+the simplest method of ``robustifying'' the standard Gaussian error model.
+The robust error model used here assumes that the errors follow a
+distribution combining a narrow ``inlier'' Gaussian with a wide ``outlier''
+Gaussian, as shown for a one-dimensional distribution in
+Figure&nbsp;<A HREF="#gauss_mix">5.4</A>.
+
+<DIV ALIGN="CENTER"><A NAME="gauss_mix"></A><A NAME="6310"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5.4:</STRONG>
+The error model used to model outliers in the observations
+	incorporated in robust Levenberg-Marquardt,
+	a combination of a narrow inlier Gaussian with
+	variance <IMG
+ WIDTH="21" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img6.png"
+ ALT="$\sigma^2$">, and wide Gaussian for outliers with
+	variance <!-- MATH
+ $\sigma_{\rm out}^2$
+ -->
+<IMG
+ WIDTH="32" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img251.png"
+ ALT="$\sigma_{\rm out}^2$">. Both distributions on the
+	observation error <IMG
+ WIDTH="16" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img8.png"
+ ALT="$w$"> have zero mean.</CAPTION>
+<TR><TD><IMG
+ WIDTH="540" HEIGHT="295" BORDER="0"
+ SRC="img252.png"
+ ALT="\begin{figure}
+\centerline{\psfig{file=gauss_mix.ps,width=120mm}}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+The distribution is a function of the observation error<A NAME="tex2html8"
+  HREF="footnode.html#foot6311"><SUP>5.3</SUP></A>
+<!-- MATH
+ ${\bf w}= {\bf z}- {\bf h}({\bf x})$
+ -->
+<IMG
+ WIDTH="99" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img255.png"
+ ALT="${\bf w}= {\bf z}- {\bf h}({\bf x})$">.
+The relative vertical scaling of the two Gaussians is chosen so that the
+two distribution functions are equal at a chosen point <!-- MATH
+ $x_{\rm offset}$
+ -->
+<IMG
+ WIDTH="44" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img256.png"
+ ALT="$x_{\rm offset}$">.
+
+<P>
+For a general multi-dimensional observation, we have a inverse covariance
+matrix <IMG
+ WIDTH="36" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img257.png"
+ ALT="$N^{-1}$"> for the inlier distribution.
+We restrict the outlier distribution <!-- MATH
+ $N_{\rm out}^{-1}$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img258.png"
+ ALT="$N_{\rm out}^{-1}$"> to be a rescaled version
+of the inlier distribution, so that
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+N_{\rm out}^{-1}= \frac{1}{V} N^{-1}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="100" HEIGHT="38" BORDER="0"
+ SRC="img259.png"
+ ALT="\begin{displaymath}N_{\rm out}^{-1}= \frac{1}{V} N^{-1}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+for some value <IMG
+ WIDTH="46" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img260.png"
+ ALT="$V&gt;1$">. We then set choose a cutoff hypersphere in the state
+space <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> for switching between the two distributions as a particular
+value of the <IMG
+ WIDTH="21" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img248.png"
+ ALT="$\chi^2$">. So the probability distribution function is
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+p(\mbox{\boldmath$\nu$}) = \left\{ \begin{array}{ll} e^{-\mbox{\boldmath$\nu$}^{\top}N^{-1}\mbox{\boldmath$\nu$}} &
+    \mbox{if}\;\;\;\mbox{\boldmath$\nu$}^{\top}N^{-1}\mbox{\boldmath$\nu$}< \chi_{\rm cutoff}^2\;\;\mbox{(inlier)} \\&\\
+		 e^{K^{-1}-1} e^{-\mbox{\boldmath$\nu$}^{\top}N_{\rm out}^{-1}\mbox{\boldmath$\nu$}}
+  & \mbox{otherwise (outlier)} \end{array} \right.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="421" HEIGHT="69" BORDER="0"
+ SRC="img261.png"
+ ALT="\begin{displaymath}p(\mbox{\boldmath$\nu$}) = \left\{ \begin{array}{ll} e^{-\mbo...
+...ath$\nu$}}
+&amp; \mbox{otherwise (outlier)} \end{array} \right.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The scaling of the outlier distribution is chosen so that the two distributions
+are correctly aligned at the chosen cutoff point <!-- MATH
+ $\chi_{\rm cutoff}^2$
+ -->
+<IMG
+ WIDTH="47" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img262.png"
+ ALT="$\chi_{\rm cutoff}^2$">.
+This leads directly to the correct ``compensation'' value for the likelihood
+function <!-- MATH
+ $1-K^{-1}\chi_{\rm cutoff}^2$
+ -->
+<IMG
+ WIDTH="107" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img263.png"
+ ALT="$1-K^{-1}\chi_{\rm cutoff}^2$">, to be added to the least-squares
+residual when the outlier distribution is selected during application
+of a minimisation iteration.
+The simple scheme used to decide switching between the
+two distributions is detailed below.
+Note that each Levenberg-Marquardt observation can be chosen as robust
+or standard (non-robust), and potentially with a different choice for
+<IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img109.png"
+ ALT="$K$"> and <!-- MATH
+ $\chi_{\rm cutoff}^2$
+ -->
+<IMG
+ WIDTH="47" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img262.png"
+ ALT="$\chi_{\rm cutoff}^2$">.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2065"
+  HREF="node132.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2061"
+  HREF="node130.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2055"
+  HREF="node130.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2063"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2066"
+  HREF="node132.html">Generalised observations</A>
+<B> Up:</B> <A NAME="tex2html2062"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+<B> Previous:</B> <A NAME="tex2html2056"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+ &nbsp; <B>  <A NAME="tex2html2064"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

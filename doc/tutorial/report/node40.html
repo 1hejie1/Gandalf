@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Setting/extracting parts of fixed size vectors</TITLE>
+<META NAME="description" CONTENT="Setting/extracting parts of fixed size vectors">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node39.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node41.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html848"
+  HREF="node41.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html844"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html840"
+  HREF="node39.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html846"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html849"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Up:</B> <A NAME="tex2html845"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html841"
+  HREF="node39.html">Other sizes of fixed</A>
+ &nbsp; <B>  <A NAME="tex2html847"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004111100000000000000">
+Setting/extracting parts of fixed size vectors</A>
+</H3>
+Apart from the cross product routines <TT>gan_vec3_cross_[qs]()</TT>
+defined only for 3-vectors, there are a few other miscellaneous routines which
+apply to a subset of the fixed size vectors. These routines enable setting
+or extracting parts of a fixed size vector using another fixed size with
+a different size. The most comprehensive set of such routines is for
+vectors of size four. So for instance to extract the first three elements
+of a 4-vector and write them into a 3-vector, use
+<PRE>
+      Gan_Vector3 v3x;
+      Gan_Vector4 v4x;
+
+      gan_vec4_fill_q ( &amp;v4x, 1.0, 2.0, 3.0, 4.0 );
+      gan_vec4_get_v3t_q ( &amp;v4x, &amp;v3x ); /* macro */
+</PRE>
+or alternatively
+<PRE>
+      v3x = gan_vec4_get_v3t_s ( &amp;v4x ); /* function */
+</PRE>
+both of which set <TT>v3x</TT> to <TT>{1.0, 2.0, 3.0}</TT>.
+To build a 4-vector from a 3-vector and a scalar use
+<PRE>
+      gan_vec3_fill_q ( &amp;v3x, 1.0, 2.0, 3.0 );
+      gan_vec4_set_parts_q ( &amp;v4x, &amp;v3x, 4.0 ); /* macro */
+</PRE>
+or alternatively
+<PRE>
+      v4x = gan_vec4_set_parts_s ( &amp;v3x, 4.0 ); /* function */
+</PRE>
+both of which set <TT>v4x</TT> to <TT>{1.0, 2.0, 3.0, 4.0}</TT>.
+To build a 4-vector from two 2-vectors use
+<PRE>
+      Gan_Vector3 v2xt, v2xb;
+      Gan_Vector4 v4x;
+
+      gan_vec2_fill_q ( &amp;v2xt,  1.0, 2.0 );
+      gan_vec2_fill_q ( &amp;v2xb, 3.0, 4.0 );
+      gan_vec4_set_blocks_q ( &amp;v4x, &amp;v2xt, &amp;v2xb ); /* macro */
+</PRE>
+(note that the ``t'' and ``b'' in <TT>v2xt</TT> and <TT>v2xb</TT> stand for the
+``top'' and ``bottom'' parts of vector <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$">), or alternatively
+<PRE>
+      v4x = gan_vec4_set_blocks_s ( &amp;v2xt, &amp;v2xb ); /* function */
+</PRE>
+both of which again set <TT>v4x</TT> to <TT>{1.0, 2.0, 3.0, 4.0}</TT>.
+
+<P>
+For 3-vectors the equivalent set of functions involves splitting the
+3-vector into the <TT>x,y</TT> coordinates as a 2-vector and <TT>z</TT> as the
+scalar. Then we have
+<PRE>
+      Gan_Vector2 v2xt;
+      Gan_Vector3 v3x;
+
+      gan_vec3_fill_q ( &amp;v3x, 1.0, 2.0, 3.0 );
+      gan_vec3_get_v2t_q ( &amp;v3x, &amp;v2xt ); /* macro, or */
+      v2xt = gan_vec3_get_v2t_s ( &amp;v3x ); /* function */
+</PRE>
+the last two lines of which both set <TT>v2xt</TT> to <TT>{1.0, 2.0}</TT>.
+To build a 3-vector from a 2-vector and a scalar use
+<PRE>
+      gan_vec2_fill_q ( &amp;v2xt, 1.0, 2.0 );
+      gan_vec3_set_parts_q ( &amp;v3x, &amp;v2xt, 3.0 ); /* macro, or */
+      v3x = gan_vec3_set_parts_s ( &amp;v2xt, 3.0 ); /* function */
+</PRE>
+both of which set <TT>v3x</TT> to <TT>{1.0, 2.0, 3.0}</TT>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html848"
+  HREF="node41.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html844"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html840"
+  HREF="node39.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html846"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html849"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Up:</B> <A NAME="tex2html845"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html841"
+  HREF="node39.html">Other sizes of fixed</A>
+ &nbsp; <B>  <A NAME="tex2html847"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

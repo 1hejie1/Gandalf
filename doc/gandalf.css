@@ -1,0 +1,16 @@
+body {font-size: 12pt;
+      font-family: "Book Antiqua, Arial";
+      color: blue;
+      background: white;
+      line-height: 16pt;
+      margin-left: 10pt;
+      margin-right: 10pt;}
+
+h1 {font: 24pt ProseAntique, Lucida Handwriting;
+    font-weight: bold;
+    line-height: 30pt;}
+
+h2 {font: 18pt ProseAntique, Lucida Handwriting;
+    font-weight: bold;
+    line-height: 22pt;}
+

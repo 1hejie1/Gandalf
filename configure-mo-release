@@ -1,0 +1,1 @@
+env CFLAGS="-O3 -DNDEBUG -I/usr/X11R6/include" ./configure --without-lapack --without-glut

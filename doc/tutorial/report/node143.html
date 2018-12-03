@@ -1,0 +1,605 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Speed Improvement to FHT Line Finder</TITLE>
+<META NAME="description" CONTENT="Speed Improvement to FHT Line Finder">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node139.html">
+<LINK REL="up" HREF="node134.html">
+<LINK REL="next" HREF="node144.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2217"
+  HREF="node144.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2213"
+  HREF="node134.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2209"
+  HREF="node142.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2215"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2218"
+  HREF="node144.html">Formal Statement of Algorithm</A>
+<B> Up:</B> <A NAME="tex2html2214"
+  HREF="node134.html">Fast Hough Transform</A>
+<B> Previous:</B> <A NAME="tex2html2210"
+  HREF="node142.html">Formal Statement of the</A>
+ &nbsp; <B>  <A NAME="tex2html2216"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION006113000000000000000"></A> <A NAME="MFHT"></A>
+<BR>
+Speed Improvement to FHT Line Finder
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/modified_fht.h&gt;
+</PRE>
+ The Fast Hough Transform can be used to fit a line to points on a plane.
+ However the modification to the FHT described here has proved to be slightly
+ faster for the line fitting problem, and it requires less memory.
+ It can readily be generalised and is applicable to
+ the same class of Hough transform problems as standard FHT.
+ However for higher dimensional parameter spaces (e.g. plane fitting)
+ standard FHT takes over as the faster method. To simplify the notation
+ the modified FHT (referred to henceforth as the MFHT)
+ is described for line fitting only.
+
+<P>
+The FHT line fitter was described in section&nbsp;<A HREF="node138.html#line_fitting">5.11.1.3</A> and the
+ notation used there will be followed. Points <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$">, <IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img344.png"
+ ALT="$j=1 \ldots n$">
+ are scattered on the <IMG
+ WIDTH="41" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img303.png"
+ ALT="$(u,v)$"> plane. A straight line in the plane is defined as
+ <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+v=\alpha u + \beta
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="78" HEIGHT="27" BORDER="0"
+ SRC="img304.png"
+ ALT="\begin{displaymath}
+v=\alpha u + \beta
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img305.png"
+ ALT="$\alpha$"> and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> are constant. Each point <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$"> ``votes''
+ for a line in parameter space <!-- MATH
+ $(\alpha , \beta )$
+ -->
+<IMG
+ WIDTH="44" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img401.png"
+ ALT="$(\alpha , \beta )$">.
+ Ranges for <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img305.png"
+ ALT="$\alpha$"> and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> are specified, so
+ <!-- MATH
+ $\alpha_1 \leq \alpha \leq \alpha_2$
+ -->
+<IMG
+ WIDTH="92" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img402.png"
+ ALT="$\alpha_1 \leq \alpha \leq \alpha_2$"> and <!-- MATH
+ $\beta_1 \leq \beta \leq \beta_2$
+ -->
+<IMG
+ WIDTH="89" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img403.png"
+ ALT="$\beta_1 \leq \beta \leq \beta_2$">.
+ Like the standard FHT, the MFHT proceeds by dividing this root
+ rectangle (hypercube) into four (<IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$">) child rectangles and counting the
+ lines (hyperplanes) passing through each child rectangle. If the number of
+ such intersections for any child is greater than a threshold <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img299.png"
+ ALT="$T$">, the child
+ is subdivided. The MFHT differs in that the circumscribing hypersphere
+ (in this case ellipse) approximation is not used.
+ Intersections between line and rectangle are calculated exactly.
+ Hence there is no need to normalise parameter space in order to
+ transform the root rectangle into a square, as is required for standard FHT.
+
+<P>
+The line in <!-- MATH
+ $(\alpha , \beta )$
+ -->
+<IMG
+ WIDTH="44" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img401.png"
+ ALT="$(\alpha , \beta )$"> space defined by a point <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$"> is
+ <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\beta = - u \alpha + v.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="94" HEIGHT="27" BORDER="0"
+ SRC="img404.png"
+ ALT="\begin{displaymath}\beta = - u \alpha + v. \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Intersection between line and rectangle is calculated by comparing the
+ <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> coordinate of the vertices of the rectangle with the points
+ of intersection between the line and the constant <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img305.png"
+ ALT="$\alpha$">
+ sides of the rectangle. This is illustrated in figure&nbsp;<A HREF="#rect_intersect">5.6</A>.
+ 
+<DIV ALIGN="CENTER">
+
+<P><A NAME="rect_intersect"></A></P><IMG
+ WIDTH="473" HEIGHT="518" BORDER="0"
+ SRC="img405.png"
+ ALT="\begin{figure}
+% latex2html id marker 5972
+\centerline{\psfig{file=intersect....
+...
+{Deciding whether a line intersects a rectangle (see text).}
+\end{figure}">
+</DIV>
+The ranges <!-- MATH
+ $[\alpha_{\rm low},\alpha_{\rm high}]$
+ -->
+<IMG
+ WIDTH="85" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img406.png"
+ ALT="$[\alpha_{\rm low},\alpha_{\rm high}]$"> and
+ <!-- MATH
+ $[\beta_{\rm low},\beta_{\rm high}]$
+ -->
+<IMG
+ WIDTH="83" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img407.png"
+ ALT="$[\beta_{\rm low},\beta_{\rm high}]$"> define a rectangle in
+ <!-- MATH
+ $(\alpha , \beta )$
+ -->
+<IMG
+ WIDTH="44" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img401.png"
+ ALT="$(\alpha , \beta )$"> space. Three lines <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">, <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$C$"> are shown.
+ For each line, the <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values of the intersection points with the lines
+ <!-- MATH
+ $\alpha = \alpha_{\rm low}$
+ -->
+<IMG
+ WIDTH="65" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img408.png"
+ ALT="$\alpha = \alpha_{\rm low}$"> and <!-- MATH
+ $\alpha = \alpha_{\rm high}$
+ -->
+<IMG
+ WIDTH="71" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img409.png"
+ ALT="$\alpha = \alpha_{\rm high}$">
+ (points <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img410.png"
+ ALT="$A_1$"> and <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img411.png"
+ ALT="$A_2$">, <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img412.png"
+ ALT="$B_1$"> and <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img413.png"
+ ALT="$B_2$">, <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img414.png"
+ ALT="$C_1$"> and <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img415.png"
+ ALT="$C_2$">
+ in figure&nbsp;<A HREF="#rect_intersect">5.6</A>) are compared with <!-- MATH
+ $\beta_{\rm low}$
+ -->
+<IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img416.png"
+ ALT="$\beta_{\rm low}$"> and
+ <!-- MATH
+ $\beta_{\rm high}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img417.png"
+ ALT="$\beta_{\rm high}$">. The <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values can be thought of as intercept values
+ of the line with the <!-- MATH
+ $\alpha = {\rm constant}$
+ -->
+<IMG
+ WIDTH="95" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img418.png"
+ ALT="$\alpha = {\rm constant}$"> lines.
+ It is clear that line and rectangle miss each other if and only if
+ if all four vertices are either below or above (i.e. their <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values
+ are all <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img419.png"
+ ALT="$&lt;$"> or <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img420.png"
+ ALT="$&gt;$">) both intercepts. Obviously this is true for line <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> but
+ false for lines <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$C$">.
+
+<P>
+In practice it saves repeated computational effort if intersections between
+ a parent's four child rectangles and the lines are calculated at the same
+ time. Let us assume that enough lines intersect the rectangle in
+ figure&nbsp;<A HREF="#rect_intersect">5.6</A> for it to be subdivided.
+ It is divided into four child rectangles <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img421.png"
+ ALT="$R_{00}$">, <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img422.png"
+ ALT="$R_{01}$">, <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img423.png"
+ ALT="$R_{10}$">
+ and <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img424.png"
+ ALT="$R_{11}$"> as shown in figure&nbsp;<A HREF="#rect_divide">5.7</A>.
+ 
+<DIV ALIGN="CENTER">
+
+<P><A NAME="rect_divide"></A></P><IMG
+ WIDTH="465" HEIGHT="358" BORDER="0"
+ SRC="img425.png"
+ ALT="\begin{figure}
+% latex2html id marker 5993
+\centerline{\psfig{file=subdiv4.ps...
+...
+{Subdivision of rectangle into four \lq\lq children'' (see text).}
+\end{figure}">
+</DIV>
+For each line such as line <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> shown, there are three intercept <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$">
+ values, at <!-- MATH
+ $\alpha_{\rm low}$
+ -->
+<IMG
+ WIDTH="34" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img426.png"
+ ALT="$\alpha_{\rm low}$">, <!-- MATH
+ $\alpha_{\rm av}$
+ -->
+<IMG
+ WIDTH="28" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img427.png"
+ ALT="$\alpha_{\rm av}$"> and <!-- MATH
+ $\alpha_{\rm high}$
+ -->
+<IMG
+ WIDTH="39" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img428.png"
+ ALT="$\alpha_{\rm high}$">.
+ Obviously <!-- MATH
+ $\alpha_{\rm av} = (\alpha_{\rm low} + \alpha_{\rm high})/2$
+ -->
+<IMG
+ WIDTH="162" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img429.png"
+ ALT="$\alpha_{\rm av} = (\alpha_{\rm low} + \alpha_{\rm high})/2$">.
+ The intercepts are each to be compared with
+ the three <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values <!-- MATH
+ $\beta_{\rm low}$
+ -->
+<IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img416.png"
+ ALT="$\beta_{\rm low}$">,
+ <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$"> and <!-- MATH
+ $\beta_{\rm high}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img417.png"
+ ALT="$\beta_{\rm high}$">. A boolean flag is defined for each of
+ the nine vertices (<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img431.png"
+ ALT="$V_{ll}$">, <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img432.png"
+ ALT="$V_{la}$"> etc. in figure&nbsp;<A HREF="#rect_divide">5.7</A>)
+ of the rectangular subdivision. Each flag is set to
+ <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$"> if the vertex lies below the line (i.e. if the <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> value
+ of the vertex is less than the corresponding intercept <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> value of
+ the line) and to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> if it lies above it. Label the flags
+ <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img433.png"
+ ALT="$v_{ll}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$"> etc. Then it follows that:-
+
+<OL>
+<LI>The line misses rectangle <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img421.png"
+ ALT="$R_{00}$"> if and only if
+	<IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img433.png"
+ ALT="$v_{ll}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img435.png"
+ ALT="$v_{al}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$">
+	are all either <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> or <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+</LI>
+<LI>The line misses rectangle <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img422.png"
+ ALT="$R_{01}$"> if and only if
+	<IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img437.png"
+ ALT="$v_{lh}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img438.png"
+ ALT="$v_{ah}$">
+	are all either <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> or <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+</LI>
+<LI>The line misses rectangle <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img423.png"
+ ALT="$R_{10}$"> if and only if
+	<IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img435.png"
+ ALT="$v_{al}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img439.png"
+ ALT="$v_{hl}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img440.png"
+ ALT="$v_{ha}$">
+	are all either <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> or <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+</LI>
+<LI>The line misses rectangle <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img424.png"
+ ALT="$R_{11}$"> if and only if
+	<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img438.png"
+ ALT="$v_{ah}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img440.png"
+ ALT="$v_{ha}$">, <IMG
+ WIDTH="28" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img441.png"
+ ALT="$v_{hh}$">
+	are all either <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> or <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+ 
+</LI>
+</OL>
+
+<P>
+In the standard version of the FHT, the normalised distances from hyperplane
+ to centre of child hypercubes are calculated from the normalised distance
+ of the parent from the hyperplane. The child ``inherits'' the new normalised
+ distances from the parent, and passes them on to its own offspring.
+ The MFHT also passes information from parent to child, in this case
+ the intercept <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values.
+ <BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html2219"
+  HREF="node144.html">Formal Statement of Algorithm</A>
+<LI><A NAME="tex2html2220"
+  HREF="node145.html">Comparision of Speed and Memory Requirement with Standard FHT</A>
+<LI><A NAME="tex2html2221"
+  HREF="node146.html">Complexity Comparison of FHT and MFHT</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2217"
+  HREF="node144.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2213"
+  HREF="node134.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2209"
+  HREF="node142.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2215"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2218"
+  HREF="node144.html">Formal Statement of Algorithm</A>
+<B> Up:</B> <A NAME="tex2html2214"
+  HREF="node134.html">Fast Hough Transform</A>
+<B> Previous:</B> <A NAME="tex2html2210"
+  HREF="node142.html">Formal Statement of the</A>
+ &nbsp; <B>  <A NAME="tex2html2216"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

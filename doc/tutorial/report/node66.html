@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Rescaling a general size vector</TITLE>
+<META NAME="description" CONTENT="Rescaling a general size vector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node65.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node67.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1201"
+  HREF="node67.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1197"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1193"
+  HREF="node65.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1199"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1202"
+  HREF="node67.html">General size matrices</A>
+<B> Up:</B> <A NAME="tex2html1198"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1194"
+  HREF="node65.html">General size vector subtraction</A>
+ &nbsp; <B>  <A NAME="tex2html1200"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00421800000000000000">
+Rescaling a general size vector</A>
+</H3>
+Multiplying or dividing a vector by a scalar value follows the scheme of the
+above copy, addition and subtraction operations. To multiply a vector <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$">
+by a scalar <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$">, <!-- MATH
+ ${\bf y}=s{\bf x}$
+ -->
+<IMG
+ WIDTH="52" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img58.png"
+ ALT="${\bf y}=s{\bf x}$">, use for example
+<PRE>
+      Gan_Vector vx, vy; /* declare vectors x &amp; y */
+
+      /* ... create &amp; fill vx, create (&amp; optionally fill) vy ... */
+      gan_vec_scale_q ( &amp;vx, 5.0, &amp;vy ); /* y = 5*x */
+</PRE>
+to multiply all the elements in vector <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> by five, writing the result
+into vector <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="${\bf y}$">.
+Alternatively you can create the rescaled vector from scratch as in
+<PRE>
+      Gan_Vector *pvy; /* declare vector y */
+
+      /* ... create &amp; fill vx ... */
+      pvy = gan_vec_scale_s ( &amp;vx, 5.0 ); /* y = 5*x */
+</PRE>
+or overwrite <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> with the result
+<PRE>
+      gan_vec_scale_i ( &amp;vx, 5.0 ); /* replace x = 5*x */
+</PRE>
+
+<P>
+There are similar routines for dividing a general size vector by a scalar
+value:
+<PRE>
+      gan_vec_divide_q ( &amp;vx, 5.0, &amp;vy ); /* y = x/5 */
+      pvy = gan_vec_divide_s ( &amp;vx, 5.0 ); /* y = x/5 */
+      gan_vec_divide_i ( &amp;vx, 5.0 ); /* replace x = x/5 */
+</PRE>
+Passing zero as the scalar value in this case invokes the error handler,
+with a division by zero error
+(error code <TT>GAN_ERROR_DIVISION_BY_ZERO</TT>),
+and <TT>NULL</TT> is returned.
+
+<P>
+There are specific routines to negate a vector, i.e. multiply it by -1,
+as follows:
+<PRE>
+      gan_vec_negate_q ( &amp;vx, &amp;vy ); /* y = -x */
+      pvy = gan_vec_negate_s ( &amp;vx ); /* y = -x */
+      gan_vec_negate_i ( &amp;vx ); /* replace x = -x */
+</PRE>
+
+<P>
+<TT>Error detection:</TT> The Gandalf error handler is invoked and <TT>NULL</TT>
+is returned if an error occurs. The most likely failure modes are
+(i) failing to create the result vector; (ii) division by zero.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

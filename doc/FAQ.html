@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>Gandalf FAQ</title>
+<META NAME="description" content="The FAQ page for Gandalf, a C Computer
+Vision Library.">
+<META NAME="keywords" content="computer vision, image processing, geometry,
+vision, software, software library, digital images, Imagineer Systems,
+Mokey">
+<! <link rel="STYLESHEET" type="text/css" href="gandalf.css" /> </!>
+</head>
+<body bgcolor="#ffffff" text="#0000f8" link="#808000" alink="#000000" vlink="#8080ff">
+
+<center><H2>Gandalf FAQ</H2></center>
+
+Here are some frequently asked questions about Gandalf.
+<ul>
+ <li><a href="#Prerequisites">What are the prerequisites to install Gandalf?</a></li>
+ <li><a href="#Systems">What systems will Gandalf work on?</a></li>
+ <li><a href="#GLUT">Why doesn't my program display any windows?</a></li>
+ <li><a href="#Link">Why does the linker complain about undefined symbols?</a></li>
+</ul>
+ 
+<p align="justify">
+<b><a name="Prerequisites">What are the prerequisites to install Gandalf?</a></b>
+<br><br>
+
+You will need an ANSI/ISO C compiler. For Unix systems you will need Gnu
+libtool to be installed on your system. If PNG, JPEG and TIFF image format
+I/O libraries are installed, Gandalf will find and use them through use of
+the Gnu "configure" script (under Windows these features need to be specified
+manually; see the gandalf/INSTALL file). The LAPACK linear algebra library
+will also be used if available, although there are internal substitutes
+for most of the LAPACK functions used by Gandalf. To use the display features
+you will also need OpenGL to be installed with the GLUT toolkit.
+
+</p>
+
+<p align="justify">
+<b><a name="Systems">What systems will Gandalf work on?</a></b>
+<br><br>
+
+Gandalf has been compiled and tested on Linux (PC), IRIX 6.5, Solaris and
+MSVC 6. It has also been cross-compiled on a Power PC. Basically any system
+with an ANSI/ISO C compiler should be OK.
+
+</p>
+
+<p align="justify">
+<b><a name="GLUT">Why doesn't my program display any windows?</a></b>
+<br><br>
+
+A common misunderstanding for people who haven't programmed in an event-driven
+environment is to forget to include a glutMainLoop() call, which passes
+control to the GLUT event handler. When you create a window using
+gan_display_new_window(), gan_display_new_window_array() or
+gan_image_display_new_window(), you need to specify
+callbacks using glutDisplayFunc() so that the windows will be updated
+when an event involving the window is processed.
+See gandalf/image/bitmap_test.c and gandalf/vision/vision_test.c for examples.
+
+</p>
+
+<p align="justify">
+<b><a name="Link">Why does the linker complain about undefined symbols?</a></b>
+<br><br>
+
+The usual problem here is a conflict between which libraries are actually
+available and which libraries Gandalf thinks are available. This is especially
+a problem under Windows where the libraries need to be specified manually.
+Another possibility is that the installed libraries are old versions
+with slightly different functions.
+
+</p>
+
+
+</body>
+</html>

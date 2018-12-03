@@ -1,0 +1,80 @@
+\begin{thebibliography}{10}
+
+\bibitem{BarShalom:Fortmann:88}
+Y.~Bar-Shalom and T.~E. Fortmann.
+\newblock {\em Tracking and Data Association}.
+\newblock Academic Press, 1988.
+
+\bibitem{Bjorck:96}
+{\AA}ke Bj\"orck.
+\newblock {\em Numerical Methods for Least Squares Problems}.
+\newblock SIAM Press, Philadelphia, PA, 1996.
+
+\bibitem{Canny:PAMI86}
+J.~Canny.
+\newblock A computational approach to edge detection.
+\newblock {\em IEEE Trans. Pattern Analysis and Machine Intelligence},
+  8(6):679--698, 1986.
+
+\bibitem{Faugeras:93}
+O.D. Faugeras.
+\newblock {\em Three-Dimensional Computer Vision}.
+\newblock MIT Press, 1993.
+
+\bibitem{Fleck:TR94}
+M.~Fleck.
+\newblock Perspective projection: The wrong imaging model.
+\newblock Technical Report 95-01, Computer Science, University of Iowa, 1994.
+
+\bibitem{Harris:Stephens:ALVEY88}
+C.~J. Harris and M.~Stephens.
+\newblock A combined corner and edge detector.
+\newblock In {\em Proc. 4th Alvey Vision Conf., Manchester}, pages 147--151,
+  1988.
+
+\bibitem{Li_etc_86}
+H.~Li, M.A. Lavin, and R.J. Le~Master.
+\newblock Fast hough transform: A hierarchical approach.
+\newblock {\em Computer Vision, Graphics and Image Processing}, 36:139--161,
+  1986.
+
+\bibitem{Luong:Faugeras:IJCV96}
+Q.-T. Luong and O.D. Faugeras.
+\newblock The fundamental matrix: theory, algorithms, and stability analysis.
+\newblock {\em International Journal of Computer Vision}, 17(1):43--76, 1996.
+
+\bibitem{Marquardt:JSIAM63}
+D.~W. Marquardt.
+\newblock An algorithm for least-squares estimation of nonlinear parameters.
+\newblock {\em Journal of the Society for Industrial and Applied Mathematics},
+  11:431--441, 1963.
+
+\bibitem{McLauchlan_91}
+P.F. McLauchlan, J.E.W. Mayhew, and J.P. Frisby.
+\newblock Stereoscopic recovery and description of smooth textured surfaces.
+\newblock {\em Image and Vision Computing}, 9(1):20--26, February 1991.
+
+\bibitem{Pennec:Thirion:IJCV97}
+X.~Pennec and J.P. Thirion.
+\newblock A framework for uncertainty and validation of 3-d registration
+  methods based on points and frames.
+\newblock {\em International Journal of Computer Vision}, 25(3):203--229,
+  December 1997.
+
+\bibitem{Press:etal:88}
+W.H. Press, B.P. Flannery, S.A. Teukolsky, and W.T. Vetterling.
+\newblock {\em Numerical Recipes in C}.
+\newblock Cambridge University Press, 1988.
+
+\bibitem{Slama:etal:PHOTOG80}
+C.C. Slama, C.~Theurer, and S.W. Henriksen, editors.
+\newblock {\em Manual of Photogrammetry}.
+\newblock American Society of Photogrammetry, 1980.
+
+\bibitem{Taylor:Kriegman:PAMI95}
+C.J. Taylor and D.J. Kriegman.
+\newblock Structure and motion from line segments in multiple images.
+\newblock {\em {IEEE} Transactions on Pattern Analysis and Machine
+  Intelligence}, 17(11):1021--1032, November 1995.
+
+\end{thebibliography}

@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Binary images</TITLE>
+<META NAME="description" CONTENT="Binary images">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node94.html">
+<LINK REL="previous" HREF="node88.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node94.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1553"
+  HREF="node94.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1549"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1543"
+  HREF="node92.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1551"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1554"
+  HREF="node94.html">Pointer images</A>
+<B> Up:</B> <A NAME="tex2html1550"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1544"
+  HREF="node92.html">Converting a pixel to</A>
+ &nbsp; <B>  <A NAME="tex2html1552"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00540000000000000000"></A> <A NAME="binary-image-sec"></A>
+<BR>
+Binary images
+</H1>
+<PRE>
+      #include &lt;gandalf/image/image_bit.h&gt;
+</PRE>
+Gandalf binary images support compact storage of an array of boolean values.
+Binary images have format <TT>GAN_GREY_LEVEL_IMAGE</TT> and type
+<TT>GAN_BOOL</TT>. The complete set of functions described above is
+available for binary images, as well as other special functions.
+Here is an illustration of using the standard routines.
+<PRE>
+      Gan_Image *pImage;
+      Gan_Pixel Pixel;
+
+      /* allocate 300x200 binary image, and initialise all values to
+         zero (false) */
+      pImage = gan_image_alloc_b ( 300, 200 );
+      gan_image_fill_zero(pImage);
+
+      /* fill rectangular region of image with ones (true) */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_BOOL;
+      Pixel.data.gl.b = GAN_TRUE;
+      gan_image_fill_const_window ( pImage, 120, 100, 40, 30, &amp;Pixel );
+
+      /* reset size of image and fill with zero again */
+      gan_image_set_b ( pImage, 400, 600 );
+      gan_image_fill_zero(pImage);
+
+      /* set some other pixels to one (true) */
+      gan_image_set_pix_b ( pImage, 250,   4, GAN_TRUE );
+      gan_image_set_pix_b ( pImage,  50, 140, GAN_TRUE );
+      gan_image_set_pix_b ( pImage, 150,  40, GAN_TRUE );
+
+      /* free image */
+      gan_image_free ( pImage );
+</PRE>
+
+<P>
+Several other routines are provided for binary images. Firstly there is
+a routine to return the ``active'' region of an image, defined as the
+bounding box around the pixels set to one:
+<PRE>
+      Gan_ImageWindow SubWindow;
+
+      /* ... set pImage as a binary image with ones and zeros ... */
+
+      /* determine image window surrounding "active" pixels, i.e. those
+         set to one */
+      gan_image_get_active_subwindow_b ( pImage, GAN_WORD_ALIGNMENT,
+                                         &amp;SubWindow );
+</PRE>
+The <TT>Gan_ImageWindow</TT> result structure was described in
+Section&nbsp;<A HREF="node85.html#formats-types-sec">4.1</A>. The second argument defines how
+precisely to determine the horizontal limits of the bounding box.
+The coarsest method is to find the limits to the nearest word, as in the
+above example. More precise but slower alignment is possible using
+either <TT>GAN_BYTE_ALIGNMENT</TT> or <TT>GAN_BIT_ALIGNMENT</TT>.
+
+<P>
+To compute the number of active bits in a binary image use
+<PRE>
+      int iCount;
+
+      iCount = gan_image_get_pixel_count_b ( pImage, GAN_TRUE, NULL );
+</PRE>
+The second argument is <TT>GAN_TRUE</TT> to count the ones or <TT>GAN_FALSE</TT>
+to count the zeroes. The last argument is an optional pointer to a
+sub-window of the image in which to apply the count.
+
+<P>
+There are functions to return a boolean value indicating whether a local
+group of pixels are all set to one. These routines are
+<PRE>
+      /* check whether the group of four pixels at positions (100,100),
+         (100,101), (101,100), (101,101) are all set to one */
+      if ( gan_image_pix_get_pix_4group ( pImage, 100, 100 ) )
+         printf ( "group of four found\n" );
+
+      /* check whether the group of four pixels at positions (99,100),
+         (100,99), (100,100), (100,101) and (101,100) are all set to one */
+      if ( gan_image_pix_get_pix_5group ( pImage, 100, 100 ) )
+         printf ( "group of five found\n" );
+
+      /* check whether the group of three pixels at positions (100,99),
+         (100,100), (100,101) are all set to one */
+      if ( gan_image_pix_get_pix_3group_horiz ( pImage, 100, 100 ) )
+         printf ( "group of three horizontally found\n" );
+
+      /* check whether the group of three pixels at positions (99,100),
+         (100,100), (101,100) are all set to one */
+      if ( gan_image_pix_get_pix_3group_vert ( pImage, 100, 100 ) )
+         printf ( "group of three vertically found\n" );
+</PRE>
+
+<P>
+There is a set of functions to apply a boolean operation to every pixel
+in one image or a pair of images. Firstly there is are routines to invert
+a boolean image:
+<PRE>
+      Gan_Image *pImage1, *pImage2, *pImage3;
+
+      /* ... create and fill image 1 as a boolean image, create image 2 ... */
+
+      gan_image_bit_invert_q ( pImage1, pImage2 ); /* invert image 1 into image 2, OR */
+      pImage3 = gan_image_bit_invert_s ( pImage1 ); /* invert image 1 as a new image, OR */
+      gan_image_bit_invert_i ( pImage1 ); /* replace image 1 with its inverse */
+</PRE>
+Then there are routines to apply the operations AND, OR, exclusive-OR (EOR) and
+not-AND (NAND) to a pair of binary images, which must have the same dimensions.
+Illustrating the AND operation first, we have the options
+<PRE>
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 &amp; 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_and_q ( pImage1, pImage2, pImage3 ); /* AND(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_and_s ( pImage1, pImage2 ); /* AND(1,2) as a new image, OR */
+      gan_image_bit_and_i ( pImage1, pImage2 ); /* replace image 1 with AND(1,2) */
+</PRE>
+The other operations follow similar lines. Firstly the OR operation:
+<PRE>
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 &amp; 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_or_q ( pImage1, pImage2, pImage3 ); /* OR(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_or_s ( pImage1, pImage2 ); /* OR(1,2) as a new image, OR */
+      gan_image_bit_or_i ( pImage1, pImage2 ); /* replace image 1 with OR(1,2) */
+</PRE>
+Now the exclusive-OR operation:
+<PRE>
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 &amp; 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_eor_q ( pImage1, pImage2, pImage3 ); /* EOR(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_eor_s ( pImage1, pImage2 ); /* EOR(1,2) as a new image, OR */
+      gan_image_bit_eor_i ( pImage1, pImage2 ); /* replace image 1 with EOR(1,2) */
+</PRE>
+Finally the not-AND operation:
+<PRE>
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 &amp; 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_nand_q ( pImage1, pImage2, pImage3 ); /* NAND(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_nand_s ( pImage1, pImage2 ); /* NAND(1,2) as a new image, OR */
+      gan_image_bit_nand_i ( pImage1, pImage2 ); /* replace image 1 with NAND(1,2) */
+</PRE>
+
+<P>
+A few more miscellaneous routines are available for binary images.
+To fill part of a row with either zero or one use the routine
+<PRE>
+      /* fill section of row 13 of image with ones (true) starting at
+         horizontal position 20 and filling 30 pixels */
+      gan_image_bit_fill_row ( pImage, 13, 20, 30, GAN_TRUE );
+</PRE>
+To invert part of a row of a binary image use
+<PRE>
+      /* invert section of row 13 starting at horizontal position 20 and
+         filling 30 pixels */
+      gan_image_bit_invert_row ( pImage, 13, 20, 30 );
+</PRE>
+Finally if you want to clear a binary image to zero except inside a
+specified rectangular region of the image, try this:
+<PRE>
+      /* clear binary image to zero except in 50(h)x30(w) pixel area starting
+         at position 20,60 (y,x) */
+      gan_image_mask_window_b ( pImage, 20, 60, 50, 30 );
+</PRE>
+
+<P>
+<B>Error detection:</B> The standard binary image routines detect errors
+as described in Section&nbsp;<A HREF="node86.html#simple-image-sec">4.2</A>. The boolean operation
+routines (<TT>gan_image_bit_invert_q()</TT> etc.) return a pointer to
+the result image, and return <TT>NULL</TT> on an error. All the other binary
+image routines, with one exception, return a boolean value;
+thus <TT>GAN_FALSE</TT> is returned on error. The exception is
+<TT>gan_image_get_pixel_count_b()</TT>, which returns an integer
+value, which in case of error is returned as -1.
+The Gandalf error handler is invoked in all these cases.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1553"
+  HREF="node94.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1549"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1543"
+  HREF="node92.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1551"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1554"
+  HREF="node94.html">Pointer images</A>
+<B> Up:</B> <A NAME="tex2html1550"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1544"
+  HREF="node92.html">Converting a pixel to</A>
+ &nbsp; <B>  <A NAME="tex2html1552"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Conversion from general to fixed size vector</TITLE>
+<META NAME="description" CONTENT="Conversion from general to fixed size vector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node37.html">
+<LINK REL="previous" HREF="node35.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node37.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html802"
+  HREF="node37.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html798"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html792"
+  HREF="node35.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html800"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html803"
+  HREF="node37.html">Single precision fixed size</A>
+<B> Up:</B> <A NAME="tex2html799"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html793"
+  HREF="node35.html">Fixed size vector file</A>
+ &nbsp; <B>  <A NAME="tex2html801"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00411700000000000000">
+Conversion from general to fixed size vector</A>
+</H3>
+Functions are provided to convert a general vector <TT>Gan_Vector</TT>
+<TT>Gan_Vector3</TT>, provided that the general vector has actually been
+created with size three. So for instance
+<PRE>
+      Gan_Vector *pvx;
+
+      pvx = gan_vec_alloc(3);
+      gan_vec_fill_va ( pvx, 3, 2.0, 3.0, 4.0 );
+      gan_vec3_from_vec_q ( pvx, &amp;v3x );
+</PRE>
+or
+<PRE>
+      v3x = gan_vec3_from_vec_s ( pvx );
+</PRE>
+fill <TT>v3x</TT> with the same values as the general vector.
+Calling these functions with a general vector <TT>pvx</TT> not having
+the same size as the fixed size vector is an error.
+
+<P>
+<TT>Error detection:</TT> The conversion routines return the pointer to the
+filled fixed size vector, or <TT>NULL</TT> on failure, invoking the Gandalf
+error handle in the latter case.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

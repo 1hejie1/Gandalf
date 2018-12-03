@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Single precision general size matrices &amp; vectors</TITLE>
+<META NAME="description" CONTENT="Single precision general size matrices &amp; vectors">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node67.html">
+<LINK REL="up" HREF="node57.html">
+<LINK REL="next" HREF="node84.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1416"
+  HREF="node84.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1412"
+  HREF="node57.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1408"
+  HREF="node82.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1414"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1417"
+  HREF="node84.html">The Image Package</A>
+<B> Up:</B> <A NAME="tex2html1413"
+  HREF="node57.html">General size matrices and</A>
+<B> Previous:</B> <A NAME="tex2html1409"
+  HREF="node82.html">Accumulated symmetric matrix eigendecomposition</A>
+ &nbsp; <B>  <A NAME="tex2html1415"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00423000000000000000">
+Single precision general size matrices &amp; vectors</A>
+</H2>
+Note that for the routines to fill a matrix/vector with values, described
+in Sections&nbsp;<A HREF="node61.html#fill-vec-gen-sec">3.2.1.3</A> and&nbsp;<A HREF="node70.html#fill-mat-gen-sec">3.2.2.3</A>, the values
+provided in the single precision case must actually still be double precision,
+because C has the restriction that floating point variable argument list
+values must be double precision. So for instance, this won't work:
+<PRE>
+      Gan_Vector_f vx;
+
+      gan_vecf_form ( &amp;vx, 6 );
+      gan_vecf_fill_va ( &amp;vx, 6, 1.0F, 2.0F, 3.0F, 4.0F, 5.0F, 6.0F ); /* WRONG */
+</PRE>
+Instead use
+<PRE>
+      gan_vecf_fill_va ( &amp;vx, 6, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ); /* RIGHT! */
+</PRE>
+<A NAME="single-gen-sec"></A>
+If necessary use a <TT>(double)</TT> cast in front of each value.
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

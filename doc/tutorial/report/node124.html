@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Displaying a line map</TITLE>
+<META NAME="description" CONTENT="Displaying a line map">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node125.html">
+<LINK REL="previous" HREF="node123.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node125.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1980"
+  HREF="node125.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1976"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1970"
+  HREF="node123.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1978"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1981"
+  HREF="node125.html">The Gandalf line detector</A>
+<B> Up:</B> <A NAME="tex2html1977"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1971"
+  HREF="node123.html">Line segment detection</A>
+ &nbsp; <B>  <A NAME="tex2html1979"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00679000000000000000">
+Displaying a line map</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/line_disp.h&gt;
+</PRE>
+There are functions to display both whole line maps and individual lines,
+the latter being used, for instance, to highlight lines in a different
+colour. The functions invoke OpenGL routines, and the OpenGL display window
+must be set up beforehand. Also you will need to set up some colours as single
+precision floating point RGB pixel structures. We can use the colour
+structures set up for the edge detector in Section&nbsp;<A HREF="node118.html#edge-disp-sec">5.7.3</A>.
+Then an example call to display an line map is
+<PRE>
+      /* display a whole line map using OpenGL */
+      gan_line_feature_map_display ( &amp;LineMap,
+                                     NULL, /* affine transformation of coordinates */
+                                     &amp;green, /* line colour */
+                                     &amp;blue, /* colour of start of line */
+                                     &amp;yellow, /* colour of end of line */
+                                     &amp;blue, /* colour to display points */
+                                     &amp;green ); /* colour of bounding box */
+</PRE>
+The second argument is an affine transformation
+of coordinates that allows additional freedom in positioning and scaling
+the line map on the display window.<TT>vision_test.c</TT> has some example code
+using this routine.
+
+<P>
+To highlight a single line, use instead
+<PRE>
+      Gan_LineFeature *pLine;
+
+      /* ... set pLine to point to a Gan_LineFeature structure ... */
+
+      /* display a single line using OpenGL */
+      gan_line_feature_display ( pLine,
+                                 NULL, /* affine transformation of coordinates */
+                                 &amp;yellow, /* colour to highlight line */
+                                 &amp;yellow, /* colour of start of line */
+                                 &amp;yellow, /* colour of end of line */
+                                 &amp;blue ); /* colour to display points */
+</PRE>
+Note that the <TT>NULL</TT> passed for the affine coordinate transformation
+indicates an identity transformation.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

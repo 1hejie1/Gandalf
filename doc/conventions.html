@@ -1,0 +1,199 @@
+<html>
+<head>
+<title>Gandalf Home Page</title>
+<META NAME="description" content="The Home Page for Gandalf, a C Computer
+Vision Library.">
+<META NAME="keywords" content="computer vision, image processing, geometry,
+vision, software, software library, digital images, Imagineer Systems,
+Mokey">
+<! <link rel="STYLESHEET" type="text/css" href="gandalf.css" /> </!>
+</head>
+<body bgcolor="#ffffff" text="#0000f8" link="#808000" alink="#000000" vlink="#8080ff">
+
+Some Gandalf conventions are described in chapter 1 of the Gandalf tutorial
+documentation. You should become familiar with these. For people writing
+new Gandalf code, the following conventions should also be applied.
+<ol>
+ <li> <b>File names</b>
+      File names will normally be lower case, and use underline characters
+      as separators. There should be a corresponding header file for each
+      C source file, and they should be placed in the same directory.
+ <li> <b>Function names</b>
+      All function names should be in lower case, starting with a <tt>"gan_"</tt>
+      prefix. Use an underline character to separate parts of the function
+      name. Example: <tt>gan_malloc_array</tt>, <tt>gan_mat_sub_q</tt>.
+      Current exceptions are upper case <tt>I</tt> and <tt>T</tt> used to
+      indicate implicit matrix inverse and transpose respectively, in the
+      linear algebra package.
+ <li> <b>Type names</b>
+      Names of structures, typedefs or enumerated types should have a
+      <tt>"Gan_"</tt> prefix, use upper case letters to indicate the start
+      of each field of the name and otherwise eschew use of the underline
+      character as a separator. Example: <tt>Gan_SquMatrix</tt>.
+ <li> <b>Return types</b>
+      Functions should normally return a boolean (<tt>Gan_Bool</tt>) value to
+      indicate successful execution (<tt>GAN_TRUE</tt>) or an error condition
+      (<tt>GAN_FALSE</tt>). Where this is not applicable you should choose a
+      return type which allows the returned value to be easily tested for
+      error. For instance a returned pointer can be compared with
+      <tt>NULL</tt>. Exceptions: Free functions in Gandalf, for instance
+      <tt>gan_vec_free()</tt>, are <tt>void</tt>
+      functions, like the <tt>free()</tt> function itself.
+ <li> <b>Curly braces</b>
+      Place curly braces vertically under each other, this makes it
+      easier to see which ones belong together. Example:
+      <pre>
+   for (int iCtr = 0; iCtr < iMaxIndex; iCtr++)
+   {
+      /* loop body */
+   }
+      </pre>
+ <li> <b>Comment blocks</b>
+      Gandalf uses the <a href="http://www.doxygen.org/index.html">Doxygen</a>
+      documentation system, which specifies conventions for formatting
+      comment blocks. Please follow the style used in the existing Gandalf
+      functions.
+ <li> <b>Indentation</b>
+      Please use 3 spaces per indentation level. If you use emacs and
+      would like to have your editor set up for indenting using this
+      convention, let me know and I will send you the relevant part of
+      my <tt>.emacs</tt> file.
+ <li> <b>Error detection</b>
+      When errors are detected in your functions, invoke the Gandalf error
+      handler to deal with them. See the Gandalf documentation for more
+      details. There are also copious examples of using the error handler
+      in the Gandalf source.
+ <li> <b>License</b>
+      Gandalf uses the Lesser GPL license (see the LICENSE file in the
+      Gandalf distribution). Your code will have to be available under the
+      same or a compatible license.
+ <li> <b>File structure</b> Please use the same structure for your source file
+      as the rest of Gandalf. Header files should have the following structure:
+      <pre>
+   /**
+    * File:          $RCSfile: conventions.html,v $
+    * Module:        SHORT DESCRIPTION OF YOUR FILE
+    * Part of:       Gandalf Library
+    *
+    * Revision:      $Revision: 1.4 $
+    * Last edited:   $Date: 2003/01/31 18:30:17 $
+    * Author:        $Author: pm $
+    * Copyright:     (c) 2002 YOUR INSTITITION
+    */
+   
+   /* This library is free software; you can redistribute it and/or
+      modify it under the terms of the GNU Lesser General Public
+      License as published by the Free Software Foundation; either
+      version 2.1 of the License, or (at your option) any later version.
+   
+      This library is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+      Lesser General Public License for more details.
+   
+      You should have received a copy of the GNU Lesser General Public
+      License along with this library; if not, write to the Free Software
+      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   */
+   
+   #ifndef _GAN_YOUR_FILE_H
+   #define _GAN_YOUR_FILE_H
+   
+   /* ANY STANDARD HEADERS REQUIRED TO COMPILE THIS HEADER FILE, E.G. */
+   #include &lt&#115tdlib.h&gt
+   
+   /* ANY OTHER GANDALF HEADERS REQUIRED TO COMPILE THIS HEADER FILE, E.G. */
+   #include &lt&#103andalf/common/misc_defs.h&gt
+   
+   #ifdef __cplusplus
+   extern "C" {
+   #endif
+   
+   /* YOUR DECLARATIONS */
+   
+   #ifdef __cplusplus
+   }
+   #endif
+   
+   #endif /* #ifndef _GAN_YOUR_FILE_H */
+</pre>
+Note that there is no need to edit the revision and date. These will be
+updated automatically by CVS (actually the RCS file name will be updated
+as well). The <tt>extern "C"</tt> declaration is there so that C++ code
+incorporating Gandalf will correctly interpret the Gandalf header files
+as containing C functions. C source files will have the structure
+<pre>
+   /**
+    * File:          $RCSfile: conventions.html,v $
+    * Module:        SHORT DESCRIPTION OF YOUR FILE
+    * Part of:       Gandalf Library
+    *
+    * Revision:      $Revision: 1.4 $
+    * Last edited:   $Date: 2003/01/31 18:30:17 $
+    * Author:        $Author: pm $
+    * Copyright:     (c) 2002 YOUR INSTITITION
+    */
+   
+   /* This library is free software; you can redistribute it and/or
+      modify it under the terms of the GNU Lesser General Public
+      License as published by the Free Software Foundation; either
+      version 2.1 of the License, or (at your option) any later version.
+   
+      This library is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+      Lesser General Public License for more details.
+   
+      You should have received a copy of the GNU Lesser General Public
+      License along with this library; if not, write to the Free Software
+      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   */
+
+   /* This should be the first header file included */   
+   #include &lt&#103andalf/linalg/YOUR_FILE.h&gt
+
+   /* any other header files your C file needs */
+
+   /* your code */
+</pre>
+ <li> <b>Header files</b>
+      All Gandalf header files are self-contained. That is, they can
+      be <tt>#include</tt>'d at the top of a C file. This way, the programmer
+      knows that to use a Gandalf function, only the header file declaring
+      that function is required, which greatly simplifies programming with
+      Gandalf. To this end, you should <tt>#include</tt> in your header file
+      any other header files that your header file depends on.
+      Your C file should <tt>#include</tt> the corresponding header file
+      as its first <tt>#include</tt> declaration. This acts as a check that
+      the header file can be compiled independently, because any departures
+      from this convention will be flagged immediately by the compiler.
+      </pre>
+ <li> <b>Macros</b>
+      Gandalf contains a lot of macros. For each macro there should be
+      a normal function declaration in the header file. hidden from normal
+      use by an <tt>#ifdef</tt> on the
+      <tt>GAN_GENERATE_DOCUMENTATION</tt> symbol. See for example this
+      fragment taken from <tt>gandalf/linalg/mat_gen.h</tt>.
+      <pre>
+   /**
+    * \brief Macro: Allocate and return a generic matrix.
+    *
+    * Allocates and returns a generic rectangular matrix with given dimensions.
+    *
+    * Implemented as a macro call to gan_mat_form_gen().
+    * \sa gan_mat_form().
+    */
+   #ifdef GAN_GENERATE_DOCUMENTATION
+   Gan_Matrix *gan_mat_alloc ( unsigned long rows, unsigned long cols );
+   #else
+   #define gan_mat_alloc(rows,cols) gan_mat_form_gen(NULL,rows,cols,NULL,0)
+   #endif
+      </pre>
+      The function declaration is only parsed when Doxygen is used, in which
+      case <tt>GAN_GENERATE_DOCUMENTATION</tt> is predefined for the purposes
+      of Doxygen's preprocessor. In this way the macro will be documented
+      in the same way as a normal function. It is important to retain the
+      <tt>Macro:</tt> prefix to the brief documentation line, so that
+      it is clear in the documentation which routines are macros and which
+      are real functions.
+</ol>

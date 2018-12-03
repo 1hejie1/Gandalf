@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Array fill/copy</TITLE>
+<META NAME="description" CONTENT="Array fill/copy">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node21.html">
+<LINK REL="previous" HREF="node19.html">
+<LINK REL="up" HREF="node12.html">
+<LINK REL="next" HREF="node21.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html518"
+  HREF="node21.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html514"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html508"
+  HREF="node19.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html516"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html519"
+  HREF="node21.html">Complex numbers</A>
+<B> Up:</B> <A NAME="tex2html515"
+  HREF="node12.html">The Common Package</A>
+<B> Previous:</B> <A NAME="tex2html509"
+  HREF="node19.html">Memory allocation</A>
+ &nbsp; <B>  <A NAME="tex2html517"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00350000000000000000"></A> <A NAME="array-sec"></A>
+<BR>
+Array fill/copy
+</H1>
+<PRE>
+      #include &lt;gandalf/common/array.h&gt;
+</PRE>
+There are two sets of functions in this module, one set dealing with
+filling an array of numbers or pointers with a constant value, the other
+dealing with copying an array into another array. To fill an array of
+<TT>float</TT>s with the value five, for instance, use
+<PRE>
+      float afArray[100];
+
+      gan_fill_array_f ( afArray, 100, 1, 5.0F );
+</PRE>
+The third <TT>stride</TT> argument will be one for filling a simple contiguous
+array. A different value indicates the number of elements of the array to
+skip when filling each value. A value of three, for instance, indicates that
+only every third element of the array is to be filled.
+
+<P>
+To copy one array into another, each having arbitrary stride, use
+<PRE>
+      float afArray1[100], float afArray2[100];
+
+      /* fill array afArray1 with values */
+      ...
+
+      gan_copy_array_f ( afArray1, 1, 100, afArray2, 1 );
+</PRE>
+This copies array <TT>afArray1</TT> into <TT>afArray2</TT>.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

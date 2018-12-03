@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Inverting a general size matrix</TITLE>
+<META NAME="description" CONTENT="Inverting a general size matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node80.html">
+<LINK REL="previous" HREF="node78.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node80.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1372"
+  HREF="node80.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1368"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1362"
+  HREF="node78.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1370"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1373"
+  HREF="node80.html">Cholesky factorising a general</A>
+<B> Up:</B> <A NAME="tex2html1369"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1363"
+  HREF="node78.html">General size matrix/matrix multiplication</A>
+ &nbsp; <B>  <A NAME="tex2html1371"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004221200000000000000">
+Inverting a general size matrix</A>
+</H3>
+If a general rectangular matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> happens to be square, it can be
+inverted using the routine
+<PRE>
+      Gan_Matrix mA, mB; /* declare matrices A &amp; B */
+
+      /* ... create and fill matrix A, which must be square, create B ... */
+      gan_mat_invert_q ( &amp;mA, &amp;mB ); /* B = A^-1 */
+</PRE>
+There is also a routine to create the inverse matrix <IMG
+ WIDTH="33" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img84.png"
+ ALT="$A^{-1}$"> from scratch:
+<PRE>
+      Gan_Matrix mA, *pmB; /* declare matrix A */
+
+      /* ... create and fill matrix A, which must be square ... */
+      pmB = gan_mat_invert_s ( &amp;mA ); /* B = A^-1 */
+</PRE>
+The routines for special square matrices are similar
+<PRE>
+      Gan_Matrix mA, mB, *pmB; /* declare matrices A &amp; B */
+
+      /* ... create and fill matrix A, which must be square, create B ... */
+      gan_squmat_invert_q ( &amp;mA, &amp;mB ); /* B = A^-1, OR */
+      pmB = gan_squmat_invert_s ( &amp;mA ); /* B = A^-1 */
+</PRE>
+The type of the output <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> is in this case set to the appropriate type given
+the input. For all the square matrix types supported by Gandalf (symmetric,
+triangular, diagonal, scaled identity), the matrix type of the inverse <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$">
+is the same as that of the input matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">.
+
+<P>
+<B>Error detection:</B> If implicit inverse is used (the
+<TT>..._squmatI_...()</TT> or <TT>..._squmatIT_...()</TT> routines),
+the square matrix involved must be non-singular. If the matrix is singular
+then <TT>NULL</TT> is returned and the Gandalf error handler is invoked.
+Other failure modes are failing to create the result matrix and incompatibility
+between the sizes of the input matrices.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

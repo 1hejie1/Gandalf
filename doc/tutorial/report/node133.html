@@ -1,0 +1,475 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Levenberg-Marquardt software</TITLE>
+<META NAME="description" CONTENT="Levenberg-Marquardt software">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node132.html">
+<LINK REL="up" HREF="node130.html">
+<LINK REL="next" HREF="node134.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2087"
+  HREF="node134.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2083"
+  HREF="node130.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2079"
+  HREF="node132.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2085"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2088"
+  HREF="node134.html">Fast Hough Transform</A>
+<B> Up:</B> <A NAME="tex2html2084"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+<B> Previous:</B> <A NAME="tex2html2080"
+  HREF="node132.html">Generalised observations</A>
+ &nbsp; <B>  <A NAME="tex2html2086"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION006103000000000000000">
+Levenberg-Marquardt software</A>
+</H2>
+The following code extracts are taken from the <TT>vision/vision_test.c</TT>
+test program. The example application is fitting a quadratic function through
+points <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$x,y$"> on a plane. The function to be fitted is
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+y = ax^2 + bx + c
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="116" HEIGHT="27" BORDER="0"
+ SRC="img280.png"
+ ALT="\begin{displaymath}y = ax^2 + bx + c
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The state vector of unknown parameters to be estimated is thus
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf x}= \left(\!\!\begin{array}{c} a \\b \\c \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="68" HEIGHT="64" BORDER="0"
+ SRC="img281.png"
+ ALT="\begin{displaymath}{\bf x}= \left(\!\!\begin{array}{c} a \ b \ c \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+and we wish to compute the least-squares solution that minimises
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+J({\bf x}) = \sum_{j=1}^k(y_j - ax_j^2 - bx_j - c)^2 \sigma_j^{-2}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="247" HEIGHT="58" BORDER="0"
+ SRC="img282.png"
+ ALT="\begin{displaymath}J({\bf x}) = \sum_{j=1}^k(y_j - ax_j^2 - bx_j - c)^2 \sigma_j^{-2}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+given <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img156.png"
+ ALT="$k$"> points <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img283.png"
+ ALT="$x_j,y_j$"> for  <IMG
+ WIDTH="85" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img158.png"
+ ALT="$j=1,\ldots,k$"> and independent noise
+levels <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img284.png"
+ ALT="$\sigma_j$"> for each point <IMG
+ WIDTH="12" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img285.png"
+ ALT="$j$">. This can be solved directly by
+linear methods, and this feature makes it useful as a test algorithm because
+test program can compare the results with the Levenberg-Marquardt solution.
+The problem can be put into the form of the Levenberg-Marquardt algorithm
+described above by identifying
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf z}{\scriptstyle (j)}= (y_j),\;\;\;N^{-1}{\scriptstyle (j)}= (\sigma^{-2}),\;\;\;
+   {\bf h}({\bf x}) = ax_j^2 + bx_j + c
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="367" HEIGHT="30" BORDER="0"
+ SRC="img286.png"
+ ALT="\begin{displaymath}{\bf z}{\scriptstyle (j)}= (y_j),\;\;\;N^{-1}{\scriptstyle (j)}= (\sigma^{-2}),\;\;\;
+{\bf h}({\bf x}) = ax_j^2 + bx_j + c
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+To initialise a Levenberg-Marquardt algorithm instance use the call
+<PRE>
+      Gan_LevMarqStruct *lm;
+
+      /* initialise Levenberg-Marquardt algorithm */
+      lm = gan_lev_marq_alloc();
+</PRE>
+We build the points from ground-truth values for the quadratic coefficients
+<IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img287.png"
+ ALT="$a,b,c$">, and add random Gaussian noise:
+<PRE>
+      /* number of points */
+      #define NPOINTS 100
+
+      /* ground-truth quadratic coefficients a,b,c */
+      #define A_TRUE 2.0
+      #define B_TRUE 3.0
+      #define C_TRUE 4.0
+
+      /* noise standard deviation */
+      #define SIGMA 1.0
+
+      /* arrays of x &amp; y coordinates */
+      double xcoord[NPOINTS], ycoord[NPOINTS];
+
+      /* build arrays of x &amp; y coordinates */
+      for ( i = NPOINTS-1; i &gt;= 0; i-- )
+      {
+         /* x-coordinates evenly spaced */
+         xcoord[i] = (double) i;
+
+         /* construct y = a*x^2 + b*y + c + w with added Gaussian noise w */
+         ycoord[i] = A_TRUE*xcoord[i]*xcoord[i] + B_TRUE*xcoord[i]
+                     + C_TRUE + gan_normal_sample(0.0, SIGMA);
+      }
+</PRE>
+Here we defined a noise level <TT>SIGMA</TT> as the estimated standard deviation
+of the random observation errors, the same for each point.
+Now that we have constructed the input data, the next thing is to create
+observations for each point.
+Gandalf's version of Levenberg-Marquardt uses callback functions to
+evaluate observation <IMG
+ WIDTH="31" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img264.png"
+ ALT="${\bf h}(.)$"> and observation Jacobians <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img279.png"
+ ALT="$H$">.
+A non-robust h-type observation is then defined by:
+
+<UL>
+<LI>The observation vector <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img56.png"
+ ALT="${\bf z}$">;
+</LI>
+<LI>The observation inverse covariance <IMG
+ WIDTH="36" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img257.png"
+ ALT="$N^{-1}$">, and;
+</LI>
+<LI>The observation callback function <IMG
+ WIDTH="31" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img264.png"
+ ALT="${\bf h}(.)$">.
+</LI>
+</UL>
+We construct the observations for the quadratic fitting problem using the
+following code:
+<PRE>
+      Gan_Vector *z; /* define observation vector */
+      Gan_SquMatrix *Ni; /* define observation inverse covariance */
+
+      /* allocate observation vector z and inverse covariance Ni */
+      z = gan_vec_alloc(1);
+      Ni = gan_symmat_fill_va ( NULL, 1, 1.0/(SIGMA*SIGMA) );
+
+      for ( i = NPOINTS-1; i &gt;= 0; i-- )
+      {
+         /* construct point observation */
+         z = gan_vec_fill_va ( z, 1, ycoord[i] );
+         cu_assert ( z != NULL );
+         cu_assert ( gan_lev_marq_obs_h ( lm, z, &amp;xcoord[i], Ni, quadratic_h )
+                     != NULL );
+      }
+</PRE>
+We create the observation vector with size one; this can be adjusted
+dynamically if necessary; see Section&nbsp;<A HREF="node60.html#set-size-vec-sec">3.2.1.2</A>.
+
+<P>
+The observation callback function <TT>quadratic_h()</TT> is defined as follows:
+<PRE>
+      /* observation callback function for single point */
+      static Gan_Bool
+       quadratic_h ( Gan_Vector *x,  /* state vector */
+                     Gan_Vector *z,  /* observation vector */
+                     void *zdata,    /* user pointer attached to z */
+                     Gan_Vector *h,  /* vector h(x) to be evaluated */
+                     Gan_Matrix *H ) /* matrix dh/dx to be evaulated or NULL */
+      {
+         double a, b, c;
+
+         /* read x-coordinate from user-defined data pointer */
+         double xj = *((double *) zdata);
+
+         /* read quadratic parameters from state vector x=(a b c)^T*/
+         if ( !gan_vec_read_va ( x, 3, &amp;a, &amp;b, &amp;c ) )
+         {
+            gan_err_register ( "quadratic_h", GAN_ERROR_FAILURE, NULL );
+            return GAN_FALSE;
+         }
+
+         /* evaluate h(x) = h(a,b,c) = y = a*x*x + b*x + c */
+         if ( gan_vec_fill_va ( h, 1, a*xj*xj + b*xj + c ) == NULL )
+         {
+            gan_err_register ( "quadratic_h", GAN_ERROR_FAILURE, NULL );
+            return GAN_FALSE;
+         }
+
+         /* if Jacobian matrix is passed as non-NULL, fill it with the Jacobian
+            matrix (dh/da dh/db dh/dc) = (x*x x 1) */
+         if ( H != NULL &amp;&amp;
+              gan_mat_fill_va ( H, 1, 3, xj*xj, xj, 1.0 ) == NULL )
+         {
+            gan_err_register ( "quadratic_h", GAN_ERROR_FAILURE, NULL );
+            return GAN_FALSE;
+         }
+
+         /* success */
+         return GAN_TRUE;
+      }
+</PRE>
+Note the the <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$">-coordinate passed in as the third ``user pointer'' argument
+to <TT>gan_lev_marq_obs_h()</TT> is read into the variable <TT>xj</TT> in
+<TT>quadratic_h()</TT>. Using pointers in this way is the standard method
+to pass extra information into the callback routines.
+
+<P>
+So far we have merely registered the observations and their callback
+routines. No processing has started. To get started with some actual
+optimisation we need to initialise the state vector with some values for
+<IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img200.png"
+ ALT="$a$">, <IMG
+ WIDTH="11" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img288.png"
+ ALT="$b$"> and <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img289.png"
+ ALT="$c$">. This involves invoking the routine
+<PRE>
+      double residual;
+
+      /* initialise Levenberg-Marquardt algorithm */
+      gan_lev_marq_init ( lm, quadratic_init, NULL, &amp;residual );
+</PRE>
+<TT>quadratic_init()</TT> is another callback routine that computes values for
+the state vector <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img18.png"
+ ALT="${\bf x}$"> given the observations <!-- MATH
+ ${\bf z}{\scriptstyle (j)}$
+ -->
+<IMG
+ WIDTH="28" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img244.png"
+ ALT="${\bf z}{\scriptstyle (j)}$">. The observations
+are presented to <TT>quadratic_init()</TT> in a linked list. The third argument
+to <TT>gan_lev_marq_init()</TT> is another user pointer, not used in this
+example. The last <TT>residual</TT> argument is returned as the initial
+value of the least-squares residual <IMG
+ WIDTH="37" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img290.png"
+ ALT="$J({\bf x})$">. This is the full code for
+the <TT>quadratic_init()</TT> function, whose operation is self-explanatory:
+<PRE>
+      /* initialisation function for state vector */
+      static Gan_Bool
+       quadratic_init ( Gan_Vector *x0,     /* state vector to be initialised */
+                        Gan_List *obs_list, /* list of observations */
+                        void *data )        /* user data pointer */
+      {
+         int list_size = gan_list_get_size(obs_list);
+         Gan_LevMarqObs *obs;
+         Gan_Matrix33 A;
+         Gan_Vector3 b;
+         double xj, y;
+
+         /* we need at least three points to fit a quadratic */
+         if ( list_size &lt; 3 ) return GAN_FALSE;
+
+         /* initialise quadratic by interpolating three points: the first, middle and
+            last point in the list of point observations. We construct equations
+      
+               (y1)   (x1*x1 x1 1) (a)
+               (y2) = (x2*x2 x2 1) (b) = A * b for 3x3 matrix A and 3-vector b
+               (y3)   (x3*x3 x3 1) (c)
+
+            and solve the equations by direct matrix inversion (not pretty...) to
+            obtain our first estimate of a, b, c given points (x1,y1), (x2,y2) and
+            (x3,y3).
+         */
+
+         /* first point */
+         gan_list_goto_pos ( obs_list, 0 );
+         obs = gan_list_get_current ( obs_list, Gan_LevMarqObs );
+         xj = *((double *) obs-&gt;details.h.zdata); /* read x-coordinate */
+         A.xx = xj*xj; A.xy = xj; A.xz = 1.0; /* fill first row of equations in A */
+         gan_vec_read_va ( &amp;obs-&gt;details.h.z, 1, &amp;y );
+         b.x = y; /* fill first entry in b vector */
+    
+         /* middle point */
+         gan_list_goto_pos ( obs_list, list_size/2 );
+         obs = gan_list_get_current ( obs_list, Gan_LevMarqObs );
+         xj = *((double *) obs-&gt;details.h.zdata); /* read x-coordinate */
+         A.yx = xj*xj; A.yy = xj; A.yz = 1.0; /* fill first row of equations in A */
+         gan_vec_read_va ( &amp;obs-&gt;details.h.z, 1, &amp;y );
+         b.y = y; /* fill second entry in b vector */
+    
+         /* last point */
+         gan_list_goto_pos ( obs_list, list_size-1 );
+         obs = gan_list_get_current ( obs_list, Gan_LevMarqObs );
+         xj = *((double *) obs-&gt;details.h.zdata); /* read x-coordinate */
+         A.zx = xj*xj; A.zy = xj; A.zz = 1.0; /* fill first row of equations in A */
+         gan_vec_read_va ( &amp;obs-&gt;details.h.z, 1, &amp;y );
+         b.z = y; /* fill second entry in b vector */
+
+         /* invert matrix and solve (don't do this at home) */
+         A = gan_mat33_invert_s(&amp;A);
+         b = gan_mat33_multv3_s ( &amp;A, &amp;b );
+
+         /* fill state vector x0 with our initial values for a,b,c */
+         gan_vec_fill_va ( x0, 3, b.x, b.y, b.z );
+         return GAN_TRUE;
+      }
+</PRE>
+We are now ready to apply optimisation iterations using the routine
+<TT>gan_lev_marq_iteration()</TT>. The following code
+applies ten iterations, adjusting the damping factor in the way suggested
+in&nbsp;[<A
+ HREF="node149.html#Press:etal:88">12</A>]. This simple scheme decreases the damping when the
+residual decreases, and vice versa.
+<PRE>
+      double lambda = 0.1; /* damping factor */
+      double new_residual;
+
+      /* apply iterations */
+      for ( i = 0; i &lt; 10; i++ )
+      {
+         gan_lev_marq_iteration ( lm, lambda, &amp;new_residual );
+         if ( new_residual &lt; residual )
+         {
+            /* iteration succeeded in reducing the residual */
+            lambda /= 10.0;
+            residual = new_residual;
+         }
+         else
+            /* iteration failed to reduce the residual */
+            lambda *= 10.0;
+      }
+</PRE>
+To extract the optimised solution, use the code
+<PRE>
+   Gan_Vector *x;
+
+   /* get optimised solution */
+   x = gan_lev_marq_get_x ( lm );
+</PRE>
+Note that the <TT>x</TT> pointer passed back here points to a vector internal
+to the Levenberg-Marquardt software, and should <EM>not</EM> be freed.
+To free the Levenberg-Marquardt structure and the matrices &amp; vectors
+created above, use the code
+<PRE>
+   gan_squmat_free ( Ni );
+   gan_vec_free ( z );
+   gan_lev_marq_free ( lm );
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2087"
+  HREF="node134.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2083"
+  HREF="node130.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2079"
+  HREF="node132.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2085"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2088"
+  HREF="node134.html">Fast Hough Transform</A>
+<B> Up:</B> <A NAME="tex2html2084"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+<B> Previous:</B> <A NAME="tex2html2080"
+  HREF="node132.html">Generalised observations</A>
+ &nbsp; <B>  <A NAME="tex2html2086"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

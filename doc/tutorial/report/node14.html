@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Simple types</TITLE>
+<META NAME="description" CONTENT="Simple types">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node15.html">
+<LINK REL="previous" HREF="node13.html">
+<LINK REL="up" HREF="node13.html">
+<LINK REL="next" HREF="node15.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html448"
+  HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html444"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html438"
+  HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html446"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html449"
+  HREF="node15.html">Types with specific bit</A>
+<B> Up:</B> <A NAME="tex2html445"
+  HREF="node13.html">Miscellaneous definitions</A>
+<B> Previous:</B> <A NAME="tex2html439"
+  HREF="node13.html">Miscellaneous definitions</A>
+ &nbsp; <B>  <A NAME="tex2html447"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00311000000000000000"></A> <A NAME="simple-types-sec"></A>
+<BR>
+Simple types
+</H2>
+A boolean type <TT>GAN_BOOL</TT> is defined:
+<PRE>
+      typedef enum { GAN_FALSE=0, GAN_TRUE=1 } Gan_Bool;
+</PRE>
+The boolean type is the standard type returned by a Gandalf function,
+where a return type of <TT>GAN_TRUE</TT> indicates success, <TT>GAN_FALSE</TT>
+failure. Another use for the <TT>Gan_Bool</TT> type is with bit arrays and
+binary images. See Sections&nbsp;<A HREF="node18.html#bit-array-sec">2.3</A> and&nbsp;<A HREF="node93.html#binary-image-sec">4.4</A>.
+
+<P>
+The <TT>Gan_Type</TT> enumerated type is used extensively to indicated
+different kinds of simple objects:
+<PRE>
+      /// labels for simple types used throughout Gandalf
+      typedef enum
+      {
+         GAN_CHAR,       /**&lt; signed character */
+         GAN_UCHAR,      /**&lt; unsigned character */
+         GAN_SHORT,      /**&lt; signed short integer */
+         GAN_USHORT,     /**&lt; unsigned short integer */
+         GAN_INT,        /**&lt; signed integer */
+         GAN_UINT,       /**&lt; unsigned integer */
+         GAN_LONG,       /**&lt; signed long integer */
+         GAN_ULONG,      /**&lt; unsigned long integer */
+      #if (SIZEOF_LONG_LONG != 0)
+         GAN_LONGLONG,   /**&lt; signed extra-long integer */
+      #endif
+         GAN_FLOAT,      /**&lt; single precision floating point */
+         GAN_DOUBLE,     /**&lt; double precision floating point */
+         GAN_LONGDOUBLE, /**&lt; long double precision floating point */
+         GAN_STRING,     /**&lt; string (array of characters) */
+         GAN_BOOL,       /**&lt; boolean */
+         GAN_POINTER     /**&lt; generic pointer */
+      } Gan_Type;
+</PRE>
+Note that the <TT>GAN_LONGLONG</TT> value is only defined if the <TT>configure</TT>
+program finds the <TT>long&nbsp;long</TT> C type, and is able to determine its size.
+The array <TT>gan_type_sizes[]</TT> holds the sizes of each <TT>Gan_Type</TT>
+value:
+<PRE>
+      /// array of sizeof()'s of each Gandalf type, one for each value in a Gan_Type
+      extern const size_t gan_type_sizes[];
+</PRE>
+<TT>gan_type_sizes</TT> and the <TT>gan_debug</TT> boolean flag
+(see below) are the only global variables in Gandalf.
+<BR><TT>gan_type_sizes[]</TT>
+is a constant array, so it is thread-safe.
+
+<P>
+Gandalf also provides single and double precision floating point versions
+of the integer limit values found in <TT>&lt;limits.h&gt;</TT>. For instance
+<TT>GAN_INT_MAXF</TT> and <TT>GAN_INT_MAXD</TT> are the <TT>float</TT> and
+<TT>double</TT> versions of <TT>INT_MAX</TT>.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

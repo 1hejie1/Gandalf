@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Other types of fixed size vector</TITLE>
+<META NAME="description" CONTENT="Other types of fixed size vector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node39.html">
+<LINK REL="previous" HREF="node37.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node39.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html826"
+  HREF="node39.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html822"
+  HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html816"
+  HREF="node37.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html824"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html827"
+  HREF="node39.html">Other sizes of fixed</A>
+<B> Up:</B> <A NAME="tex2html823"
+  HREF="node29.html">Fixed size vectors</A>
+<B> Previous:</B> <A NAME="tex2html817"
+  HREF="node37.html">Single precision fixed size</A>
+ &nbsp; <B>  <A NAME="tex2html825"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00411900000000000000">
+Other types of fixed size vector</A>
+</H3>
+As well as floating point coordinates, integer vectors are often useful.
+Although Gandalf does not currently provide sets of functions handling
+vectors with integer coordinates, structures are defined as follows
+<PRE>
+      /* structure definition for unsigned character 3-vector */
+      typedef struct Gan_Vector3_uc
+      {
+         unsigned char x, y, z;
+      } Gan_Vector3_uc;
+
+      /* structure definition for short integer 3-vector */
+      typedef struct Gan_Vector3_s
+      {
+         short x, y, z;
+      } Gan_Vector3_s;
+
+      /* structure definition for unsigned short integer 3-vector */
+      typedef struct Gan_Vector3_us
+      {
+         unsigned short x, y, z;
+      } Gan_Vector3_us;
+
+      /* structure definition for integer 3-vector */
+      typedef struct Gan_Vector3_i
+      {
+         int x, y, z;
+      } Gan_Vector3_i;
+
+      /* structure definition for unsigned integer 3-vector */
+      typedef struct Gan_Vector3_ui
+      {
+         unsigned int x, y, z;
+      } Gan_Vector3_ui;
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

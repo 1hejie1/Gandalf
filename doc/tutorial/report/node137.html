@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The FHT Algorithm</TITLE>
+<META NAME="description" CONTENT="The FHT Algorithm">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node138.html">
+<LINK REL="previous" HREF="node136.html">
+<LINK REL="up" HREF="node135.html">
+<LINK REL="next" HREF="node138.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2148"
+  HREF="node138.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2144"
+  HREF="node135.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2138"
+  HREF="node136.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2146"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2149"
+  HREF="node138.html">Example: Line Fitting</A>
+<B> Up:</B> <A NAME="tex2html2145"
+  HREF="node135.html">The Fast Hough Transform</A>
+<B> Previous:</B> <A NAME="tex2html2139"
+  HREF="node136.html">Notation</A>
+ &nbsp; <B>  <A NAME="tex2html2147"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006111200000000000000"></A> <A NAME="FHT_alg"></A>
+<BR>
+The FHT Algorithm
+</H3>
+ A coarse Hough Transform is applied to the initial ``root'' hypercube in
+ parameter space by dividing it into <IMG
+ WIDTH="20" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img298.png"
+ ALT="$2^k$"> ``child''
+ hypercubes formed by halving the root along each of the <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img156.png"
+ ALT="$k$"> dimensions and
+ assigning an accumulator to each child. Each hyperplane passing through
+ a child hypercube increments its accumulator. Those children receiving
+ greater than a threshold <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img299.png"
+ ALT="$T$"> votes are recursively subdivided, becoming
+ parents themselves, and so on.
+
+<P>
+A limit is set on the level of subdivision. Because the range of the
+ parameters in a hypercube is halved for each level of subdivision,
+ This is equivalent to having a precision threshold:
+ <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\rm maximum\;subdivision\;level}=\log_2
+      {\rm\frac{initial\;range}{required\;accuracy}}.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="368" HEIGHT="42" BORDER="0"
+ SRC="img300.png"
+ ALT="\begin{displaymath}
+{\rm maximum\;subdivision\;level}=\log_2
+{\rm\frac{initial\;range}{required\;accuracy}}.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+An extra speed up is made possible by keeping track of which features vote
+ for (i.e. which hyperplanes intersect) each hypercube.
+ Only those features need be tested for intersection
+ between hyperplane and child hypercubes, since children lie inside their
+ ``parents''.
+
+<P>
+Li et al. consider two methods of calculating whether a hyperplane passes
+ through a hypercube. The ``brute force'' method is to test whether all
+ the vertices of the hypercube are on the same side of the hyperplane by
+ evaluating the left hand side of equation&nbsp;<A HREF="node136.html#hyperpln_eq">5.15</A> for each
+ vertex. For increased speed, Li et al. recommend determining whether the
+ hyperplane intersects the hypercube's circumscribing hypersphere.
+ This is an approximation, since some planes will intersect the
+ hypersphere but not the hypercube. One effect of this is that the
+ total number of subdivisions will be increased, because a hypersphere
+ may get more than <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img299.png"
+ ALT="$T$"> votes when the hypercube on its own
+ (being smaller) would not have. However the increased speed more
+ than compensates for this, especially for high-dimensional
+ parameter spaces. The method is fast because the perpendicular distance
+ from the centre of a child hypercube to a hyperplane can be
+ calculated simply in terms of the corresponding distance from the parent's
+ centre to the hyperplane, as is shown on page&nbsp;<A HREF="node140.html#lookup_table"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/usr/share/latex2html/icons/crossref.png"></A>.
+ This distance is then compared with the radius of the hypersphere.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2148"
+  HREF="node138.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2144"
+  HREF="node135.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2138"
+  HREF="node136.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2146"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2149"
+  HREF="node138.html">Example: Line Fitting</A>
+<B> Up:</B> <A NAME="tex2html2145"
+  HREF="node135.html">The Fast Hough Transform</A>
+<B> Previous:</B> <A NAME="tex2html2139"
+  HREF="node136.html">Notation</A>
+ &nbsp; <B>  <A NAME="tex2html2147"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

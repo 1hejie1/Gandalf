@@ -1,0 +1,374 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Computing a homography between 3D scene and image</TITLE>
+<META NAME="description" CONTENT="Computing a homography between 3D scene and image">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node113.html">
+<LINK REL="previous" HREF="node109.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node113.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1826"
+  HREF="node113.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1822"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1816"
+  HREF="node111.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1824"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1827"
+  HREF="node113.html">Smoothing an image using</A>
+<B> Up:</B> <A NAME="tex2html1823"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1817"
+  HREF="node111.html">Computing a 2D affine</A>
+ &nbsp; <B>  <A NAME="tex2html1825"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00640000000000000000">
+Computing a homography between 3D scene and image</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/vision/affine34_fit.h&gt;
+</PRE>
+Pose estimation is the procedure to compute the position of a camera relative
+to a known scene. In projective terms it means estimating the <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$">
+homography matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> representing the projection from the 3D scene into
+the 2D image. Here we assume a point-cloud representation, so
+the scene is represented by <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img61.png"
+ ALT="$n$"> 3D points <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img150.png"
+ ALT="${\bf X}_i$"> in homogeneous
+coordinates, <IMG
+ WIDTH="84" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img94.png"
+ ALT="$i=1,\ldots,n$">. The relationship between the <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img150.png"
+ ALT="${\bf X}_i$">
+and points <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img92.png"
+ ALT="${\bf x}_i$"> in an image of the same (part of the) scene is a simple
+linear projective transformation or homography:
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+{\bf x}_i = \lambda_i P {\bf X}_i
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="point-proj3D-eq"></A><IMG
+ WIDTH="81" HEIGHT="26" BORDER="0"
+ SRC="img151.png"
+ ALT="\begin{displaymath}
+{\bf x}_i = \lambda_i P {\bf X}_i
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.5)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> is a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> homography matrix and <IMG
+ WIDTH="13" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img107.png"
+ ALT="$\lambda$"> is a scale factor.
+This equation also assumes that the camera
+employed in projecting the points onto the image is linear, but if the
+camera is non-linear AND the camera parameters are known, the distortion
+can be removed first by applying the function
+<TT>gan_camera_remove_distortion_[qi]()</TT> to the image points <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img92.png"
+ ALT="${\bf x}_i$">
+as described in Section&nbsp;<A HREF="node102.html#camera-sec">5.1</A>.
+Given six or more point correspondences (in general 3D position)
+in two images, the homography matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> can be computed.
+This can be done by first eliminating <IMG
+ WIDTH="13" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img107.png"
+ ALT="$\lambda$"> to obtain homogeneous
+linear equations for the elements of <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">.
+Given that <!-- MATH
+ ${\bf X}=(X\;Y\;Z\:W)^{\top}$
+ -->
+<IMG
+ WIDTH="131" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img171.png"
+ ALT="${\bf X}=(X\;Y\;Z\:W)^{\top}$"> and <!-- MATH
+ ${\bf x}=(x\;y\;z_h)^{\top}$
+ -->
+<IMG
+ WIDTH="100" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img125.png"
+ ALT="${\bf x}=(x\;y\;z_h)^{\top}$">,
+we can obtain the equations
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+x {\bf P}_3.{\bf X}- z_h {\bf P}_1.{\bf X}= 0,\;\;\;
+ y {\bf P}_3.{\bf X}- z_h {\bf P}_2.{\bf X}= 0
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="homog3D-point"></A><IMG
+ WIDTH="316" HEIGHT="27" BORDER="0"
+ SRC="img154.png"
+ ALT="\begin{displaymath}
+x {\bf P}_3.{\bf X}- z_h {\bf P}_1.{\bf X}= 0,\;\;\;
+y {\bf P}_3.{\bf X}- z_h {\bf P}_2.{\bf X}= 0
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.6)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+where <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> is separated into rows as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+P = \left(\!\!\begin{array}{c} {\bf P}_1^{\top}\\{\bf P}_2^{\top}\\{\bf P}_3^{\top}\end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="85" HEIGHT="64" BORDER="0"
+ SRC="img155.png"
+ ALT="\begin{displaymath}P = \left(\!\!\begin{array}{c} {\bf P}_1^{\top}\ {\bf P}_2^{\top}\ {\bf P}_3^{\top}\end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+From six points we get twelve such equations, which allows <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> to be
+computed up to a scale factor<A NAME="tex2html5"
+  HREF="footnode.html#foot5109"><SUP>5.2</SUP></A> using the same symmetric eigensystem routines
+as are used to solve for the fundamental and essential matrices
+in Section&nbsp;<A HREF="node108.html#fun-ess-sec">5.2</A>.
+
+<P>
+To start the calculation, define an accumulated symmetric matrix eigensystem
+structure and initialise it using the following routine:
+<PRE>
+      Gan_SymMatEigenStruct SymEigen;
+
+      /* initialise eigensystem matrix */
+      gan_homog34_init ( &amp;SymEigen );
+</PRE>
+Then for each point correspondence, build the equations&nbsp;<A HREF="#homog3D-point">5.6</A>
+and increment the accumulated symmetric eigensystem matrix
+by calling the following function:
+<PRE>
+      int iEqCount=0, iCount;
+      Gan_Vector4 v4X; /* declare scene point X */
+      Gan_Vector3 v3x; /* declare image point x */
+
+      for ( iCount = 0; iCount &lt; 100; iCount++ )
+      {
+         /* ... build scene and image point coordinates into X and x ... */
+
+         /* increment matrix using point correspondence */
+         gan_homog34_increment_p ( &amp;SymEigen, &amp;v4X, &amp;v3x, 1.0, &amp;iEqCount );
+      }
+</PRE>
+The fourth argument <TT>1.0</TT> is a weighting factor for the equations as
+described in Section&nbsp;<A HREF="node82.html#acc-symeigen-sec">3.2.2.15</A>. The last argument <TT>iEqCount</TT>
+is a running count of the total number of equations processed thus far,
+to be passed below to the function to solve for <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">.
+
+<P>
+Once the point correspondences have been processed in this way,
+you can solve the equations using
+<PRE>
+      Gan_Matrix34 m34P; /* homography matrix P */
+
+      gan_homog34_solve ( &amp;SymEigen, iEqCount, &amp;m34P );
+</PRE>
+to compute the homography <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">. If you want to repeat the calculation of
+a homography with new data, you can start again by calling
+<PRE>
+      gan_homog34_reset ( &amp;SymEigen );
+</PRE>
+
+<P>
+At the end of the homography calculation(s) you can free the eigensystem
+structure using the function
+<PRE>
+      gan_homog34_free ( &amp;SymEigen );
+</PRE>
+
+<P>
+If line matches are available, and the endpoints of the 3D line are
+approximately known, the line information can also be incorporated into
+the calculation. Since the scene line will normally be created from previous
+matching of image lines, which are line <EM>segments</EM>, the endpoints
+<IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img166.png"
+ ALT="${\bf X}_1$"> and <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="${\bf X}_2$"> of the line in scene coordinates should indeed be
+known. Note that we don't depend on locating the actual endpoints of the line
+accurately, which is a notoriously difficult problem. You should think of
+the two points <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img166.png"
+ ALT="${\bf X}_1$"> and <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="${\bf X}_2$"> instead as <EM>representative</EM>
+points on the line. We note that <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img166.png"
+ ALT="${\bf X}_1$"> and <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="${\bf X}_2$"> should project
+onto the image line <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img127.png"
+ ALT="${\bf l}$">, and so we obtain the equations
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf l}.(P{\bf X}_1) = 0,\;\;\;\;{\bf l}.(P{\bf X}_2) = 0
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="192" HEIGHT="28" BORDER="0"
+ SRC="img168.png"
+ ALT="\begin{displaymath}{\bf l}.(P{\bf X}_1) = 0,\;\;\;\;{\bf l}.(P{\bf X}_2) = 0
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+These are homogeneous linear equations in the elements of <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">
+which can be directly fed into the
+accumulated matrix calculation for <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$">, using the routine
+<PRE>
+      Gan_Vector4 v4X1, v4X2; /* declare scene line endpoints X1 &amp; X2 */
+      Gan_Vector3 v3l; /* image line homogeneous coordinates l */
+
+      /* ... set X1, X2 and l for corresponding scene line and image line ... */
+
+      /* add equations for two endpoints */
+      gan_homog34_increment_le ( &amp;SymEigen, &amp;v4X1, &amp;v3l, 1.0, &amp;iEqCount );
+      gan_homog34_increment_le ( &amp;SymEigen, &amp;v4X2, &amp;v3l, 1.0, &amp;iEqCount );
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>gan_homog34_init()</TT> returns a pointer to
+the initialised structure, and returns <TT>NULL</TT> on error.
+All the other routines except the <TT>void</TT> routine <TT>gan_homog34_free()</TT>
+return a boolean value, which is <TT>GAN_FALSE</TT> on error.
+The Gandalf error handler is invoked when an error occurs.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1826"
+  HREF="node113.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1822"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1816"
+  HREF="node111.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1824"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1827"
+  HREF="node113.html">Smoothing an image using</A>
+<B> Up:</B> <A NAME="tex2html1823"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1817"
+  HREF="node111.html">Computing a 2D affine</A>
+ &nbsp; <B>  <A NAME="tex2html1825"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Introduction</TITLE>
+<META NAME="description" CONTENT="Introduction">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node12.html">
+<LINK REL="previous" HREF="node1.html">
+<LINK REL="up" HREF="report.html">
+<LINK REL="next" HREF="node3.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html274"
+  HREF="node3.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html270"
+  HREF="report.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html264"
+  HREF="node1.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html272"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html275"
+  HREF="node3.html">Conventions and style</A>
+<B> Up:</B> <A NAME="tex2html271"
+  HREF="report.html">Gandalf: The Fast Computer</A>
+<B> Previous:</B> <A NAME="tex2html265"
+  HREF="node1.html">Contents</A>
+ &nbsp; <B>  <A NAME="tex2html273"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00200000000000000000"></A> <A NAME="introduction-chapter"></A>
+<BR>
+Introduction
+</H1>
+Gandalf is a C library designed to support the development of computer
+vision applications. For installation instructions see the INSTALL file
+provided with the distribution. Gandalf is divided into the following
+packages:-
+
+<UL>
+<LI>The <B>Common</B> package contains general purpose tools used by other
+	packages. It includes routines for memory allocation, linked lists,
+	various numerical functions, array manipulations and error handling.
+</LI>
+<LI>The <B>Linear algebra</B> package includes vector/matrix manipulation
+	routines both for small objects (sizes 2,3,4) and general size vectors
+	&amp; matrices. The latter optionally employs LAPACK for certain
+	operations, where a fast implementation of LAPACK is available.
+</LI>
+<LI>The <B>Image</B> package contains low-level image creation and
+	manipulation functions, supporting grey-level, RGB colour images with
+	or without alpha channels, with various different pixel depths.
+	2D and 3D vector field images are also supported.
+</LI>
+<LI>The <B>Vision</B> package contains some useful vision utility modules,
+	including edge/line/corner feature detection, and geometrical
+	fitting routines.
+</LI>
+</UL>
+In the following chapters we introduce each package in turn, describing
+the scope and applications of the package, followed by tutorial examples
+showing how to build a user application using Gandalf. This is followed
+by chapter&nbsp;<A HREF="node147.html#testing-chapter">6</A> describing the testing framework used by
+Gandalf. Firstly we describe the conventions and style of Gandalf.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html276"
+  HREF="node3.html">Conventions and style</A>
+<UL>
+<LI><A NAME="tex2html277"
+  HREF="node4.html">Function/name prefixes and case</A>
+<LI><A NAME="tex2html278"
+  HREF="node5.html">``Quick'', ``slow'' and ``in-place'' Gandalf routines</A>
+<LI><A NAME="tex2html279"
+  HREF="node6.html">Variable argument list functions</A>
+<LI><A NAME="tex2html280"
+  HREF="node7.html">Dynamic self-modification</A>
+<LI><A NAME="tex2html281"
+  HREF="node8.html">Coordinate pair ordering</A>
+<LI><A NAME="tex2html282"
+  HREF="node9.html">Pixel values</A>
+<LI><A NAME="tex2html283"
+  HREF="node10.html">Image orientation</A>
+<LI><A NAME="tex2html284"
+  HREF="node11.html">Error checking</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html274"
+  HREF="node3.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html270"
+  HREF="report.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html264"
+  HREF="node1.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html272"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html275"
+  HREF="node3.html">Conventions and style</A>
+<B> Up:</B> <A NAME="tex2html271"
+  HREF="report.html">Gandalf: The Fast Computer</A>
+<B> Previous:</B> <A NAME="tex2html265"
+  HREF="node1.html">Contents</A>
+ &nbsp; <B>  <A NAME="tex2html273"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Cholesky factorising a general size symmetric matrix</TITLE>
+<META NAME="description" CONTENT="Cholesky factorising a general size symmetric matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node81.html">
+<LINK REL="previous" HREF="node79.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node81.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1384"
+  HREF="node81.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1380"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1374"
+  HREF="node79.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1382"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1385"
+  HREF="node81.html">Symmetric matrix eigendecomposition</A>
+<B> Up:</B> <A NAME="tex2html1381"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1375"
+  HREF="node79.html">Inverting a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1383"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004221300000000000000">
+Cholesky factorising a general size symmetric matrix</A>
+</H3>
+The Cholesky factor of a symmetric positive definite matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"> is
+a lower triangular matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img44.png"
+ ALT="$L$"> such that
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S = L L^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="63" HEIGHT="24" BORDER="0"
+ SRC="img45.png"
+ ALT="\begin{displaymath}S = L L^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+and we write <!-- MATH
+ $L={\rm chol}(S)$
+ -->
+<IMG
+ WIDTH="87" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img85.png"
+ ALT="$L={\rm chol}(S)$">.
+The Gandalf Cholesky factorisation routines apply to all symmetric types
+of matrix, i.e. <TT>GAN_SYMMETRIC_MATRIX</TT> itself,
+<TT>GAN_DIAGONAL_MATRIX</TT> and <TT>GAN_SCALED_IDENT_MATRIX</TT>.
+Routines are available to compute the factorisation, with the usual options,
+as follows:
+<PRE>
+      Gan_SquMatrix smS, smL, *psmL; /* declare matrices S &amp; L */
+
+      /* ... create and fill matrix S, which must be symmetric and positive definite,
+             create L ... */
+      gan_symmat_cholesky_q ( &amp;smS, &amp;smL ); /* L = chol(S), OR */
+      psmL = gan_symmat_cholesky_s ( &amp;smS ); /* L = chol(S) */
+      gan_symmat_cholesky_i ( &amp;smS ); /* replace S = chol(S) */
+</PRE>
+The last option <TT>gan_symmat_cholesky_i()</TT> replaces <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"> in-place
+by <IMG
+ WIDTH="55" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img86.png"
+ ALT="${\rm chol}(S)$">.
+
+<P>
+<B>Error detection:</B> If <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"> is not either symmetric or positive definite
+in the above routines, <TT>NULL</TT> is returned and the Gandalf error handler
+is invoked. Another failure mode is failing to create the result matrix.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

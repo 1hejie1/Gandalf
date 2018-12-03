@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Copying a general size matrix</TITLE>
+<META NAME="description" CONTENT="Copying a general size matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node73.html">
+<LINK REL="previous" HREF="node71.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node73.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1288"
+  HREF="node73.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1284"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1278"
+  HREF="node71.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1286"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1289"
+  HREF="node73.html">Transposing a general size</A>
+<B> Up:</B> <A NAME="tex2html1285"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1279"
+  HREF="node71.html">Accessing the elements of</A>
+ &nbsp; <B>  <A NAME="tex2html1287"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422500000000000000">
+Copying a general size matrix</A>
+</H3>
+To copy a matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> to another matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$">, both matrices must have
+been created, and <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> should be filled with values. <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> can be
+created with arbitrary initial dimensions (for instance zero),
+since Gandalf will
+if necessary reallocate <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> to the same size as <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">.
+So for instance the following code is perfectly valid:
+<PRE>
+      Gan_Matrix mA, mB; /* declare matrices A &amp; B */
+
+      gan_mat_form ( &amp;mA, 0, 0 ); /* create matrix A */
+      gan_mat_form ( &amp;mB, 0, 0 ); /* create matrix B */
+
+      /* reallocate &amp; initialise A */
+      gan_mat_fill_va ( &amp;mA, 2, 3, 11.0, 9.0, 7.0,
+                                    5.0, 3.0, 1.0 );
+      gan_mat_copy_q ( &amp;mA, &amp;mB ); /* set B = A, reallocating B */
+</PRE>
+The last two lines reallocate first <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> and then <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$">, because both
+were created with zero size. Note that <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> may have previosly been
+filled with other values, which are now lost.
+
+<P>
+There is also a version that creates a copy of a matrix from scratch:
+<PRE>
+      Gan_Matrix *pmB; /* declare matrix B */
+
+      pmB = gan_mat_copy_s ( &amp;mA ); /* create B and set B = A */
+</PRE>
+
+<P>
+For special square matrices, use one of the functions
+<PRE>
+      Gan_SquMatrix smA, smB, *psmB; /* declare matrices A &amp; B */
+
+      /* ... create A &amp; B using e.g. gan_diagmat_form(), and initialise A using
+             e.g. gan_diagmat_fill_va() ...  */
+      gan_squmat_copy_q ( &amp;smA, &amp;smB ); /* set B = A, reallocating B if necessary, OR */
+      psmB = gan_squmat_copy_s(&amp;smA); /* set B = A, creating B */
+</PRE>
+
+<P>
+<B>Error detection:</B> The matrix copy routines return <TT>NULL</TT> and
+invoke the Gandalf error handler upon failure.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

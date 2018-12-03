@@ -1,0 +1,493 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size matrix/matrix multiplication</TITLE>
+<META NAME="description" CONTENT="General size matrix/matrix multiplication">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node79.html">
+<LINK REL="previous" HREF="node77.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node79.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1360"
+  HREF="node79.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1356"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1350"
+  HREF="node77.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1358"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1361"
+  HREF="node79.html">Inverting a general size</A>
+<B> Up:</B> <A NAME="tex2html1357"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1351"
+  HREF="node77.html">General size matrix/vector multiplication</A>
+ &nbsp; <B>  <A NAME="tex2html1359"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004221100000000000000">
+General size matrix/matrix multiplication</A>
+</H3>
+Similar options are available to matrix/matrix multiplication as with
+matrix/vector multiplication, with the added complication that either or
+both if the matrices may have an implicit transpose or (for square matrices)
+inverse applied to them. Firstly we list the routines available when
+both input matrices are general rectangular matrices. In this case only
+implicit transpose is of relevance to us, and we can write the operations
+we need to implement as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+C = A B,\;\;\;\;\;C = A^{\top}B,\;\;\;\;C = A B^{\top},\;\;\;\;C = A^{\top}B^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="353" HEIGHT="27" BORDER="0"
+ SRC="img74.png"
+ ALT="\begin{displaymath}C = A B,\;\;\;\;\;C = A^{\top}B,\;\;\;\;C = A B^{\top},\;\;\;\;C = A^{\top}B^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+To right-multiply a matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> by another matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$">, with all the above
+transpose combinations, the Gandalf routines are
+<PRE>
+      Gan_Matrix mA, mB, mC; /* matrices A, B &amp; C */
+
+      /* ... create and fill matrices A, B, create matrix C ... */
+      gan_mat_rmult_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A*B, OR */
+      gan_mat_rmultT_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A*B^T, OR */
+      gan_matT_rmult_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A^T*B, OR */
+      gan_matT_rmultT_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A^T*B^T, OR */
+</PRE>
+with similar routines to create the result matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$C$"> from scratch:
+<PRE>
+      Gan_Matrix mA, mB, *pmC; /* matrices A, B &amp; C */
+
+      /* ... create and fill matrices A, B ... */
+      pmC = gan_mat_rmult_s ( &amp;mA, &amp;mB ); /* C = A*B, OR */
+      pmC = gan_mat_rmultT_s ( &amp;mA, &amp;mB ); /* C = A*B^T, OR */
+      pmC = gan_matT_rmult_s ( &amp;mA, &amp;mB ); /* C = A^T*B, OR */
+      pmC = gan_matT_rmultT_s ( &amp;mA, &amp;mB ); /* C = A^T*B^T, OR */
+</PRE>
+The next set of routines deals with the case where it is known that the
+result of multiplying matrices <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> is symmetric. In that case we
+can use the routines
+<PRE>
+      Gan_Matrix mA, mB; /* matrices A &amp; B */
+      Gan_SquMatrix smC; /* matrix C */
+
+      /* ... create and fill matrices A, B, create matrix C ... */
+      gan_mat_rmult_sym_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A*B, OR */
+      gan_mat_rmultT_sym_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A*B^T, OR */
+      gan_matT_rmult_sym_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A^T*B, OR */
+      gan_matT_rmultT_sym_q ( &amp;mA, &amp;mB, &amp;mC ); /* C = A^T*B^T */
+</PRE>
+with the alternatives
+<PRE>
+      Gan_Matrix mA, mB; /* matrices A &amp; B */
+      Gan_SquMatrix *psmC; /* matrix C */
+
+      /* ... create and fill matrices A, B ... */
+      psmC = gan_mat_rmult_sym_s ( &amp;mA, &amp;mB ); /* C = A*B, OR */
+      psmC = gan_mat_rmultT_sym_s ( &amp;mA, &amp;mB ); /* C = A*B^T, OR */
+      psmC = gan_matT_rmult_sym_s ( &amp;mA, &amp;mB ); /* C = A^T*B, OR */
+      psmC = gan_matT_rmultT_sym_s ( &amp;mA, &amp;mB ); /* C = A^T*B^T */
+</PRE>
+In the case that <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> are the same matrix, we can be sure that both
+<IMG
+ WIDTH="39" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img75.png"
+ ALT="$AA^{\top}$"> and <IMG
+ WIDTH="39" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img76.png"
+ ALT="$A^{\top}A$"> are symmetric, and there are special Gandalf routines
+for these cases, distinguished according to whether <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is multiplied by its
+own transpose on the <B>r</B>ight or <B>l</B>eft:
+<PRE>
+      Gan_Matrix mA; /* matrix A */
+      Gan_SquMatrix smC; /* matrix C */
+
+      /* ... create and fill matrix A, create matrix C ... */
+      gan_mat_srmultT_q ( &amp;mA, &amp;mC ); /* C = A*A^T, OR */
+      gan_mat_slmultT_q ( &amp;mA, &amp;mC ); /* C = A^T*A */
+</PRE>
+with the alternatives
+<PRE>
+      Gan_Matrix mA; /* matrix A */
+      Gan_SquMatrix *psmC; /* matrix C */
+
+      /* ... create and fill matrix A ... */
+      psmC = gan_mat_srmultT_s ( &amp;mA ); /* C = A*A^T, OR */
+      psmC = gan_mat_slmultT_s ( &amp;mA ); /* C = A^T*A */
+</PRE>
+
+<P>
+If one or both of the input matrices is a special square matrix, there are
+many more combinations available. First consider a square matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> being
+multiplied on left or right by a general rectangular matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$">, giving
+a result matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$C$">. Given the possibility of both implicit transpose and
+inverse of the square matrix, we need to consider the operations
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+C = A B,\;\;\;C = A B^{\top},\;\;\;C = A^{\top}B,\;\;\;C = A^{\top}B^{\top},
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="341" HEIGHT="27" BORDER="0"
+ SRC="img77.png"
+ ALT="\begin{displaymath}C = A B,\;\;\;C = A B^{\top},\;\;\;C = A^{\top}B,\;\;\;C = A^{\top}B^{\top},
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+C = A^{-1}B,\;\;\;C = A^{-1}B^{\top},\;\;\;C = A^{-\top}B,\;\;\;C = A^{-\top}B^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="390" HEIGHT="27" BORDER="0"
+ SRC="img78.png"
+ ALT="\begin{displaymath}C = A^{-1}B,\;\;\;C = A^{-1}B^{\top},\;\;\;C = A^{-\top}B,\;\;\;C = A^{-\top}B^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+C = B A,\;\;\;C = B^{\top}A,\;\;\;C = B A^{\top},\;\;\;C = B^{\top}A^{\top},
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="341" HEIGHT="27" BORDER="0"
+ SRC="img79.png"
+ ALT="\begin{displaymath}C = B A,\;\;\;C = B^{\top}A,\;\;\;C = B A^{\top},\;\;\;C = B^{\top}A^{\top},
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+C = B A^{-1},\;\;\;C = B^{\top}A^{-1},\;\;\;C = B A^{-\top},\;\;\;C = B^{\top}A^{-\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="390" HEIGHT="27" BORDER="0"
+ SRC="img80.png"
+ ALT="\begin{displaymath}C = B A^{-1},\;\;\;C = B^{\top}A^{-1},\;\;\;C = B A^{-\top},\;\;\;C = B^{\top}A^{-\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+These operations are implemented by the following Gandalf routines:
+<PRE>
+      Gan_SquMatrix smA; /* square matrix A */
+      Gan_Matrix mB, mC; /* matrices B &amp; C */
+
+      /* ... create and fill matrices A, B, create matrix C ... */
+
+      /* routines right-multipling A by B */
+      gan_squmat_rmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A*B, OR */
+      gan_squmat_rmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A*B^T, OR */
+      gan_squmatT_rmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A^T*B, OR */
+      gan_squmatT_rmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A^T*B^T, OR */
+      gan_squmatI_rmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A^-1*B, OR */
+      gan_squmatI_rmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A^-1*B^T, OR */
+      gan_squmatIT_rmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A^-T*B, OR */
+      gan_squmatIT_rmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = A^-T*B^T */
+
+      /* routines left-multipling A by B */
+      gan_squmat_lmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B*A, OR */
+      gan_squmat_lmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B^T*A, OR */
+      gan_squmatT_lmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B*A^T, OR */
+      gan_squmatT_lmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B^T*A^T, OR */
+      gan_squmatI_lmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B*A^-1, OR */
+      gan_squmatI_lmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B^T*A^-1, OR */
+      gan_squmatIT_lmult_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B*A^-T, OR */
+      gan_squmatIT_lmultT_q ( &amp;smA, &amp;mB, &amp;mC ); /* C = B^T*A^-T */
+</PRE>
+These routines have the alternative form
+<PRE>
+      Gan_SquMatrix smA; /* square matrix A */
+      Gan_Matrix mB, *pmC; /* matrices B &amp; C */
+
+      /* ... create and fill matrices A, B ... */
+
+      /* routines right-multipling A by B */
+      pmC = gan_squmat_rmult_s ( &amp;smA, &amp;mB ); /* C = A*B, OR */
+      pmC = gan_squmat_rmultT_s ( &amp;smA, &amp;mB ); /* C = A*B^T, OR */
+      pmC = gan_squmatT_rmult_s ( &amp;smA, &amp;mB ); /* C = A^T*B, OR */
+      pmC = gan_squmatT_rmultT_s ( &amp;smA, &amp;mB ); /* C = A^T*B^T, OR */
+      pmC = gan_squmatI_rmult_s ( &amp;smA, &amp;mB ); /* C = A^-1*B, OR */
+      pmC = gan_squmatI_rmultT_s ( &amp;smA, &amp;mB ); /* C = A^-1*B^T, OR */
+      pmC = gan_squmatIT_rmult_s ( &amp;smA, &amp;mB ); /* C = A^-T*B, OR */
+      pmC = gan_squmatIT_rmultT_s ( &amp;smA, &amp;mB ); /* C = A^-T*B^T */
+
+      /* routines left-multipling A by B */
+      pmC = gan_squmat_lmult_s ( &amp;smA, &amp;mB ); /* C = B*A, OR */
+      pmC = gan_squmat_lmultT_s ( &amp;smA, &amp;mB ); /* C = B^T*A, OR */
+      pmC = gan_squmatT_lmult_s ( &amp;smA, &amp;mB ); /* C = B*A^T, OR */
+      pmC = gan_squmatT_lmultT_s ( &amp;smA, &amp;mB ); /* C = B^T*A^T, OR */
+      pmC = gan_squmatI_lmult_s ( &amp;smA, &amp;mB ); /* C = B*A^-1, OR */
+      pmC = gan_squmatI_lmultT_s ( &amp;smA, &amp;mB ); /* C = B^T*A^-1, OR */
+      pmC = gan_squmatIT_lmult_s ( &amp;smA, &amp;mB ); /* C = B*A^-T, OR */
+      pmC = gan_squmatIT_lmultT_s ( &amp;smA, &amp;mB ); /* C = B^T*A^-T */
+</PRE>
+The in-place versions will overwrite the contents of matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> with the
+result, and work fine unless <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is of symmetric type (in which case the
+error handler is invoked and <TT>NULL</TT> returned):
+<PRE>
+      Gan_SquMatrix smA; /* square matrix A */
+      Gan_Matrix mB; /* matrix B */
+
+      /* ... create and fill matrices A, B ... */
+
+      /* routines right-multipling A by B */
+      gan_squmat_rmult_i ( &amp;smA, &amp;mB ); /* replace B = A*B, OR */
+      gan_squmat_rmultT_i ( &amp;smA, &amp;mB ); /* replace B = A*B^T, OR */
+      gan_squmatT_rmult_i ( &amp;smA, &amp;mB ); /* replace B = A^T*B, OR */
+      gan_squmatT_rmultT_i ( &amp;smA, &amp;mB ); /* replace B = A^T*B^T, OR */
+      gan_squmatI_rmult_i ( &amp;smA, &amp;mB ); /* replace B = A^-1*B, OR */
+      gan_squmatI_rmultT_i ( &amp;smA, &amp;mB ); /* replace B = A^-1*B^T, OR */
+      gan_squmatIT_rmult_i ( &amp;smA, &amp;mB ); /* replace B = A^-T*B, OR */
+      gan_squmatIT_rmultT_i ( &amp;smA, &amp;mB ); /* replace B = A^-T*B^T */
+
+      /* routines left-multipling A by B */
+      gan_squmat_lmult_i ( &amp;smA, &amp;mB ); /* replace B = B*A, OR */
+      gan_squmat_lmultT_i ( &amp;smA, &amp;mB ); /* replace B = B^T*A, OR */
+      gan_squmatT_lmult_i ( &amp;smA, &amp;mB ); /* replace B = B*A^T, OR */
+      gan_squmatT_lmultT_i ( &amp;smA, &amp;mB ); /* replace B = B^T*A^T, OR */
+      gan_squmatI_lmult_i ( &amp;smA, &amp;mB ); /* replace B = B*A^-1, OR */
+      gan_squmatI_lmultT_i ( &amp;smA, &amp;mB ); /* replace B = B^T*A^-1, OR */
+      gan_squmatIT_lmult_i ( &amp;smA, &amp;mB ); /* replace B = B*A^-T, OR */
+      gan_squmatIT_lmultT_i ( &amp;smA, &amp;mB ); /* replace B = B^T*A^-T */
+</PRE>
+Now we consider multiplying a square matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> by its own transpose, producing
+a symmetric matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$">. This operation will most often be applied to triangular
+matrices, and in Gandalf implicit transpose and inverse of the input
+matrix are supported, giving rise to the operations
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+B = A A^{\top},\;\;\;\;B = A^{\top}A,\;\;\;\;B = A^{-1}A^{-\top},\;\;\;\;B = A^{-\top}A^{-1}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="402" HEIGHT="27" BORDER="0"
+ SRC="img81.png"
+ ALT="\begin{displaymath}B = A A^{\top},\;\;\;\;B = A^{\top}A,\;\;\;\;B = A^{-1}A^{-\top},\;\;\;\;B = A^{-\top}A^{-1}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+which are implemented by the routines
+<PRE>
+      Gan_SquMatrix smA, smB; /* declare matrices A &amp; B */
+
+      /* ... create &amp; fill matrix A, create (&amp; optionally fill) matrix B ... */
+      gan_squmat_srmultT_squ_q ( &amp;smA, &amp;smB ); /* set B = A*A^T, OR */
+      gan_squmatT_srmult_squ_q ( &amp;smA, &amp;smB ); /* set B = A^T*A, OR */
+      gan_squmatI_srmultIT_squ_q ( &amp;smA, &amp;smB ); /* set B = A^-1*A^-T, OR */
+      gan_squmatIT_srmultI_squ_q ( &amp;smA, &amp;smB ); /* set B = A^-T*A^-1 */
+</PRE>
+There are also routines to build the result matrix <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> from scratch:
+<PRE>
+      Gan_SquMatrix smA, *psmB; /* declare matrices A &amp; B */
+
+      /* ... create &amp; fill matrix A ... */
+      psmB = gan_squmat_srmultT_squ_s ( &amp;smA ); /* create B = A*A^T, OR */
+      psmB = gan_squmatT_srmult_squ_s ( &amp;smA ); /* create B = A^T*A, OR */
+      psmB = gan_squmatI_srmultIT_squ_s ( &amp;smA ); /* create B = A^-1*A^-T, OR */
+      psmB = gan_squmatIT_srmultI_squ_s ( &amp;smA ); /* create B = A^-T*A^-1 */
+</PRE>
+and in-place versions of these operations are also available:
+<PRE>
+      Gan_SquMatrix smA; /* declare matrix A */
+
+      /* ... create &amp; fill matrix A ... */
+      gan_squmat_srmultT_squ_i ( &amp;smA ); /* replace A = A*A^T, OR */
+      gan_squmatT_srmult_squ_i ( &amp;smA ); /* replace A = A^T*A, OR */
+      gan_squmatI_srmultIT_squ_i ( &amp;smA ); /* replace A = A^-1*A^-T, OR */
+      gan_squmatIT_srmultI_squ_i ( &amp;smA ); /* replace A = A^-T*A^-1 */
+</PRE>
+
+<P>
+Finally, there is a set of routines that multiply a symmetric matrix on left
+and right by a rectangular matrix and its transpose, producing another
+symmetric matrix. The operations implemented are
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S' = A S A^{\top},\;\;\;\;\;\;S' = A^{\top}S A.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="200" HEIGHT="27" BORDER="0"
+ SRC="img82.png"
+ ALT="\begin{displaymath}S' = A S A^{\top},\;\;\;\;\;\;S' = A^{\top}S A.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+This triple product is implemented as two matrix multiplications, and the
+matrix to hold the intermediate result is also passed in to the routines,
+so that it is also available on output. The routines are
+<PRE>
+      Gan_SquMatrix smS, smSp; /* declare matrices S &amp; S' */
+      Gan_Matrix mA, mB; /* declare matrices A &amp; B */
+
+      /* ... create &amp; fill matrices S &amp; A, create (&amp; optionally fill) matrices B &amp; Sp ... */
+      gan_symmat_lrmult_q ( &amp;smS, &amp;mA, &amp;mB, &amp;smSp ); /* set B = S*A^T and Sp = A*S*A^T, OR */
+      gan_symmat_lrmultT_q ( &amp;smS, &amp;mA, &amp;mB, &amp;smSp ); /* set B = S*A and Sp = A^T*S*A */
+</PRE>
+with alternative versions that create the result matrix <IMG
+ WIDTH="19" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img83.png"
+ ALT="$S'$"> from scratch:
+<PRE>
+      Gan_SquMatrix smS, *psmSp; /* declare matrices S &amp; S' */
+      Gan_Matrix mA, mB; /* declare matrices A &amp; B */
+
+      /* ... create &amp; fill matrices S &amp; A, create (&amp; optionally fill) matrix B ... */
+      psmSp = gan_symmat_lrmult_s ( &amp;smS, &amp;mA, &amp;mB ); /* set B = S*A^T and Sp = A*S*A^T, OR */
+      psmSp = gan_symmat_lrmultT_s ( &amp;smS, &amp;mA, &amp;mB ); /* set B = S*A and Sp = A^T*S*A */
+</PRE>
+It is allowable to pass <TT>NULL</TT> for the <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img69.png"
+ ALT="$B$"> matrix (<TT>&amp;mB</TT> in the
+above function calls). In that case the intermediate result is computed and
+thrown away.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1360"
+  HREF="node79.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1356"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1350"
+  HREF="node77.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1358"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1361"
+  HREF="node79.html">Inverting a general size</A>
+<B> Up:</B> <A NAME="tex2html1357"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1351"
+  HREF="node77.html">General size matrix/vector multiplication</A>
+ &nbsp; <B>  <A NAME="tex2html1359"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

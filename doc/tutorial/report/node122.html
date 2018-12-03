@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The Harris corner detector</TITLE>
+<META NAME="description" CONTENT="The Harris corner detector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node123.html">
+<LINK REL="previous" HREF="node121.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node123.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1956"
+  HREF="node123.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1952"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1946"
+  HREF="node121.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1954"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1957"
+  HREF="node123.html">Line segment detection</A>
+<B> Up:</B> <A NAME="tex2html1953"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1947"
+  HREF="node121.html">Displaying a corner map</A>
+ &nbsp; <B>  <A NAME="tex2html1955"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00677000000000000000">
+The Harris corner detector</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/harris_corner.h&gt;
+</PRE>
+The Harris corner detector&nbsp;[<A
+ HREF="node149.html#Harris:Stephens:ALVEY88">6</A>] computes the
+locally averaged moment matrix computed from the image gradients, and
+then combines the eigenvalues of the moment matrix to compute a corner
+``strength'', of which maximum values indicate the corner positions.
+Here is an example code fragment using the Harris corner detector.
+<PRE>
+      Gan_Image *pImage; /* declare image from which corners will be computed */
+      Gan_Mask1D *pFilter; /* convolution mask */
+      Gan_CornerFeatureMap CornerMap; /* declare corner map */
+
+      /* ... fill image ... */
+
+      /* initialise corner map */
+      gan_corner_feature_map_form ( &amp;CornerMap,
+                                    1000 ); /* initial limit on number of corners */
+
+      /* create convolution mask */
+      pFilter = gan_gauss_mask_new ( GAN_FLOAT, 1.0, 9, 1.0, NULL );
+      
+      /* apply Harris corner detector */
+      gan_harris_corner_q ( pImage, /* input image */
+                            NULL, /* or binary mask of pixels to be processed */
+                            NULL, NULL, /* or image pre-smoothing masks */
+                            pFilter, pFilter, /* gradient smoothing */
+                            0.04, /* kappa used in computing corner strength */
+                            0.04, /* corner strength threshold */
+                            NULL, /* or affine coordinate transformation */
+                            0, /* status value to assign to each corner */
+                            NULL, /* or pointer to camera structure defining
+                                     distortion model */
+                            NULL, /* or parameters of local feature map */
+                            &amp;CornerMap ); /* result corner map */
+
+      /* free convolution mask and corner map */
+      gan_mask1D_free ( pFilter );
+      gan_corner_feature_map_free ( &amp;CornerMap );
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

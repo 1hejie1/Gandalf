@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The Canny edge detector</TITLE>
+<META NAME="description" CONTENT="The Canny edge detector">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node120.html">
+<LINK REL="previous" HREF="node118.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node120.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1920"
+  HREF="node120.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1916"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1910"
+  HREF="node118.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1918"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1921"
+  HREF="node120.html">Corner detection</A>
+<B> Up:</B> <A NAME="tex2html1917"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1911"
+  HREF="node118.html">Displaying an edge map</A>
+ &nbsp; <B>  <A NAME="tex2html1919"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00674000000000000000">
+The Canny edge detector</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/canny_edge.h&gt;
+</PRE>
+The Canny edge detector is described in&nbsp;[<A
+ HREF="node149.html#Canny:PAMI86">3</A>].
+It involves three stages:
+
+<OL>
+<LI><B>Directional gradients</B> are computed by smoothing the image and
+	numerically differentiating the image to compute the <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> and <IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img113.png"
+ ALT="$y$">
+	gradients.
+</LI>
+<LI><B>Non-maximum suppression</B> finds peaks in the image gradient.
+</LI>
+<LI><B>Hysteresis thresholding</B> locates edge strings.
+</LI>
+</OL>
+Here is a code fragment illustrating the use of the Canny edge detector.
+More example code can be found in the <TT>vision_test.c</TT> test program.
+<PRE>
+      Gan_Image *pImage; /* declare image from which edges will be computed */
+      Gan_Mask1D *pFilter; /* convolution mask */
+      Gan_EdgeFeatureMap EdgeMap; /* declare edge map */
+
+      /* ... fill image ... */
+
+      /* initialise edge map */
+      gan_edge_feature_map_form ( &amp;EdgeMap,
+                                  10000,   /* initial limit on number of edges */
+                                    500 ); /* initial limit on number of edge strings */
+
+      /* create convolution mask */
+      pFilter = gan_gauss_mask_new ( GAN_FLOAT, 1.0, 9, 1.0, NULL );
+      
+      /* apply Canny edge detector */
+      gan_canny_edge_q ( pImage, /* input image */
+                         NULL, /* or binary mask of pixels to be processed */
+                         pFilter, pFilter, /* image smoothing filters */
+                         0.008, /* lower edge strength threshold */
+                         0.024, /* upper edge strength threshold */
+                         10, /* threshold on string length */
+                         NULL, /* or affine coordinate transformation */
+                         NULL, /* or pointer to camera structure defining
+                                  distortion model */
+                         NULL, /* or parameters of local feature map */
+                         &amp;EdgeMap ); /* result edge map */
+
+      /* free convolution mask and edge map */
+      gan_mask1D_free ( pFilter );
+      gan_edge_feature_map_free ( &amp;EdgeMap );
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

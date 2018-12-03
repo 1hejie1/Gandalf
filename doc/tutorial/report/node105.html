@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Adding/removing camera distortion</TITLE>
+<META NAME="description" CONTENT="Adding/removing camera distortion">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node106.html">
+<LINK REL="previous" HREF="node104.html">
+<LINK REL="up" HREF="node102.html">
+<LINK REL="next" HREF="node106.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1744"
+  HREF="node106.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1740"
+  HREF="node102.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1734"
+  HREF="node104.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1742"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1745"
+  HREF="node106.html">Building the camera calibration</A>
+<B> Up:</B> <A NAME="tex2html1741"
+  HREF="node102.html">Cameras</A>
+<B> Previous:</B> <A NAME="tex2html1735"
+  HREF="node104.html">Projecting points and lines</A>
+ &nbsp; <B>  <A NAME="tex2html1743"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00613000000000000000">
+Adding/removing camera distortion</A>
+</H2>
+Gandalf also supplies some functions for adding and removing the
+image plane distortion from an image point. So for instance
+<PRE>
+      Gan_Camera CameraD;
+      Gan_Vector3 v3x, v3xu;
+
+      /* build camera with one parameter of radial distortion */
+      gan_camera_build_radial_distortion_1 ( &amp;CameraD,
+                                       /*    ZH     FY     FX     Y0     X0 */
+                                             100.0, 700.0, 500.0, 150.0, 100.0,
+                                       /*    K1 */
+                                             0.001 );
+
+      /* build image point x assumed to have distortion */
+      gan_vec3_fill_q ( &amp;v3x, 50.0, -80.0, 100.0 );
+
+      /* remove distortion from image point x --&gt; xu */
+      gan_camera_remove_distortion_q ( &amp;CameraD, &amp;v3x, &amp;v3xu );
+</PRE>
+removes the distortion from the image point <TT>x</TT>, producing an
+undistorted point <TT>xu</TT>. Given the camera 3D point <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img123.png"
+ ALT="${\bf X}$"> that projects
+onto <TT>x</TT>, <TT>xu</TT> is defined as the point on the image onto which the
+equivalent linear camera (i.e. the linear camera with the same <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img111.png"
+ ALT="$f_x$">, <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img112.png"
+ ALT="$f_y$">,
+<IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img114.png"
+ ALT="$x_0$">, <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img115.png"
+ ALT="$y_0$"> and <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img105.png"
+ ALT="$z_h$">) would project when applied to <IMG
+ WIDTH="18" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img123.png"
+ ALT="${\bf X}$">.
+The in-place version of this function is
+<PRE>
+      /* remove distortion from image point x --&gt; xu in-place */
+      gan_camera_remove_distortion_i ( &amp;CameraD, &amp;v3x );
+</PRE>
+
+<P>
+The reverse is to add distortion to an image point. Given a non-linear camera,
+this means converting a point projected with the equivalent linear camera
+to a point projected with the non-linear camera:
+<PRE>
+      /* build image point xu assumed to have NO distortion */
+      gan_vec3_fill_q ( &amp;v3xu, 50.0, -80.0, 100.0 );
+
+      /* add distortion to image point xu --&gt; x */
+      gan_camera_add_distortion_q ( &amp;CameraD, &amp;v3xu, &amp;v3x ); /* OR */
+      gan_camera_add_distortion_i ( &amp;CameraD, &amp;v3xu ); /* in-place */
+</PRE>
+
+<P>
+The single precision versions of these routines are
+<PRE>
+      Gan_Camera_f CameraF;
+      Gan_Vector3_f v3x, v3xu;
+
+      /* build camera with one parameter of radial distortion */
+      gan_cameraf_build_radial_distortion_1 ( &amp;CameraF,
+                                        /*    ZH      FY      FX      Y0      X0 */
+                                              100.0F, 700.0F, 500.0F, 150.0F, 100.0F,
+                                        /*    K1 */
+                                              0.001F );
+
+      /* build image point x assumed to have distortion */
+      gan_vec3f_fill_q ( &amp;v3x, 50.0F, -80.0F, 100.0F );
+
+      /* remove distortion from image point x --&gt; xu */
+      gan_cameraf_remove_distortion_q ( &amp;CameraF, &amp;v3x, &amp;v3xu ); /* OR */
+      gan_cameraf_remove_distortion_i ( &amp;CameraF, &amp;v3x ); /* in-place */
+
+      /* build image point xu assumed to have NO distortion */
+      gan_vec3f_fill_q ( &amp;v3xu, 50.0F, -80.0F, 100.0F );
+
+      /* add distortion to image point xu --&gt; x */
+      gan_cameraf_add_distortion_q ( &amp;CameraF, &amp;v3xu, &amp;v3x ); /* OR */
+      gan_cameraf_add_distortion_i ( &amp;CameraF, &amp;v3xu ); /* in-place */
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

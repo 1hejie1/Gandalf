@@ -1,0 +1,564 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Cameras</TITLE>
+<META NAME="description" CONTENT="Cameras">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node108.html">
+<LINK REL="previous" HREF="node101.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node103.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1703"
+  HREF="node103.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1699"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1693"
+  HREF="node101.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1701"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1704"
+  HREF="node103.html">Building cameras</A>
+<B> Up:</B> <A NAME="tex2html1700"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1694"
+  HREF="node101.html">The Vision Package</A>
+ &nbsp; <B>  <A NAME="tex2html1702"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00610000000000000000"></A> <A NAME="camera-sec"></A>
+<BR>
+Cameras
+</H1>
+The camera modules are separated into single and double precision versions.
+The double precision camera structure is defined in
+<PRE>
+      #include &lt;gandalf/vision/camera.h&gt;
+</PRE>
+and the single precision version in
+<PRE>
+      #include &lt;gandalf/vision/cameraf.h&gt;
+</PRE>
+The Gandalf camera defines the transformation from camera 3D coordinates
+into image coordinates and back again. Ten camera models are defined,
+all using the assumption that the projected position in the image is
+independent of the depth.
+The camera structure (double precision floating point version) is as follows:
+<PRE>
+      /**
+        * \brief Structure containing camera parameters.
+        */
+      typedef struct Gan_Camera
+      {
+         /// Type of camera
+         Gan_CameraType type;
+
+         /// parameters of linear camera
+
+         /// focal distance in x/y pixels
+         double fx, fy;
+
+         /// image centre x/y coordinates
+         double x0, y0;
+
+         /// third homogeneous image coordinate
+         double zh;
+
+         /**
+          * \brief Supplementary parameters for non-linear camera models.
+          *
+          * The thresholds are the square \f$ R^2 \f$ of the undistorted radial
+          * camera coordinate \f$ R \f$ where the first reversal of distortion occurs
+          * (\a thres_R2), and the similar threshold on the distorted radial
+          * distance \f$ d\:R \f$, involving both the distortion coefficient
+          * \f$ d \f$  and \f$ F \f$ (thres_dR), at the same reversal point.
+          * Both thresholds are set to \c DBL_MAX if there is no reversal.
+          */
+         union
+         {
+            struct
+            {
+               /// Distortion coefficients
+               double K1;
+      
+               /// Thresholds on \f$ R^2 \f$ and \f$ d\:R \f$
+               double thres_R2, thres_dR;
+      
+               /// Outer linear model parameters
+               double outer_a, outer_b;
+            } radial1;
+      
+            struct
+            {
+               /// Distortion coefficients
+               double K1, K2;
+      
+               /// Thresholds on \f$ R^2 \f$ and \f$ d\:R \f$
+               double thres_R2, thres_dR;
+      
+               /// Outer linear model parameters
+               double outer_a, outer_b;
+            } radial2;
+      
+            struct
+            {
+               /// Distortion coefficients
+               double K1, K2, K3;
+      
+               /// Thresholds on \f$ R^2 \f$ and \f$ d\:R \f$
+               double thres_R2, thres_dR;
+      
+               /// Outer linear model parameters
+               double outer_a, outer_b;
+            } radial3;
+      
+            struct { double cxx, cxy, cyx, cyy; } xydist4;
+         } nonlinear;
+
+         /// gamma value of images taken using this camera
+         double gamma;
+
+         /// point functions
+         struct
+         {
+            /// point projection function
+            Gan_Bool (*project) ( struct Gan_Camera *camera,
+                                  Gan_Vector3 *X, Gan_Vector3 *p,
+                                  Gan_Matrix22 *HX, struct Gan_Camera HC[2],
+                                  int *error_code );
+
+            /// point back-projection function
+            Gan_Bool (*backproject) ( struct Gan_Camera *camera,
+                                      Gan_Vector3 *p, Gan_Vector3 *X,
+                                      int *error_code );
+
+            /// function to add distortion to a point
+            Gan_Bool (*add_distortion) ( struct Gan_Camera *camera,
+                                         Gan_Vector3 *pu, Gan_Vector3 *p,
+                                         int *error_code );
+
+            /// function to remove distortion from a point
+            Gan_Bool (*remove_distortion) ( struct Gan_Camera *camera,
+                                            Gan_Vector3 *p, Gan_Vector3 *pu,
+                                            int *error_code);
+         } point;
+
+         /// line functions
+         struct
+         {
+            /// line projection function
+            Gan_Bool (*project) ( struct Gan_Camera *camera,
+                                  Gan_Vector3 *L, Gan_Vector3 *l );
+
+            /// line back-projection function
+            Gan_Bool (*backproject) ( struct Gan_Camera *camera,
+                                      Gan_Vector3 *l, Gan_Vector3 *L );
+         } line;
+      } Gan_Camera;
+</PRE>
+The single precision version <TT>Gan_Camera_f</TT> is defined similarly.
+The camera models are defined in <TT>&lt;gandalf/vision/camera_defs.h&gt;</TT>,
+and are
+<PRE>
+      /**
+       * \brief Camera models supported by Gandalf.
+       */
+      typedef enum
+      {
+         /// linear camera model
+         GAN_LINEAR_CAMERA,
+
+         /// one parameter K1 of radial distortion
+         GAN_RADIAL_DISTORTION_1,
+
+         /// two parameters K1,K2 of radial distortion
+         GAN_RADIAL_DISTORTION_2,
+
+         /// three parameters K1,K2,K3 of radial distortion */
+         GAN_RADIAL_DISTORTION_3,
+
+         /// one parameter K1 of inverse radial distortion
+         GAN_RADIAL_DISTORTION_1_INV,
+
+         /// stereographic projection
+         GAN_STEREOGRAPHIC_CAMERA,
+
+         /// equidistant projection
+         GAN_EQUIDISTANT_CAMERA,
+
+         /// sine-law projection
+         GAN_SINE_LAW_CAMERA,
+
+         /// equi-solid angle projection
+         GAN_EQUI_SOLID_ANGLE_CAMERA,
+
+         /// distortion model as used by 3D Equalizer V4
+         GAN_XY_DISTORTION_4,
+      } Gan_CameraType;
+</PRE>
+The linear and radial distortion models are standard models.
+The stereographic, equidistant, sine law and equi-solid angle models are
+wide-angle camera models from&nbsp;[<A
+ HREF="node149.html#Fleck:TR94">5</A>].
+
+<P>
+The coordinate frames are illustrated in Figure&nbsp;<A HREF="#camera">5.1</A>.
+
+<DIV ALIGN="CENTER"><A NAME="camera"></A><A NAME="4908"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5.1:</STRONG>
+Illustration of coordinate frames in projection from camera 3D
+          frame into the image.</CAPTION>
+<TR><TD><IMG
+ WIDTH="542" HEIGHT="340" BORDER="0"
+ SRC="img100.png"
+ ALT="\begin{figure}
+\centerline{\psfig{file=camera.ps,width=120mm}}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+The linear camera model is the simplest standard camera model. It defines
+the following model relating camera 3D coordinates <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$X,Y,Z$"> to image
+coordinates <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$x,y$">:
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+x = x_0 + f_x\frac{X}{Z},\;\;\;\;y = y_0 + f_y\frac{Y}{Z}
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="linear-camera-model"></A><IMG
+ WIDTH="219" HEIGHT="39" BORDER="0"
+ SRC="img101.png"
+ ALT="\begin{displaymath}
+x = x_0 + f_x\frac{X}{Z},\;\;\;\;y = y_0 + f_y\frac{Y}{Z}
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.1)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+This equation derives from the similar triangles apparent in the
+geometrical model illustrated in Figure&nbsp;<A HREF="#project">5.2</A>.
+
+<DIV ALIGN="CENTER"><A NAME="project"></A><A NAME="4921"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5.2:</STRONG>
+Geometrical model of projection from camera 3D coordinates <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$X,Y,Z$">
+	onto image coordinates <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$x,y$"> for a perfect pinhole camera,
+	here showing only the relationship between <IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$X,Z$"> and <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$">.
+	The optic axis is defined as being perpendicular to the image plane
+        and intersecting the optical centre of the camera. Note the reversal
+	between the 3D camera <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img5.png"
+ ALT="$X$"> axis and the image <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> axis, caused by
+        the projection.</CAPTION>
+<TR><TD><IMG
+ WIDTH="543" HEIGHT="366" BORDER="0"
+ SRC="img102.png"
+ ALT="\begin{figure}
+\centerline{\psfig{file=project.ps,width=120mm}}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+The image centre coordinates <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img103.png"
+ ALT="$x_0,y_0$"> and focal distance parameters <IMG
+ WIDTH="43" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img104.png"
+ ALT="$f_x,f_y$">
+correspond to the similarly named <TT>x0, y0</TT> and <TT>fx, fy</TT> fields in
+the <TT>Gan_Camera</TT> structure. The normal way to write the linear model
+is in homogeneous coordinates, introducing the third image coordinate <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img105.png"
+ ALT="$z_h$">,
+which can be identified with the <TT>zh</TT> field of the <TT>Gan_Camera</TT>
+structure:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\left(\!\!\begin{array}{l} x \\y \\z_h \end{array}\!\!\right)=
+   \lambda \left(\!\!\begin{array}{ccc} f_x & 0 & x_0 \\0 & f_y & y_0 \\0 & 0 & z_h \end{array}\!\!\right)
+   \left(\!\!\begin{array}{c} X \\Y \\Z \end{array}\!\!\right)\;\;\;\mbox{or}\;\;\;
+   {\bf x}= \lambda K {\bf X}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="351" HEIGHT="64" BORDER="0"
+ SRC="img106.png"
+ ALT="\begin{displaymath}\left(\!\!\begin{array}{l} x \ y \ z_h \end{array}\!\!\righ...
+...\!\!\right)\;\;\;\mbox{or}\;\;\;
+{\bf x}= \lambda K {\bf X}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+The <IMG
+ WIDTH="13" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img107.png"
+ ALT="$\lambda$"> parameter can be eliminated, to recover
+Equation&nbsp;<A HREF="#linear-camera-model">5.1</A>.
+<IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img105.png"
+ ALT="$z_h$"> can be set to one, but a good rule of thumb
+is to set it to roughly half the range of image <IMG
+ WIDTH="30" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img108.png"
+ ALT="$x/y$"> coordinates, so that
+all the image coordinates will be scaled in approximately the same way,
+which can reduce truncation error in certain situations.
+<IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img109.png"
+ ALT="$K$"> is known as the <EM>camera calibrarion matrix</EM>:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+K = \left(\!\!\begin{array}{ccc} f_x & 0 & x_0 \\0 & f_y & y_0 \\0 & 0 & z_h \end{array}\!\!\right)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="144" HEIGHT="64" BORDER="0"
+ SRC="img110.png"
+ ALT="\begin{displaymath}K = \left(\!\!\begin{array}{ccc} f_x &amp; 0 &amp; x_0 \ 0 &amp; f_y &amp; y_0 \ 0 &amp; 0 &amp; z_h \end{array}\!\!\right)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Note the units the elements of <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img109.png"
+ ALT="$K$">. <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img111.png"
+ ALT="$f_x$"> and <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img112.png"
+ ALT="$f_y$"> both represent the same
+distance, the perpendicular distance from the image plane to the optical
+centre, but they are measured in image <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> and <IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img113.png"
+ ALT="$y$"> pixels respectively.
+<IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img114.png"
+ ALT="$x_0$"> is the position of the image centre in the image <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> direction and
+measured in image <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> pixels, and similarly for <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img115.png"
+ ALT="$y_0$">. Note also that <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img111.png"
+ ALT="$f_x$">
+and <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img112.png"
+ ALT="$f_y$"> do not measure the focal <EM>length</EM> of the camera.
+The focal length is purely a property of the lens system.
+Under normal circumstances the focal distance will be shorter than the
+focal length, unless the camera
+is focussing at infinity when the two distances will be the same.
+
+<P>
+The linear model is an ``ideal'' model, corresponding to a perfect pinhole
+camera. It is safe to use this model when the focal length of the lens is
+large. In practice there will be non-linear distortions, and the
+simplest model of distortion is that it is purely <TT>radial</TT>,
+i.e. directed directly towards or away from the centre of the
+image<A NAME="tex2html4"
+  HREF="footnode.html#foot6306"><SUP>5.1</SUP></A>
+A simple model of this distortion is
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+x = x_0 + f_x (1+d)\frac{X}{Z},\;\;\;\;y = y_0 + f_y (1+d)\frac{Y}{Z}
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="radial-distortion-model"></A><IMG
+ WIDTH="315" HEIGHT="39" BORDER="0"
+ SRC="img116.png"
+ ALT="\begin{displaymath}
+x = x_0 + f_x (1+d)\frac{X}{Z},\;\;\;\;y = y_0 + f_y (1+d)\frac{Y}{Z}
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5.2)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+where
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+d = K_1 r^2 + K_2 r^4 + K_3 r^6\;\;\;\;\mbox{and}\;\;\;\;r^2 = \frac{X^2 + Y^2}{Z^2}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="334" HEIGHT="41" BORDER="0"
+ SRC="img117.png"
+ ALT="\begin{displaymath}d = K_1 r^2 + K_2 r^4 + K_3 r^6\;\;\;\;\mbox{and}\;\;\;\;r^2 = \frac{X^2 + Y^2}{Z^2}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Here <IMG
+ WIDTH="12" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img118.png"
+ ALT="$d$"> represents the non-linear distortion. The camera models
+<TT>GAN_RADIAL_DISTORTION_1</TT>, <TT>GAN_RADIAL_DISTORTION_2</TT>
+and <TT>GAN_RADIAL_DISTORTION_3</TT>
+represent the above distortion model with respectively <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img119.png"
+ ALT="$K_1$"> only,
+both <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img119.png"
+ ALT="$K_1$"> &amp; <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img120.png"
+ ALT="$K_2$"> and all of <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img119.png"
+ ALT="$K_1$">, <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img120.png"
+ ALT="$K_2$"> and <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img121.png"
+ ALT="$K_3$">.
+Once a camera has been created, it can be used to project from camera to
+image coordinates, or to back-project from image out into camera coordinates.
+Note that although the projection is apparently from a 3D space onto a
+2D space, you should think instead of a projection between two 2D spaces.
+All camera 3D points along a straight line through the optical centre
+project to the same image point, so the projection is between the image
+plane and the space of <EM>rays</EM> in camera 3D space through the optical
+centre, a 2D space of rays.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1705"
+  HREF="node103.html">Building cameras</A>
+<LI><A NAME="tex2html1706"
+  HREF="node104.html">Projecting points and lines</A>
+<LI><A NAME="tex2html1707"
+  HREF="node105.html">Adding/removing camera distortion</A>
+<LI><A NAME="tex2html1708"
+  HREF="node106.html">Building the camera calibration matrix</A>
+<LI><A NAME="tex2html1709"
+  HREF="node107.html">Converting cameras between precisions</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1703"
+  HREF="node103.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1699"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1693"
+  HREF="node101.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1701"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1704"
+  HREF="node103.html">Building cameras</A>
+<B> Up:</B> <A NAME="tex2html1700"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1694"
+  HREF="node101.html">The Vision Package</A>
+ &nbsp; <B>  <A NAME="tex2html1702"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

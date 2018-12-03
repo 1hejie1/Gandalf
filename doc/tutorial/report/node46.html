@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Rescaling a fixed size matrix</TITLE>
+<META NAME="description" CONTENT="Rescaling a fixed size matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node47.html">
+<LINK REL="previous" HREF="node45.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node47.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html933"
+  HREF="node47.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html929"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html923"
+  HREF="node45.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html931"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html934"
+  HREF="node47.html">Transposing a fixed size</A>
+<B> Up:</B> <A NAME="tex2html930"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html924"
+  HREF="node45.html">Fixed size matrix subtraction</A>
+ &nbsp; <B>  <A NAME="tex2html932"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412500000000000000">
+Rescaling a fixed size matrix</A>
+</H3>
+There are similar functions to multiply a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix by a scalar
+<PRE>
+      double ds;
+
+      gan_mat34_scale_q ( &amp;m34A, ds, &amp;m34C ); /* macro */
+      m34C = gan_mat34_scale_s ( &amp;m34A, ds ); /* function call */
+      gan_mat34_scale_i ( &amp;m34A, ds ); /* macro, result in-place in m34A */
+</PRE>
+to divide a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix by a (non-zero) scalar
+<PRE>
+      gan_mat34_divide_q ( &amp;m34A, ds, &amp;m34C ); /* macro */
+      m34C = gan_mat34_divide_s ( &amp;m34A, ds ); /* function call */
+      gan_mat34_divide_i ( &amp;m34A, ds ); /* macro, result in-place in m34A */
+</PRE>
+to negate a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix
+<PRE>
+      gan_mat34_negate_q ( &amp;m34A, &amp;m34C ); /* macro */
+      m34C = gan_mat34_negate_s ( &amp;m34A ); /* function call */
+      gan_mat34_negate_i ( &amp;m34A ); /* macro, result in-place in m34A */
+</PRE>
+and to scale a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix to unit unit Frobenius norm
+<PRE>
+      gan_mat34_unit_q ( &amp;m34A, &amp;m34C ); /* macro */
+      m34C = gan_mat34_unit_s ( &amp;m34A ); /* function call */
+      gan_mat34_unit_i ( &amp;m34A ); /* macro, result in-place in m34A */
+</PRE>
+The Frobenius norm of a matrix is the square-root of the sum of squares
+of the matrix elements. The Gandalf functions for computing it are
+described in&nbsp;<A HREF="node52.html#fixed-det-trace-norms-sec">3.1.2.11</A>.
+
+<P>
+Equivalent routiness to the above for multiplying/dividing a matrix by a
+scalar, negating a matrix and scaling a matrix to unit Frobenius norm are
+available for square fixed size matrices. Without listing the routines
+exhaustively, some examples are
+<PRE>
+      gan_mat33_scale_q ( &amp;m33A, ds, &amp;m33C ); /* macro */
+      sm33Sc = gan_symmat33_divide_s ( &amp;sm33Sa, ds ); /* function call */
+      gan_ltmat33_negate_i ( &amp;sm33La ); /* macro, result in-place in sm33La */
+      m33C = gan_mat33_unit_s ( &amp;m33A ); /* function call */
+</PRE>
+
+<P>
+<TT>Error detection:</TT> If zero is passed as the scalar value to the
+<TT>..._divide_[qi]()</TT> routines, <TT>NULL</TT> will be returned, while the
+<TT>..._divide_s()</TT> routines will abort the program. You should add tests
+for division by zero <EM>before</EM> calling any of the <TT>..._divide_[qsi]()</TT>
+routines. Similarly, the <TT>..._unit_[qsi]()</TT> routines will fail if
+the input matrix contains only zeros. If this is a possibility then the
+program should check beforehand.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html933"
+  HREF="node47.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html929"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html923"
+  HREF="node45.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html931"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html934"
+  HREF="node47.html">Transposing a fixed size</A>
+<B> Up:</B> <A NAME="tex2html930"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html924"
+  HREF="node45.html">Fixed size matrix subtraction</A>
+ &nbsp; <B>  <A NAME="tex2html932"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

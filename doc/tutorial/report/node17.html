@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Linked lists</TITLE>
+<META NAME="description" CONTENT="Linked lists">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node18.html">
+<LINK REL="previous" HREF="node13.html">
+<LINK REL="up" HREF="node12.html">
+<LINK REL="next" HREF="node18.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html482"
+  HREF="node18.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html478"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html472"
+  HREF="node16.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html480"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html483"
+  HREF="node18.html">Bit arrays</A>
+<B> Up:</B> <A NAME="tex2html479"
+  HREF="node12.html">The Common Package</A>
+<B> Previous:</B> <A NAME="tex2html473"
+  HREF="node16.html">Debugging tools</A>
+ &nbsp; <B>  <A NAME="tex2html481"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00320000000000000000"></A> <A NAME="linked-list-sec"></A>
+<BR>
+Linked lists
+</H1>
+<PRE>
+      #include &lt;gandalf/common/linked_list.h&gt;
+</PRE>
+Gandalf linked lists are stored in <TT>Gan_List</TT> structures.
+The underlying structure is a doubly-linked list, so Gandalf lists can be
+traversed both forwards and backwards.
+A new empty list can be created using
+<PRE>
+      Gan_List List;
+
+      gan_list_form(&amp;List);
+</PRE>
+Note that to detect errors the return value of <TT>gan_list_form()</TT>
+should be compared with <TT>NULL</TT>, invoking the Gandalf error package
+(see Sections&nbsp;<A HREF="node26.html#error-sec">2.10</A> and&nbsp;<A HREF="node24.html#error-handling-sec">2.9</A>)
+and returning an error condition
+if <TT>NULL</TT> is returned. Here and elsewhere we omit these tests for
+the sake of clarity, but many examples of this testing can be found in
+the Gandalf source.
+
+<P>
+To insert a new list node at the start of the list, use
+<PRE>
+      gan_list_insert_first ( &amp;List, ptr );
+</PRE>
+where <TT>ptr</TT> is the data item (pointer) to be stored. By repetitively
+called this function, a list can be built up, with the last item added as
+the first node in the list.
+A Gandalf list stores pointers in an ordered way, while still transparently
+allowing pseudo-random access to the list nodes. As well as the stored
+data, the list maintains a state variable indicating a position within the
+list, from 0 to <IMG
+ WIDTH="46" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$N-1$"> for a list of <IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img12.png"
+ ALT="$N$"> nodes. The normal way to traverse
+a list is to use the following sequence:
+<PRE>
+      int iCount;
+      Gan_Matrix *pMatrix;
+
+      gan_list_goto_head ( &amp;List );
+      for ( iCount = gan_list_get_size(&amp;List)-1; iCount &gt;= 0; iCount-- )
+      {
+         pMatrix = gan_list_get_next ( &amp;List, Gan_Matrix );
+         ... [ do something with pMatrix ] ...
+      }
+</PRE>
+<TT>gan_list_goto_head()</TT> sets the position state variable to -1,
+i.e. the position just before the start of the list.
+<TT>gan_list_get_size()</TT> returns the number of nodes in a list.
+So the above loop runs through each node of the list, calling
+<TT>gan_list_get_next()</TT> to provide each data item in turn, in this
+case matrix structure pointers. <TT>gan_list_get_next()</TT> increments
+the position state variable by one each time it is called, so on the
+first call in the above loop, the position is increment from -1 to 0,
+and the node at position 0 returned.
+
+<P>
+To free the list use
+<PRE>
+      gan_list_free ( &amp;List, NULL );
+</PRE>
+which frees the list nodes but not the data they point to. If you wanted to
+free the data as well, for the above list you would use
+<PRE>
+      gan_list_free ( &amp;List, (Gan_FreeFunc) gan_mat_free );
+</PRE>
+which calls <TT>gan_mat_free()</TT> on each matrix in the list.
+
+<P>
+Note that pointers to lists may be used instead of directly using the
+structures. To create a list using pointers use
+<PRE>
+      Gan_List *pList;
+
+      pList = gan_list_new();
+</PRE>
+and at the end call
+<PRE>
+      gan_list_free ( pList, NULL );
+</PRE>
+In this and other examples Gandalf keeps track of which parts of a structure
+were dynamically allocated, and only frees those which were.
+
+<P>
+Other ways to build and access linked lists are provided in the reference
+documentation.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html482"
+  HREF="node18.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html478"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html472"
+  HREF="node16.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html480"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html483"
+  HREF="node18.html">Bit arrays</A>
+<B> Up:</B> <A NAME="tex2html479"
+  HREF="node12.html">The Common Package</A>
+<B> Previous:</B> <A NAME="tex2html473"
+  HREF="node16.html">Debugging tools</A>
+ &nbsp; <B>  <A NAME="tex2html481"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

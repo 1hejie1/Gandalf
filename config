@@ -1,0 +1,18 @@
+# Include this file near the top of your Makefile
+
+# suffix to add to the end of the object file names, normally _db for debug
+# build or _rl for release build.
+OBJECT_SUFFIX=_rl
+#OBJECT_SUFFIX=_db
+
+# command to remove files
+RM = /bin/rm -rf
+
+# You only need to bother setting the stuff below if you are creating the html
+# documentation
+
+# command to move files
+MV = /bin/mv -f
+
+# libtool command, in case a non-default libtool is used
+LIBTOOL = $(TOPLEVEL)/libtool

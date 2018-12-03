@@ -1,0 +1,1 @@
+env CFLAGS="-g -Wall -I/usr/X11R6/include" ./configure --without-lapack --without-glut --without-opengl

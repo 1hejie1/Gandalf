@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General size vector subtraction</TITLE>
+<META NAME="description" CONTENT="General size vector subtraction">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node66.html">
+<LINK REL="previous" HREF="node64.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node66.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1191"
+  HREF="node66.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1187"
+  HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1181"
+  HREF="node64.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1189"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1192"
+  HREF="node66.html">Rescaling a general size</A>
+<B> Up:</B> <A NAME="tex2html1188"
+  HREF="node58.html">General size vectors</A>
+<B> Previous:</B> <A NAME="tex2html1182"
+  HREF="node64.html">General size vector addition</A>
+ &nbsp; <B>  <A NAME="tex2html1190"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00421700000000000000">
+General size vector subtraction</A>
+</H3>
+The routines for vector subtraction follow the scheme of those for
+vector addition, leading to the options
+<PRE>
+      Gan_Vector vx, vy, vz; /* declare vectors x, y and z */
+      Gan_Vector *pvz; /* declare vector z alternatively as pointer */
+
+      /* ... create and fill vx &amp; vy, create vz ... */
+      gan_vec_sub_q ( &amp;vx, &amp;vy, &amp;vz ); /* compute z = x - y */
+      pvz = gan_vec_sub_s ( &amp;vx, &amp;vy ); /* compute z = x - y */
+      gan_vec_sub_i1 ( &amp;vx, &amp;vy ); /* replace x = x - y */
+      gan_vec_sub_i2 ( &amp;vx, &amp;vy ); /* replace y = x - y */
+      gan_vec_decrement ( &amp;vx, &amp;vy ); /* replace x = x - y */
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>NULL</TT> is returned and the Gandalf error handler
+invoked if the vector subtraction fails.
+The most likely failure modes are failing to create/set the result vector,
+or size incompatibility between the input vectors.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

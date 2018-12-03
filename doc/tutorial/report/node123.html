@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Line segment detection</TITLE>
+<META NAME="description" CONTENT="Line segment detection">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node124.html">
+<LINK REL="previous" HREF="node122.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node124.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1968"
+  HREF="node124.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1964"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1958"
+  HREF="node122.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1966"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1969"
+  HREF="node124.html">Displaying a line map</A>
+<B> Up:</B> <A NAME="tex2html1965"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1959"
+  HREF="node122.html">The Harris corner detector</A>
+ &nbsp; <B>  <A NAME="tex2html1967"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00678000000000000000">
+Line segment detection</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/line_feature.h&gt;
+</PRE>
+A <EM>line map</EM> is a collection of line segments stored in
+a line map structure. The line structure is
+<PRE>
+      /* Definition of basic 2D line feature structure */
+      typedef struct Gan_LineFeature
+      {
+         unsigned r1, c1, r2, c2; /* row/column coordinates in coordinate frame of 2D
+                                     feature array */
+         Gan_Vector2_f p1, p2; /* endpoints of line */
+         double strength; /* line feature strength/contrast value */
+         Gan_Vector3_f l; /* line parameters a*x + b*y + c = 0 scaled so that
+                             a^2 + b^2 = 1 */
+         Gan_SquMatrix22_f N, Ni; /* covariance and inverse covariance for canonical
+                                     line parameters a/b in y=ax+b, with x/y system
+                                     centred on midpoint of line (p1+p2)/2 with
+                                     positive x-axis along the line towards p2
+                                     endpoint, and positive y-axis 90 degrees
+                                     anticlockwise from x-axis */
+      
+         /* fields for user program to define */
+         int status;
+         int index;
+
+         /* array of points attached to this line */
+         Gan_Vector2_f *point;
+         unsigned npoints;
+      } Gan_LineFeature;
+</PRE>
+The <TT>r1, c1, r2, c2</TT> fields are the integer local coordinates of the line
+segment endpoints. <TT>p1</TT> and <TT>p2</TT> are coordinates in the user-defined
+coordinate frame.
+
+<P>
+The lines are stored in the line map structure as follows:
+<PRE>
+      /* Definition of 2D line feature map structure */
+      typedef struct Gan_LineFeatureMap
+      {
+         unsigned nlines;       /* number of line features stored */
+         Gan_LineFeature *line; /* array of line features */
+         unsigned max_nlines;   /* allocated limit on number of line features */
+
+         /* dimensions of image region in which line features have been computed */
+         unsigned height, width;
+
+         /* whether the following A, Ai fields are set */
+         Gan_Bool A_set;
+
+         /* transformation between region coordinates (0..width) and (0..height)
+            and line coordinates, and its inverse */
+         Gan_Matrix23_f A, Ai;
+
+         /* local blocked feature index map */
+         Gan_LocalFeatureMap local_fmap;
+
+         /* points making up line (optional) */
+         Gan_Vector2_f *point;  /* array of points used to fit the lines to:
+                                   may be NULL */
+         unsigned npoints;     /* current number of points */
+         unsigned max_npoints; /* maximum (allocated) number of points */
+
+         /* whether this structure was dynamically allocated */
+         Gan_Bool alloc;
+      } Gan_LineFeatureMap;
+</PRE>
+
+<P>
+To create a line map with an initially allocated number of lines,
+use the following routine:
+<PRE>
+      Gan_LineFeatureMap LineMap;
+
+      /* initialise line map */
+      gan_line_feature_map_form ( &amp;LineMap,
+                                  10000 ); /* initial limit on number of lines */
+</PRE>
+If the initially allocated number of lines is exceeded,
+<TT>gan_realloc_array()</TT> is used to reallocate the array,
+so if you have no idea what reasonable initial limit should be,
+you can pass zero.
+
+<P>
+The line detection algorithm will then add lines to the line map,
+using the functions
+<BR><TT>gan_line_feature_add()</TT> defined in the
+<TT>line_feature.[ch]</TT> module. To free the line map afterwards, call
+<PRE>
+      /* free line map */
+      gan_line_feature_map_free ( &amp;LineMap );
+</PRE>
+The other low-level line routines defined
+in the <TT>line_feature.[ch]</TT> module are
+relevant only if you are developing your own line detector; examples
+of their use can be found in the Harris line detector code.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1968"
+  HREF="node124.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1964"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1958"
+  HREF="node122.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1966"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1969"
+  HREF="node124.html">Displaying a line map</A>
+<B> Up:</B> <A NAME="tex2html1965"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1959"
+  HREF="node122.html">The Harris corner detector</A>
+ &nbsp; <B>  <A NAME="tex2html1967"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

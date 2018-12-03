@@ -1,0 +1,358 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The Linear Algebra Package</TITLE>
+<META NAME="description" CONTENT="The Linear Algebra Package">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node84.html">
+<LINK REL="previous" HREF="node12.html">
+<LINK REL="up" HREF="report.html">
+<LINK REL="next" HREF="node28.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html599"
+  HREF="node28.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html595"
+  HREF="report.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html589"
+  HREF="node26.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html597"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html600"
+  HREF="node28.html">Fixed size matrices and</A>
+<B> Up:</B> <A NAME="tex2html596"
+  HREF="report.html">Gandalf: The Fast Computer</A>
+<B> Previous:</B> <A NAME="tex2html590"
+  HREF="node26.html">Error tests and codes</A>
+ &nbsp; <B>  <A NAME="tex2html598"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00400000000000000000"></A> <A NAME="linalg-chapter"></A>
+<BR>
+The Linear Algebra Package
+</H1>
+The <B>linear algebra</B> package covers matrix and vector manipulations,
+matrix decompositions and other operations.
+To be able to use any function or structure in the linear algebra package
+use the declaration
+<PRE>
+      #include &lt;gandalf/linalg.h&gt;
+</PRE>
+but including individual module header files instead will speed up program
+compilation.
+There are two parts to the linear algebra package, one dealing with small
+fixed size vectors and matrices, between size two and four, and another
+for general size objects. This separation allows the most efficient
+implementation of linear algebra operations when the size of the objects
+is known and small. Being designed to support image- and goemetry-based
+applications, the size range from two to four allows 2D image and
+3D camera/world objects to be manipulated, in homogeneous coordinates
+where required; thus four is the natural size limit for Gandalf.
+
+<P>
+A major design feature of the linear algebra package is the application
+of <EM>implicit operations</EM>. By this is meant, for example, that adding
+a matrix to the transpose of another matrix is a <EM>one</EM> step operation.
+Rather than transposing the matrix and then adding it, there is a specific
+Gandalf routine to apply the operation ``add matrix to transpose of another
+matrix'', implemented by indexing the elements of the second matrix in
+transposed order. This principle increases greatly the number of routines
+that Gandalf implements, but also greatly increases the efficiency of
+the package. It can also help to reduce errors, in the case of implicit
+matrix inverse. Let us say that we want to compute a matrix/vector product
+where the matrix is to be inverted:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf y}= A^{-1}{\bf x}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="69" HEIGHT="27" BORDER="0"
+ SRC="img13.png"
+ ALT="\begin{displaymath}{\bf y}= A^{-1}{\bf x}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+If <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> happens to be a diagonal matrix, it makes sense to apply the inverse
+operation implicitly, inside the product operation. This is because if, for
+example, we are dealing with vectors &amp; matrix of size 2, we have
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf x}=\left(\!\!\begin{array}{c} x_1 \\x_2 \end{array}\!\!\right),\;\;{\bf y}=\left(\!\!\begin{array}{c} y_1 \\y_2 \end{array}\!\!\right),\;\;
+   A=\left(\!\!\begin{array}{cc} A_{11} & 0 \\0 & A_{22} \end{array}\!\!\right),
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="323" HEIGHT="45" BORDER="0"
+ SRC="img15.png"
+ ALT="\begin{displaymath}{\bf x}=\left(\!\!\begin{array}{c} x_1 \ x_2 \end{array}\!\!...
+...n{array}{cc} A_{11} &amp; 0 \ 0 &amp; A_{22} \end{array}\!\!\right),
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+and the operations required are
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+y_1 \leftarrow \frac{x_1}{A_{11}}, \;\;\; y_2 \leftarrow \frac{x_2}{A_{22}}.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="161" HEIGHT="37" BORDER="0"
+ SRC="img16.png"
+ ALT="\begin{displaymath}y_1 \leftarrow \frac{x_1}{A_{11}}, \;\;\; y_2 \leftarrow \frac{x_2}{A_{22}}.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Applying the inverse firstly to <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> and then computing the product would
+involve the following operations
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+A_{11} \leftarrow \frac{1}{A_{11}}, \;\;
+   A_{22} \leftarrow \frac{1}{A_{22}}, \;\;
+   y_1 \leftarrow A_{11} x_1, \;\;\; y_2 \leftarrow A_{22} x_2.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="376" HEIGHT="41" BORDER="0"
+ SRC="img17.png"
+ ALT="\begin{displaymath}A_{11} \leftarrow \frac{1}{A_{11}}, \;\;
+A_{22} \leftarrow ...
+... y_1 \leftarrow A_{11} x_1, \;\;\; y_2 \leftarrow A_{22} x_2.
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+This has two drawbacks: the two stages of inverting followed by multiplication
+reduces the accuracy of the result compared to a single division operation,
+and the <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> matrix is overwritten with the inverse of <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">, which is not
+normally what is wanted (explicit matrix inverse is to be avoided wherever
+possible). As we shall see, Gandalf implements a comprehensive set of
+implicit transpose and inverse operations, which apply when the matrix
+involved is diagonal (as above) or triangular. For these types of matrix
+the inverse operation can be conjoined with multiplication, such that
+effectively only one operation is performed.
+Implicit inverse does not apply to symmetric or general square matrices,
+because there is no way of conjoining the inverse with multiplication in
+the same way.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html601"
+  HREF="node28.html">Fixed size matrices and vectors</A>
+<UL>
+<LI><A NAME="tex2html602"
+  HREF="node29.html">Fixed size vectors</A>
+<UL>
+<LI><A NAME="tex2html603"
+  HREF="node30.html">Creating and accessing fixed size vectors</A>
+<LI><A NAME="tex2html604"
+  HREF="node31.html">Fixed size vector addition</A>
+<LI><A NAME="tex2html605"
+  HREF="node32.html">Fixed size vector subtraction</A>
+<LI><A NAME="tex2html606"
+  HREF="node33.html">Rescaling a fixed size vector</A>
+<LI><A NAME="tex2html607"
+  HREF="node34.html">Fixed size vector products</A>
+<LI><A NAME="tex2html608"
+  HREF="node35.html">Fixed size vector file I/O</A>
+<LI><A NAME="tex2html609"
+  HREF="node36.html">Conversion from general to fixed size vector</A>
+<LI><A NAME="tex2html610"
+  HREF="node37.html">Single precision fixed size vectors</A>
+<LI><A NAME="tex2html611"
+  HREF="node38.html">Other types of fixed size vector</A>
+<LI><A NAME="tex2html612"
+  HREF="node39.html">Other sizes of fixed size vector</A>
+<LI><A NAME="tex2html613"
+  HREF="node40.html">Setting/extracting parts of fixed size vectors</A>
+</UL>
+<LI><A NAME="tex2html614"
+  HREF="node41.html">Fixed size matrices</A>
+<UL>
+<LI><A NAME="tex2html615"
+  HREF="node42.html">Definitions of fixed size matrice</A>
+<LI><A NAME="tex2html616"
+  HREF="node43.html">Creating and accessing fixed size matrices</A>
+<LI><A NAME="tex2html617"
+  HREF="node44.html">Fixed size matrix addition</A>
+<LI><A NAME="tex2html618"
+  HREF="node45.html">Fixed size matrix subtraction</A>
+<LI><A NAME="tex2html619"
+  HREF="node46.html">Rescaling a fixed size matrix</A>
+<LI><A NAME="tex2html620"
+  HREF="node47.html">Transposing a fixed size matrix</A>
+<LI><A NAME="tex2html621"
+  HREF="node48.html">Fixed size vector outer products</A>
+<LI><A NAME="tex2html622"
+  HREF="node49.html">Fixed size matrix/vector multiplication</A>
+<LI><A NAME="tex2html623"
+  HREF="node50.html">Fixed size matrix/matrix multiplication</A>
+<LI><A NAME="tex2html624"
+  HREF="node51.html">Fixed size matrix inverse</A>
+<LI><A NAME="tex2html625"
+  HREF="node52.html">Determinant, trace, norms of fixed size matrix</A>
+<LI><A NAME="tex2html626"
+  HREF="node53.html">Fixed size matrix decompositions</A>
+<LI><A NAME="tex2html627"
+  HREF="node54.html">Fixed size matrix file I/O</A>
+<LI><A NAME="tex2html628"
+  HREF="node55.html">Conversion from general to fixed size matrix</A>
+<LI><A NAME="tex2html629"
+  HREF="node56.html">Single precision fixed size matrices</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html630"
+  HREF="node57.html">General size matrices and vectors</A>
+<UL>
+<LI><A NAME="tex2html631"
+  HREF="node58.html">General size vectors</A>
+<UL>
+<LI><A NAME="tex2html632"
+  HREF="node59.html">Creating and freeing general size vectors</A>
+<LI><A NAME="tex2html633"
+  HREF="node60.html">Adjusting the size of a general size vector</A>
+<LI><A NAME="tex2html634"
+  HREF="node61.html">Filling a general size vector with values</A>
+<LI><A NAME="tex2html635"
+  HREF="node62.html">Accessing the elements of a general size vector</A>
+<LI><A NAME="tex2html636"
+  HREF="node63.html">Copying a general size vector</A>
+<LI><A NAME="tex2html637"
+  HREF="node64.html">General size vector addition</A>
+<LI><A NAME="tex2html638"
+  HREF="node65.html">General size vector subtraction</A>
+<LI><A NAME="tex2html639"
+  HREF="node66.html">Rescaling a general size vector</A>
+</UL>
+<LI><A NAME="tex2html640"
+  HREF="node67.html">General size matrices</A>
+<UL>
+<LI><A NAME="tex2html641"
+  HREF="node68.html">Creating and freeing general size matrices</A>
+<LI><A NAME="tex2html642"
+  HREF="node69.html">Adjusting the size of a general size matrix</A>
+<LI><A NAME="tex2html643"
+  HREF="node70.html">Filling a general size matrix with values</A>
+<LI><A NAME="tex2html644"
+  HREF="node71.html">Accessing the elements of a general size matrix</A>
+<LI><A NAME="tex2html645"
+  HREF="node72.html">Copying a general size matrix</A>
+<LI><A NAME="tex2html646"
+  HREF="node73.html">Transposing a general size matrix</A>
+<LI><A NAME="tex2html647"
+  HREF="node74.html">General size matrix addition</A>
+<LI><A NAME="tex2html648"
+  HREF="node75.html">General size matrix subtraction</A>
+<LI><A NAME="tex2html649"
+  HREF="node76.html">Rescaling a general size matrix</A>
+<LI><A NAME="tex2html650"
+  HREF="node77.html">General size matrix/vector multiplication</A>
+<LI><A NAME="tex2html651"
+  HREF="node78.html">General size matrix/matrix multiplication</A>
+<LI><A NAME="tex2html652"
+  HREF="node79.html">Inverting a general size matrix</A>
+<LI><A NAME="tex2html653"
+  HREF="node80.html">Cholesky factorising a general size symmetric matrix</A>
+<LI><A NAME="tex2html654"
+  HREF="node81.html">Symmetric matrix eigendecomposition</A>
+<LI><A NAME="tex2html655"
+  HREF="node82.html">Accumulated symmetric matrix eigendecomposition</A>
+</UL>
+<LI><A NAME="tex2html656"
+  HREF="node83.html">Single precision general size matrices &amp; vectors</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html599"
+  HREF="node28.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html595"
+  HREF="report.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html589"
+  HREF="node26.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html597"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html600"
+  HREF="node28.html">Fixed size matrices and</A>
+<B> Up:</B> <A NAME="tex2html596"
+  HREF="report.html">Gandalf: The Fast Computer</A>
+<B> Previous:</B> <A NAME="tex2html590"
+  HREF="node26.html">Error tests and codes</A>
+ &nbsp; <B>  <A NAME="tex2html598"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

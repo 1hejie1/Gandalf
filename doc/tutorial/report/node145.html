@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Comparision of Speed and Memory Requirement with Standard FHT</TITLE>
+<META NAME="description" CONTENT="Comparision of Speed and Memory Requirement with Standard FHT">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node146.html">
+<LINK REL="previous" HREF="node144.html">
+<LINK REL="up" HREF="node143.html">
+<LINK REL="next" HREF="node146.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2244"
+  HREF="node146.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2240"
+  HREF="node143.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2234"
+  HREF="node144.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2242"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2245"
+  HREF="node146.html">Complexity Comparison of FHT</A>
+<B> Up:</B> <A NAME="tex2html2241"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Previous:</B> <A NAME="tex2html2235"
+  HREF="node144.html">Formal Statement of Algorithm</A>
+ &nbsp; <B>  <A NAME="tex2html2243"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006113200000000000000">
+Comparision of Speed and Memory Requirement with Standard FHT</A>
+</H3>
+  Direct speed tests on a Sun have shown that
+  the MFHT is about 8% faster than an FHT line fitter adapted from
+  the plane fitter described in section&nbsp;<A HREF="node142.html#formal_FHT">5.11.2.3</A>. This improvement
+  is almost entirely due to the hypersphere (circle) approximation to
+  a hypercube (square) used in the FHT, which increases the total number of
+  subdivisions. The speeds of individual subdivisions in the two versions
+  are almost identical.
+
+<P>
+When memory is limited, the MFHT is preferable. Ignoring the arrays
+  of flags and individual variables, the MFHT allocates space for one array,
+  <!-- MATH
+ ${\bf I}^{\rm av}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img466.png"
+ ALT="${\bf I}^{\rm av}$">, at each call to <!-- MATH
+ $divide\_rectangle$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img459.png"
+ ALT="$divide\_rectangle$">. On the contrary,
+  the FHT requires four: <!-- MATH
+ ${\bf R}_{\bf b}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img378.png"
+ ALT="${\bf R}_{\bf b}$"> for each value [-1,-1], [-1,1],
+  [1,-1] and [1,1] of <IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img220.png"
+ ALT="${\bf b}$"> (refer to procedure <IMG
+ WIDTH="83" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img372.png"
+ ALT="$divide\_cube$"> in
+  section&nbsp;<A HREF="node142.html#formal_FHT">5.11.2.3</A>). The FHT also uses global arrays, whereas the MFHT
+  does not. The subdivision procedure in the FHT can be
+  reordered so as to require only one array (which is used four times),
+  but at the cost of introducing repeated tests into the code,
+  slowing the algorithm by about 50%.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2244"
+  HREF="node146.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2240"
+  HREF="node143.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2234"
+  HREF="node144.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2242"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2245"
+  HREF="node146.html">Complexity Comparison of FHT</A>
+<B> Up:</B> <A NAME="tex2html2241"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Previous:</B> <A NAME="tex2html2235"
+  HREF="node144.html">Formal Statement of Algorithm</A>
+ &nbsp; <B>  <A NAME="tex2html2243"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

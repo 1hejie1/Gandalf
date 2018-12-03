@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Image formats and types</TITLE>
+<META NAME="description" CONTENT="Image formats and types">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node86.html">
+<LINK REL="previous" HREF="node84.html">
+<LINK REL="up" HREF="node84.html">
+<LINK REL="next" HREF="node86.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1456"
+  HREF="node86.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1452"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1446"
+  HREF="node84.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1454"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1457"
+  HREF="node86.html">Simple image/pixel routines</A>
+<B> Up:</B> <A NAME="tex2html1453"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1447"
+  HREF="node84.html">The Image Package</A>
+ &nbsp; <B>  <A NAME="tex2html1455"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00510000000000000000"></A> <A NAME="formats-types-sec"></A>
+<BR>
+Image formats and types
+</H1>
+Gandalf distinguishes between the external <TT>file</TT> format of an image
+and the an internal image format used by Gandalf to represent the image data.
+The former is often used to select the latter, but it is important to
+separate the two. The available internal Gandalf image formats are defined
+by the <TT>Gan_ImageFormat</TT> enumerated type, found
+in <TT>&lt;gandalf/image/pixel.h&gt;</TT>:
+<PRE>
+      typedef enum { GAN_GREY_LEVEL_IMAGE,       /* grey-level images */
+                     GAN_GREY_LEVEL_ALPHA_IMAGE, /* grey-level images with alpha
+                                                    channel */
+                     GAN_RGB_COLOUR_IMAGE,       /* RGB colour images */
+                     GAN_RGB_COLOUR_ALPHA_IMAGE, /* RGB colour images with alpha
+                                                    channel */
+                     GAN_VECTOR_FIELD_2D,        /* 2D image of 2D vectors */
+                     GAN_VECTOR_FIELD_3D }       /* 2D image of 3D vectors */
+        Gan_ImageFormat;
+</PRE>
+The formats are (hopefully) self-explanatory, and allow Gandalf to represent
+most useful kinds of image data. Along with the format there is also an
+image <B>type</B>, which determines what type of data is stored in each pixel
+of the image. The <TT>Gan_Type</TT> enumerated type is used to distinguish
+the image type. It allows for instance boolean, unsigned character, short
+integer or floating point types to be defined, and is described in
+Section&nbsp;<A HREF="node14.html#simple-types-sec">2.1.1</A>.
+Note that not all types are supported by each format.
+For instance boolean images (<TT>GAN_BOOL</TT> type) are only supported as
+grey-level format images (format <TT>GAN_GREY_LEVEL_IMAGE</TT>), and
+the vector field formats <TT>GAN_VECTOR_FIELD_2D</TT> and
+<TT>GAN_VECTOR_FIELD_3D</TT> are currently supported only for signed types.
+Support for extra types can be added when required.
+
+<P>
+There is also a structure to represent a rectangular sub-window of an
+image, useful in many situations:
+<PRE>
+      /* Definition of a rectangular sub-part of an image.
+       */
+      typedef struct Gan_ImageWindow
+      {
+         /* offset of window relative to top-left corner of the image */
+         unsigned c0, r0;
+
+         /* dimensions of window */
+         unsigned width, height;
+      } Gan_ImageWindow;
+</PRE>
+
+<P>
+Apart from the standard simple C types, boolean and pointer image types are
+supported. These are described in Sections&nbsp;<A HREF="node93.html#binary-image-sec">4.4</A>
+and&nbsp;<A HREF="node94.html#pointer-image-sec">4.5</A>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1456"
+  HREF="node86.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1452"
+  HREF="node84.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1446"
+  HREF="node84.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1454"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1457"
+  HREF="node86.html">Simple image/pixel routines</A>
+<B> Up:</B> <A NAME="tex2html1453"
+  HREF="node84.html">The Image Package</A>
+<B> Previous:</B> <A NAME="tex2html1447"
+  HREF="node84.html">The Image Package</A>
+ &nbsp; <B>  <A NAME="tex2html1455"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

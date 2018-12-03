@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Corner detection</TITLE>
+<META NAME="description" CONTENT="Corner detection">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node121.html">
+<LINK REL="previous" HREF="node119.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node121.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1932"
+  HREF="node121.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1928"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1922"
+  HREF="node119.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1930"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1933"
+  HREF="node121.html">Displaying a corner map</A>
+<B> Up:</B> <A NAME="tex2html1929"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1923"
+  HREF="node119.html">The Canny edge detector</A>
+ &nbsp; <B>  <A NAME="tex2html1931"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00675000000000000000">
+Corner detection</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/corner_feature.h&gt;
+</PRE>
+An <EM>corner map</EM> is a collection of ``corner'' points stored in
+a corner map structure. The corner structure is
+<PRE>
+      /* Definition of basic 2D corner feature structure */
+      typedef struct Gan_CornerFeature
+      {
+         unsigned short r, c; /* row/column coordinates in coordinate frame of 2D
+                                 feature array */
+         Gan_Vector2_f p; /* potentially sub-pixel coordinates of corner feature in
+                             coordinate frame defined by corner map */
+         Gan_Vector2_f pu; /* coordinates of feature with any non-linear image
+                              distortion removed */
+         float strength; /* corner feature strength/contrast value */
+         Gan_SquMatrix22_f N, Ni; /* covariance and inverse covariance for feature
+                                     point position */
+
+         /* fields for user program to define */
+         short status;
+         short index;
+      } Gan_CornerFeature;
+</PRE>
+
+<P>
+The <TT>r, c</TT> fields are the integer local coordinates of the corner feature.
+<TT>p</TT> and <TT>pu</TT> are coordinates in the user-defined coordinate frame.
+
+<P>
+The corners are stored in the corner map structure as follows:
+<PRE>
+      /* Definition of 2D corner feature map structure */
+      typedef struct Gan_CornerFeatureMap
+      {
+         unsigned ncorners;         /* number of corner features stored */
+         Gan_CornerFeature *corner; /* array of corner features */
+         unsigned max_ncorners;     /* allocated limit on number of corner features*/
+
+         /* dimensions of image region in which corner features have been computed */
+         unsigned height, width;
+
+         /* whether the following A, Ai fields are set */
+         Gan_Bool A_set;
+
+         /* transformation between region coordinates (0..width) and (0..height)
+            and corner coordinates, and its inverse */
+         Gan_Matrix23_f A, Ai;
+
+         /* calibration structure defining camera used for non-linear distortion
+            correction */
+         Gan_Camera_f camera;
+
+         /* local blocked feature index map */
+         Gan_LocalFeatureMap local_fmap;
+
+         /* whether this structure was dynamically allocated */
+         Gan_Bool alloc;
+      } Gan_CornerFeatureMap;
+</PRE>
+
+<P>
+To create a corner map with an initially allocated number of corners,
+use the following routine:
+<PRE>
+      Gan_CornerFeatureMap CornerMap;
+
+      /* initialise corner map */
+      gan_corner_feature_map_form ( &amp;CornerMap,
+                                    10000 ); /* initial limit on number of corners */
+</PRE>
+If the initially allocated number of corners is exceeded,
+<TT>gan_realloc_array()</TT> is used to reallocate the array,
+so if you have no idea what reasonable initial limit should be,
+you can pass zero.
+
+<P>
+The corner detection algorithm will then add corners to the corner map,
+using the functions
+<BR><TT>gan_corner_feature_add()</TT> defined in the
+<TT>corner_feature.[ch]</TT> module. To free the corner map afterwards, call
+<PRE>
+      /* free corner map */
+      gan_corner_feature_map_free ( &amp;CornerMap );
+</PRE>
+The other low-level corner routines defined
+in the <TT>corner_feature.[ch]</TT> module are
+relevant only if you are developing your own corner detector; examples
+of their use can be found in the Harris corner detector code.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

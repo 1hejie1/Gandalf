@@ -1,0 +1,1457 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Formal Statement of Algorithm</TITLE>
+<META NAME="description" CONTENT="Formal Statement of Algorithm">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node145.html">
+<LINK REL="previous" HREF="node143.html">
+<LINK REL="up" HREF="node143.html">
+<LINK REL="next" HREF="node145.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2232"
+  HREF="node145.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2228"
+  HREF="node143.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2222"
+  HREF="node143.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2230"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2233"
+  HREF="node145.html">Comparision of Speed and</A>
+<B> Up:</B> <A NAME="tex2html2229"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Previous:</B> <A NAME="tex2html2223"
+  HREF="node143.html">Speed Improvement to FHT</A>
+ &nbsp; <B>  <A NAME="tex2html2231"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION006113100000000000000">
+Formal Statement of Algorithm</A>
+</H3>
+  We have:
+
+<OL>
+<LI>A set of points on a plane <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$">, <IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img344.png"
+ ALT="$j=1 \ldots n$">.
+
+<P>
+</LI>
+<LI>An array of weights <IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img345.png"
+ ALT="$W_j$">, <IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img344.png"
+ ALT="$j=1 \ldots n$">, one for each
+	 point <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$">.
+
+<P>
+</LI>
+<LI>Parameter space <!-- MATH
+ $(\alpha,\beta)$
+ -->
+<IMG
+ WIDTH="44" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img401.png"
+ ALT="$(\alpha , \beta )$">, restricted to the rectangle
+	 <!-- MATH
+ $\alpha_1 \leq \alpha \leq \alpha_2$
+ -->
+<IMG
+ WIDTH="92" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img402.png"
+ ALT="$\alpha_1 \leq \alpha \leq \alpha_2$">,
+	 <!-- MATH
+ $\beta_1 \leq \beta \leq \beta_2$
+ -->
+<IMG
+ WIDTH="89" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img403.png"
+ ALT="$\beta_1 \leq \beta \leq \beta_2$">.
+
+<P>
+</LI>
+<LI>A vote threshold <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img299.png"
+ ALT="$T$">.
+
+<P>
+</LI>
+<LI>A maximum level of subdivision <IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img354.png"
+ ALT="$l_{\max}$">.
+  
+</LI>
+</OL>
+  The algorithm is as follows:
+
+<P>
+<B>begin</B>
+  
+<DL COMPACT>
+<DT>
+<DD>Declare new variables:
+   
+<DL COMPACT>
+<DT>
+<DD>Arrays <!-- MATH
+ ${\bf I}^{\rm low}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img442.png"
+ ALT="${\bf I}^{\rm low}$"> and <!-- MATH
+ ${\bf I}^{\rm high}$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img443.png"
+ ALT="${\bf I}^{\rm high}$"> of intercepts
+    <IMG
+ WIDTH="32" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img444.png"
+ ALT="$I^{\rm low}_j$">, <!-- MATH
+ $I^{\rm high}_j$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img445.png"
+ ALT="$I^{\rm high}_j$">, <IMG
+ WIDTH="74" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img344.png"
+ ALT="$j=1 \ldots n$">.
+
+<P>
+An array <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$"> of boolean flags <!-- MATH
+ $P_1, P_2,\ldots,P_n$
+ -->
+<IMG
+ WIDTH="100" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img357.png"
+ ALT="$P_1, P_2,\ldots,P_n$">.
+
+<P>
+Integer variables <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$"> and <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$">.
+
+<P>
+Variables <!-- MATH
+ $\alpha_{\rm best}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img446.png"
+ ALT="$\alpha_{\rm best}$"> and <!-- MATH
+ $\beta_{\rm best}$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img447.png"
+ ALT="$\beta_{\rm best}$"> comprising a point in
+    <!-- MATH
+ $(\alpha , \beta)$
+ -->
+<IMG
+ WIDTH="44" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img401.png"
+ ALT="$(\alpha , \beta )$"> space.
+
+<P>
+Another array of flags <!-- MATH
+ ${\bf P}_{\rm best}$
+ -->
+<IMG
+ WIDTH="41" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img366.png"
+ ALT="${\bf P}_{\rm best}$">.
+
+<P>
+Boolean flags <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img448.png"
+ ALT="$s_{00}$">, <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img449.png"
+ ALT="$s_{01}$">, <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img450.png"
+ ALT="$s_{10}$"> and <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img451.png"
+ ALT="$s_{11}$">.
+   
+</DD>
+</DL>
+<P>
+The variables <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$">, <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$">, <!-- MATH
+ $\alpha_{\rm best}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img446.png"
+ ALT="$\alpha_{\rm best}$">,
+   <!-- MATH
+ $\beta_{\rm best}$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img447.png"
+ ALT="$\beta_{\rm best}$"> and
+   array <!-- MATH
+ ${\bf P}_{\rm best}$
+ -->
+<IMG
+ WIDTH="41" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img366.png"
+ ALT="${\bf P}_{\rm best}$"> are used to keep track of the best fit as the
+   algorithm proceeds.
+
+<P>
+Set all the <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img358.png"
+ ALT="$P_j$"> to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+For each point <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$">:
+
+<P>
+<B>begin</B>
+   
+<DL COMPACT>
+<DT>
+<DD>Set flags corresponding to intercepts lying below/above vertices of
+    the root rectangle:
+
+<P>
+if <!-- MATH
+ $v_j - \alpha_1 u_j - \beta_1 > 0$
+ -->
+<IMG
+ WIDTH="136" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img452.png"
+ ALT="$v_j - \alpha_1 u_j - \beta_1 &gt; 0$"> set <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img448.png"
+ ALT="$s_{00}$"> to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">,
+    otherwise set it to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+
+<P>
+if <!-- MATH
+ $v_j - \alpha_2 u_j - \beta_1 > 0$
+ -->
+<IMG
+ WIDTH="136" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img453.png"
+ ALT="$v_j - \alpha_2 u_j - \beta_1 &gt; 0$"> set <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img449.png"
+ ALT="$s_{01}$"> to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">,
+    otherwise set it to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+
+<P>
+if <!-- MATH
+ $v_j - \alpha_1 u_j - \beta_2 > 0$
+ -->
+<IMG
+ WIDTH="136" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img454.png"
+ ALT="$v_j - \alpha_1 u_j - \beta_2 &gt; 0$"> set <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img450.png"
+ ALT="$s_{10}$"> to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">,
+    otherwise set it to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+
+<P>
+if <!-- MATH
+ $v_j - \alpha_2 u_j - \beta_2 > 0$
+ -->
+<IMG
+ WIDTH="136" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img455.png"
+ ALT="$v_j - \alpha_2 u_j - \beta_2 &gt; 0$"> set <IMG
+ WIDTH="25" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img451.png"
+ ALT="$s_{11}$"> to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">,
+    otherwise set it to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+
+<P>
+If the <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$">'s are either all true or all false, the line
+    <!-- MATH
+ $\beta = -u_j \alpha + v_j$
+ -->
+<IMG
+ WIDTH="108" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img456.png"
+ ALT="$\beta = -u_j \alpha + v_j$"> misses the root rectangle,
+    otherwise they intersect. If they intersect, set
+    <IMG
+ WIDTH="32" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img444.png"
+ ALT="$I^{\rm low}_j$"> to <!-- MATH
+ $v_j - \alpha_1 u_j$
+ -->
+<IMG
+ WIDTH="71" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img457.png"
+ ALT="$v_j - \alpha_1 u_j$">,
+    <!-- MATH
+ $I^{\rm high}_j$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img445.png"
+ ALT="$I^{\rm high}_j$"> to <!-- MATH
+ $v_j - \alpha_2 u_j$
+ -->
+<IMG
+ WIDTH="71" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img458.png"
+ ALT="$v_j - \alpha_2 u_j$"> and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img358.png"
+ ALT="$P_j$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+    
+</DD>
+</DL>
+   <B>end</B>
+
+<P>
+Call the procedure <!-- MATH
+ $divide\_rectangle$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img459.png"
+ ALT="$divide\_rectangle$"> with arguments as follows:
+
+<OL>
+<LI>Array of flags <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$">.
+
+<P>
+</LI>
+<LI>Arrays <!-- MATH
+ ${\bf I}^{\rm low}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img442.png"
+ ALT="${\bf I}^{\rm low}$"> and <!-- MATH
+ ${\bf I}^{\rm high}$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img443.png"
+ ALT="${\bf I}^{\rm high}$">.
+
+<P>
+</LI>
+<LI>Variables <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img460.png"
+ ALT="$\beta_1$"> and <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img461.png"
+ ALT="$\beta_2$">.
+
+<P>
+</LI>
+<LI>Initial level of subdivision 0.
+
+<P>
+</LI>
+<LI>Initial accumulator value 0.
+
+<P>
+</LI>
+<LI>Empty line of descent list.
+   
+</LI>
+</OL>
+</DD>
+</DL>
+  <B>end</B>
+
+<P>
+Procedure <!-- MATH
+ $divide\_rectangle$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img459.png"
+ ALT="$divide\_rectangle$"> ( array of flags <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$">, arrays of
+	    intercepts <!-- MATH
+ ${\bf I}^{\rm low}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img442.png"
+ ALT="${\bf I}^{\rm low}$"> and <!-- MATH
+ ${\bf I}^{\rm high}$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img443.png"
+ ALT="${\bf I}^{\rm high}$">,
+	    variables <!-- MATH
+ $\beta_{\rm low}$
+ -->
+<IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img416.png"
+ ALT="$\beta_{\rm low}$"> and <!-- MATH
+ $\beta_{\rm high}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img417.png"
+ ALT="$\beta_{\rm high}$">,
+	    subdivision level <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img373.png"
+ ALT="$l$">, accumulator value <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img374.png"
+ ALT="$v$">,
+	    line of descent list ):
+
+<P>
+<B>begin</B>
+  
+<DL COMPACT>
+<DT>
+<DD>Declare new variables:
+   
+<DL COMPACT>
+<DT>
+<DD>Boolean flag arrays <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img462.png"
+ ALT="${\bf P}^{00}$">, <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img463.png"
+ ALT="${\bf P}^{01}$">, <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img464.png"
+ ALT="${\bf P}^{10}$">
+    and <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img465.png"
+ ALT="${\bf P}^{11}$"> each with <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img61.png"
+ ALT="$n$"> elements.
+    All the elements of the flag arrays are initialised to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+Array <!-- MATH
+ ${\bf I}^{\rm av}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img466.png"
+ ALT="${\bf I}^{\rm av}$"> of <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> intercepts with <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img61.png"
+ ALT="$n$"> elements.
+
+<P>
+Accumulators <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img467.png"
+ ALT="$A_{00}$">, <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img468.png"
+ ALT="$A_{01}$">, <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img469.png"
+ ALT="$A_{10}$"> and <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img470.png"
+ ALT="$A_{11}$">, initialised
+    to zero.
+
+<P>
+Variable <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$">.
+
+<P>
+Nine boolean flags <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img433.png"
+ ALT="$v_{ll}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img437.png"
+ ALT="$v_{lh}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img435.png"
+ ALT="$v_{al}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$">,
+    <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img438.png"
+ ALT="$v_{ah}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img439.png"
+ ALT="$v_{hl}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img440.png"
+ ALT="$v_{ha}$">, <IMG
+ WIDTH="28" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img441.png"
+ ALT="$v_{hh}$">.
+
+<P>
+Boolean flag <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$">, initialised to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+   
+</DD>
+</DL>
+   Set <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$"> to <!-- MATH
+ $(\beta_{\rm low} + \beta_{\rm high})/2$
+ -->
+<IMG
+ WIDTH="114" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img471.png"
+ ALT="$(\beta_{\rm low} + \beta_{\rm high})/2$">.
+
+<P>
+Sum the votes for the child rectangles: For each <IMG
+ WIDTH="12" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img285.png"
+ ALT="$j$"> such that <IMG
+ WIDTH="72" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img380.png"
+ ALT="$P_j = true$">:
+
+<P>
+<B>begin</B>
+   
+<DL COMPACT>
+<DT>
+<DD>Set flags <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img433.png"
+ ALT="$v_{ll}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$"> etc. to <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">.
+
+<P>
+Set <IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img472.png"
+ ALT="$I^{\rm av}_j$"> to <!-- MATH
+ $(I^{\rm low}_j + I^{\rm high}_j)/2$
+ -->
+<IMG
+ WIDTH="113" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img473.png"
+ ALT="$(I^{\rm low}_j + I^{\rm high}_j)/2$">.
+
+<P>
+If <!-- MATH
+ $\beta_{\rm low} < I^{\rm low}_j$
+ -->
+<IMG
+ WIDTH="82" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img474.png"
+ ALT="$\beta_{\rm low} &lt; I^{\rm low}_j$"> then:
+
+<P>
+<B>begin</B>
+    
+<DL COMPACT>
+<DT>
+<DD>Set <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img433.png"
+ ALT="$v_{ll}$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+
+<P>
+If <!-- MATH
+ $\beta_{\rm av} < I^{\rm low}_j$
+ -->
+<IMG
+ WIDTH="76" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img475.png"
+ ALT="$\beta_{\rm av} &lt; I^{\rm low}_j$"> then:
+
+<P>
+<B>begin</B>
+     
+<DL COMPACT>
+<DT>
+<DD>Set <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+
+<P>
+If <!-- MATH
+ $\beta_{\rm high} < I^{\rm low}_j$
+ -->
+<IMG
+ WIDTH="87" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img476.png"
+ ALT="$\beta_{\rm high} &lt; I^{\rm low}_j$"> then set <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img437.png"
+ ALT="$v_{lh}$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+     
+</DD>
+</DL>
+     <B>end</B>
+    
+</DD>
+</DL>
+    <B>end</B>
+
+<P>
+Repeat for intercept <IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img472.png"
+ ALT="$I^{\rm av}_j$"> and flags
+    <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img435.png"
+ ALT="$v_{al}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$"> and <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img438.png"
+ ALT="$v_{ah}$">.
+
+<P>
+Repeat for intercept <!-- MATH
+ $I^{\rm high}_j$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img445.png"
+ ALT="$I^{\rm high}_j$"> and flags
+    <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img439.png"
+ ALT="$v_{hl}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img440.png"
+ ALT="$v_{ha}$"> and <IMG
+ WIDTH="28" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img441.png"
+ ALT="$v_{hh}$">.
+   
+</DD>
+</DL>
+   <B>end</B>
+
+<P>
+If <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img433.png"
+ ALT="$v_{ll}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img435.png"
+ ALT="$v_{al}$"> and <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$"> are not all either <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$"> or
+   <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$">:
+
+<P>
+<B>begin</B>
+   
+<DL COMPACT>
+<DT>
+<DD>Add weight <IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img345.png"
+ ALT="$W_j$"> to <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img467.png"
+ ALT="$A_{00}$">
+
+<P>
+Set flag <IMG
+ WIDTH="30" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img477.png"
+ ALT="$P^{00}_j$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+   
+</DD>
+</DL>
+   <B>end</B>
+
+<P>
+Repeat for flags <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img434.png"
+ ALT="$v_{la}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img437.png"
+ ALT="$v_{lh}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$"> and <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img438.png"
+ ALT="$v_{ah}$">, accumulator
+   <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img468.png"
+ ALT="$A_{01}$"> and flag <IMG
+ WIDTH="30" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img478.png"
+ ALT="$P^{01}_j$">.
+
+<P>
+Repeat for flags <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img435.png"
+ ALT="$v_{al}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img439.png"
+ ALT="$v_{hl}$"> and <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img440.png"
+ ALT="$v_{ha}$">, accumulator
+   <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img469.png"
+ ALT="$A_{10}$"> and flag <IMG
+ WIDTH="30" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img479.png"
+ ALT="$P^{10}_j$">.
+
+<P>
+Repeat for flags <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img436.png"
+ ALT="$v_{aa}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img438.png"
+ ALT="$v_{ah}$">, <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img440.png"
+ ALT="$v_{ha}$"> and <IMG
+ WIDTH="28" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img441.png"
+ ALT="$v_{hh}$">, accumulator
+   <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img470.png"
+ ALT="$A_{11}$"> and flag <IMG
+ WIDTH="30" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img480.png"
+ ALT="$P^{11}_j$">.
+
+<P>
+</DD>
+</DL>
+  <B>end</B>
+
+<P>
+Subdivide child rectangles receiving greater than or equal to <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img299.png"
+ ALT="$T$"> votes:
+  If <!-- MATH
+ $l < l_{\rm best}$
+ -->
+<IMG
+ WIDTH="59" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img481.png"
+ ALT="$l &lt; l_{\rm best}$">:
+
+<P>
+<B>begin</B>
+  
+<DL COMPACT>
+<DT>
+<DD>If <IMG
+ WIDTH="62" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img482.png"
+ ALT="$A_{00} \geq T$"> recursively subdivide child rectangle:
+
+<P>
+<B>begin</B>
+   
+<DL COMPACT>
+<DT>
+<DD>Add [-1,-1] to original line of descent.
+
+<P>
+Call <!-- MATH
+ $divide\_rectangle$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img459.png"
+ ALT="$divide\_rectangle$"> with arguments <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img462.png"
+ ALT="${\bf P}^{00}$">,
+    <!-- MATH
+ ${\bf I}^{\rm low}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img442.png"
+ ALT="${\bf I}^{\rm low}$">, <!-- MATH
+ ${\bf I}^{\rm av}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img466.png"
+ ALT="${\bf I}^{\rm av}$">, <!-- MATH
+ $\beta_{\rm low}$
+ -->
+<IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img416.png"
+ ALT="$\beta_{\rm low}$">,
+    <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$">, <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img467.png"
+ ALT="$A_{00}$">, <IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img388.png"
+ ALT="$l+1$"> and extended line of descent.
+
+<P>
+Set flag <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$"> to <IMG
+ WIDTH="34" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img359.png"
+ ALT="$true$">.
+   
+</DD>
+</DL>
+   <B>end</B>
+
+<P>
+Repeat with accumulator <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img468.png"
+ ALT="$A_{01}$">, index pair [-1,1], flag list
+   <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img463.png"
+ ALT="${\bf P}^{01}$">, intercept arrays <!-- MATH
+ ${\bf I}^{\rm low}$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img442.png"
+ ALT="${\bf I}^{\rm low}$"> and
+   <!-- MATH
+ ${\bf I}^{\rm av}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img466.png"
+ ALT="${\bf I}^{\rm av}$">, and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$"> and
+   <!-- MATH
+ $\beta_{\rm high}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img417.png"
+ ALT="$\beta_{\rm high}$">.
+
+<P>
+Repeat with accumulator <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img469.png"
+ ALT="$A_{10}$">, index pair [1,-1], flag list
+   <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img464.png"
+ ALT="${\bf P}^{10}$">, intercept arrays <!-- MATH
+ ${\bf I}^{\rm av}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img466.png"
+ ALT="${\bf I}^{\rm av}$"> and
+   <!-- MATH
+ ${\bf I}^{\rm high}$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img443.png"
+ ALT="${\bf I}^{\rm high}$">, and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values <!-- MATH
+ $\beta_{\rm low}$
+ -->
+<IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img416.png"
+ ALT="$\beta_{\rm low}$"> and
+   <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$">.
+
+<P>
+Repeat with accumulator <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img470.png"
+ ALT="$A_{11}$">, index pair [1,1], flag list
+   <IMG
+ WIDTH="30" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img465.png"
+ ALT="${\bf P}^{11}$">, intercept arrays <!-- MATH
+ ${\bf I}^{\rm av}$
+ -->
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img466.png"
+ ALT="${\bf I}^{\rm av}$"> and
+   <!-- MATH
+ ${\bf I}^{\rm high}$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img443.png"
+ ALT="${\bf I}^{\rm high}$">, and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> values <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$"> and
+   <!-- MATH
+ $\beta_{\rm high}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img417.png"
+ ALT="$\beta_{\rm high}$">.
+
+<P>
+If <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$s$"> is still <IMG
+ WIDTH="42" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img360.png"
+ ALT="$false$"> (i.e. no further
+   subdivision of this rectangle), test for best fit so far:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>If <!-- MATH
+ $l > max\_level$
+ -->
+<IMG
+ WIDTH="101" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img389.png"
+ ALT="$l &gt; max\_level$"> or if <!-- MATH
+ $l = max\_level$
+ -->
+<IMG
+ WIDTH="101" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img390.png"
+ ALT="$l = max\_level$"> and <!-- MATH
+ $v > max\_value$
+ -->
+<IMG
+ WIDTH="109" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img391.png"
+ ALT="$v &gt; max\_value$">:
+
+<P>
+<B>begin</B>
+    
+<DL COMPACT>
+<DT>
+<DD>Set <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$"> to <IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img373.png"
+ ALT="$l$">.
+
+<P>
+Set <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$"> to <IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img374.png"
+ ALT="$v$">.
+
+<P>
+Calculate centre of rectangle in <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img305.png"
+ ALT="$\alpha$"> direction by calling
+     procedure <IMG
+ WIDTH="94" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img483.png"
+ ALT="$alpha\_centre$"> with the line of descent as argument.
+     The result is copied into <!-- MATH
+ $\alpha_{\rm best}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img446.png"
+ ALT="$\alpha_{\rm best}$">.
+
+<P>
+Set <!-- MATH
+ $\beta_{\rm best}$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img447.png"
+ ALT="$\beta_{\rm best}$"> to <!-- MATH
+ $\beta_{\rm av}$
+ -->
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img430.png"
+ ALT="$\beta_{\rm av}$">.
+
+<P>
+Copy array of flags <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img356.png"
+ ALT="${\bf P}$"> into array <!-- MATH
+ ${\bf P}_{\rm best}$
+ -->
+<IMG
+ WIDTH="41" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img366.png"
+ ALT="${\bf P}_{\rm best}$">.
+    
+</DD>
+</DL>
+    <B>end</B>
+   
+</DD>
+</DL>
+</DD>
+</DL>
+  <B>end</B> (procedure <!-- MATH
+ $divide\_rectangle$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img459.png"
+ ALT="$divide\_rectangle$">)
+
+<P>
+Procedure <IMG
+ WIDTH="94" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img483.png"
+ ALT="$alpha\_centre$"> ( line of descent list ):
+  <B>begin</B>
+  
+<DL COMPACT>
+<DT>
+<DD>Declare new variables:
+   
+<DL COMPACT>
+<DT>
+<DD>Array <!-- MATH
+ ${\bf r}_{\alpha}$
+ -->
+<IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img484.png"
+ ALT="${\bf r}_{\alpha}$"> of three elements with indices -1, 0 and 1.
+    The zero (middle) element of <!-- MATH
+ ${\bf r}_{\alpha}$
+ -->
+<IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img484.png"
+ ALT="${\bf r}_{\alpha}$"> is not used.
+   
+</DD>
+</DL>
+   Set array <!-- MATH
+ ${\bf r}_{\alpha}$
+ -->
+<IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img484.png"
+ ALT="${\bf r}_{\alpha}$"> as follows:
+   <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+r_{\alpha}(-1) = \frac{\alpha_1 - \alpha_2}{4},\;\;
+      r_{\alpha}(1) = \frac{\alpha_2 - \alpha_1}{4}.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="263" HEIGHT="37" BORDER="0"
+ SRC="img485.png"
+ ALT="\begin{displaymath}r_{\alpha}(-1) = \frac{\alpha_1 - \alpha_2}{4},\;\;
+r_{\alpha}(1) = \frac{\alpha_2 - \alpha_1}{4}. \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+Set <!-- MATH
+ $\alpha_{\rm best}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img446.png"
+ ALT="$\alpha_{\rm best}$"> to zero.
+
+<P>
+While line of descent not traversed (i.e. root rectangle not yet reached):
+
+<P>
+<B>begin</B>
+   
+<DL COMPACT>
+<DT>
+<DD>Take next pair of indices <IMG
+ WIDTH="48" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img486.png"
+ ALT="$[b_1,b_2]$"> on line of descent.
+
+<P>
+Replace old value of <!-- MATH
+ $\alpha_{\rm best}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img446.png"
+ ALT="$\alpha_{\rm best}$">:
+    <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\alpha_{\rm best} \leftarrow \frac{\alpha_{\rm best}}{2} +
+       r_{\alpha}(b_1).
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="161" HEIGHT="35" BORDER="0"
+ SRC="img487.png"
+ ALT="\begin{displaymath}\alpha_{\rm best} \leftarrow \frac{\alpha_{\rm best}}{2} +
+r_{\alpha}(b_1). \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+</DD>
+</DL>
+   <B>end</B>
+
+<P>
+Add centre <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img305.png"
+ ALT="$\alpha$">-coordinate of root cube to <!-- MATH
+ $\alpha_{\rm best}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img446.png"
+ ALT="$\alpha_{\rm best}$">:
+   <BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\alpha_{\rm best} \leftarrow \alpha_{\rm best} +
+	\frac{\alpha_1 + \alpha_2}{2}.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="172" HEIGHT="37" BORDER="0"
+ SRC="img488.png"
+ ALT="\begin{displaymath}\alpha_{\rm best} \leftarrow \alpha_{\rm best} +
+\frac{\alpha_1 + \alpha_2}{2}. \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+</DD>
+</DL>
+  <B>end</B> (procedure <IMG
+ WIDTH="94" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img483.png"
+ ALT="$alpha\_centre$">)
+
+<P>
+At the end of the algorithm <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$"> is the highest level of subdivision
+  reached, <IMG
+ WIDTH="80" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img362.png"
+ ALT="$max\_value$"> the highest accumulator value at level <IMG
+ WIDTH="75" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img361.png"
+ ALT="$max\_level$">,
+  while <!-- MATH
+ $\alpha_{\rm best}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img446.png"
+ ALT="$\alpha_{\rm best}$"> and <!-- MATH
+ $\beta_{\rm best}$
+ -->
+<IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img447.png"
+ ALT="$\beta_{\rm best}$"> hold the best fit line
+  parameters.
+
+<P>
+Note that the points <IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img307.png"
+ ALT="$(u_j , v_j )$"> are never used by the procedure
+  <!-- MATH
+ $divide\_rectangle$
+ -->
+<IMG
+ WIDTH="119" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img459.png"
+ ALT="$divide\_rectangle$">. All the information about the points is contained in
+  the intercept arrays. The <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> index part of the line of descent is
+  actually superflous since the <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img306.png"
+ ALT="$\beta$"> positions of rectangles are passed
+  from parent to child via <!-- MATH
+ $\beta_{\rm low}$
+ -->
+<IMG
+ WIDTH="33" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img416.png"
+ ALT="$\beta_{\rm low}$"> and <!-- MATH
+ $\beta_{\rm high}$
+ -->
+<IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img417.png"
+ ALT="$\beta_{\rm high}$">.
+ <HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2232"
+  HREF="node145.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2228"
+  HREF="node143.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2222"
+  HREF="node143.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2230"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2233"
+  HREF="node145.html">Comparision of Speed and</A>
+<B> Up:</B> <A NAME="tex2html2229"
+  HREF="node143.html">Speed Improvement to FHT</A>
+<B> Previous:</B> <A NAME="tex2html2223"
+  HREF="node143.html">Speed Improvement to FHT</A>
+ &nbsp; <B>  <A NAME="tex2html2231"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

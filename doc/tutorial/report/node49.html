@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size matrix/vector multiplication</TITLE>
+<META NAME="description" CONTENT="Fixed size matrix/vector multiplication">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node50.html">
+<LINK REL="previous" HREF="node48.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node50.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html969"
+  HREF="node50.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html965"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html959"
+  HREF="node48.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html967"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html970"
+  HREF="node50.html">Fixed size matrix/matrix multiplication</A>
+<B> Up:</B> <A NAME="tex2html966"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html960"
+  HREF="node48.html">Fixed size vector outer</A>
+ &nbsp; <B>  <A NAME="tex2html968"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00412800000000000000">
+Fixed size matrix/vector multiplication</A>
+</H3>
+Gandalf supports matrix/vector multiplication with the matrix optionally
+being (implicitly) transposed. If the matrix is triangular, Gandalf also
+supports multiplication by the inverse of the matrix, computed implicitly
+as described in the introduction to this chapter.
+These operations can be written as
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+{\bf y}&\!\!=\!\!& A{\bf x}\;\;\;\;\mbox{OR}\;\;\;\; {\bf y}= A^{\top}{\bf x}\;\;\;\mbox{OR} \nonumber \\
+ {\bf y}&\!\!=\!\!& A^{-1}{\bf x}\;\;\;\;\mbox{OR}\;\;\;\; {\bf y}= A^{-\top}{\bf x}\;\;\;\mbox{(triangular $A$\  only)} \nonumber
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img35.png"
+ ALT="$\displaystyle {\bf y}$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img36.png"
+ ALT="$\textstyle =\!\!$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="186" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img37.png"
+ ALT="$\displaystyle A{\bf x}\;\;\;\;\mbox{OR}\;\;\;\; {\bf y}= A^{\top}{\bf x}\;\;\;\mbox{OR}$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img35.png"
+ ALT="$\displaystyle {\bf y}$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img36.png"
+ ALT="$\textstyle =\!\!$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="323" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img38.png"
+ ALT="$\displaystyle A^{-1}{\bf x}\;\;\;\;\mbox{OR}\;\;\;\; {\bf y}= A^{-\top}{\bf x}\;\;\;\mbox{(triangular $A$ only)}$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+The Gandalf routines involving a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$3\times 4$"> matrix for the first of these
+(no transpose of <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">) is
+<PRE>
+      Gan_Vector4 v4x;
+      Gan_Vector3 v3y;
+      Gan_Matrix34 m34A;
+
+      /* ... set up m34A and v4x ... */
+      gan_mat34_multv4_q ( &amp;m34A, &amp;v4x, &amp;v3y ); /* macro, or */
+      v3y = gan_mat34_multv4_s ( &amp;m34A, &amp;v4x ); /* function call */
+</PRE>
+while if <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is to be transposed then the routines are
+<PRE>
+      Gan_Vector3 v3x;
+      Gan_Vector4 v4y;
+      Gan_Matrix34 m34A;
+
+      /* ... set up m34A and v3x ... */
+      gan_mat34T_multv3_q ( &amp;m34A, &amp;v3x, &amp;v4y ); /* macro, or */
+      v4y = gan_mat34T_multv3_s ( &amp;m34A, &amp;v3x ); /* function call */
+</PRE>
+There are similar routines <TT>gan_mat33_multv3_[qs]()</TT> and
+<TT>gan_mat33T_multv3_[qs]()</TT> for <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> being a general <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix.
+For symmetric matrices, there is only one pair of routines:
+<PRE>
+      Gan_Vector3 v3x, v3y;
+      Gan_SquMatrix33 sm33S;
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q(), and v3x ... */
+      gan_symmat33_multv3_q ( &amp;sm33S, &amp;v3x, &amp;v3y ); /* macro, or */
+      v3y = gan_symmat33_multv3_s ( &amp;sm33S, &amp;v3x ); /* function call */
+</PRE>
+In the case that matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> is triangular, Gandalf also supports
+multiplication of vectors by the inverse of <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">. In this case the result
+may be computed in-place in the input vector, So the complete set of
+matrix/vector multiplication routines for triangular matrices is
+<PRE>
+      Gan_Vector3 v3x, v3y;
+      Gan_SquMatrix33 sm33L;
+
+      /* ... set up sm33L using e.g. gan_ltmat33_fill_q(), and v3x ... */
+
+      /* multiply vector by lower triangular matrix */
+      gan_ltmat33_multv3_q ( &amp;sm33L, &amp;v3x, &amp;v3y ); /* macro, or */
+      v3y = gan_ltmat33_multv3_s ( &amp;sm33L, &amp;v3x ); /* function call, or */
+      gan_ltmat33_multv3_i ( &amp;sm33L, &amp;v3x ); /* macro, in-place in v3x */
+
+      /* multiply vector by upper triangular matrix */
+      gan_ltmat33T_multv3_q ( &amp;sm33L, &amp;v3x, &amp;v3y ); /* macro, or */
+      v3y = gan_ltmat33T_multv3_s ( &amp;sm33L, &amp;v3x ); /* function call, or */
+      gan_ltmat33T_multv3_i ( &amp;sm33L, &amp;v3x ); /* macro, in-place in v3x */
+
+      /* multiply vector by inverse of lower triangular matrix */
+      gan_ltmat33I_multv3_q ( &amp;sm33L, &amp;v3x, &amp;v3y ); /* macro, or */
+      v3y = gan_ltmat33I_multv3_s ( &amp;sm33L, &amp;v3x ); /* function call, or */
+      gan_ltmat33I_multv3_i ( &amp;sm33L, &amp;v3x ); /* macro, in-place in v3x */
+
+      /* multiply vector by inverse of upper triangular matrix */
+      gan_ltmat33IT_multv3_q ( &amp;sm33L, &amp;v3x, &amp;v3y ); /* macro, or */
+      v3y = gan_ltmat33IT_multv3_s ( &amp;sm33L, &amp;v3x ); /* function call, or */
+      gan_ltmat33IT_multv3_i ( &amp;sm33L, &amp;v3x ); /* macro, in-place in v3x */
+</PRE>
+
+<P>
+<B>Error detection:</B> If implicit inverse is used (the <TT>...I_multv...()</TT>
+or <TT>...IT_multv...()</TT> routines), the matrix must
+be non-singular, which for triangular matrices means that none of the
+diagonal elements should be zero. If the matrix was produced
+by successful Cholesky factorisation of a symmetric matrix
+(see Section&nbsp;<A HREF="node53.html#fixed-decomp-sec">3.1.2.12</A>) the matrix is guaranteed to be
+non-singular. This is the normal method of creating a triangular matrix,
+and Gandalf uses <TT>assert()</TT> to check for the singularity of the matrix.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html969"
+  HREF="node50.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html965"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html959"
+  HREF="node48.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html967"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html970"
+  HREF="node50.html">Fixed size matrix/matrix multiplication</A>
+<B> Up:</B> <A NAME="tex2html966"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html960"
+  HREF="node48.html">Fixed size vector outer</A>
+ &nbsp; <B>  <A NAME="tex2html968"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

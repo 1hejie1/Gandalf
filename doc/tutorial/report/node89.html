@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Setting an image to a new format, type and dimensions</TITLE>
+<META NAME="description" CONTENT="Setting an image to a new format, type and dimensions">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node90.html">
+<LINK REL="previous" HREF="node88.html">
+<LINK REL="up" HREF="node88.html">
+<LINK REL="next" HREF="node90.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1507"
+  HREF="node90.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1503"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1497"
+  HREF="node88.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1505"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1508"
+  HREF="node90.html">Accessing single pixels</A>
+<B> Up:</B> <A NAME="tex2html1504"
+  HREF="node88.html">Image file I/O</A>
+<B> Previous:</B> <A NAME="tex2html1498"
+  HREF="node88.html">Image file I/O</A>
+ &nbsp; <B>  <A NAME="tex2html1506"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00531000000000000000">
+Setting an image to a new format, type and dimensions</A>
+</H2>
+Once an image has been created with a certain format, type, width and height,
+that is not the end of the matter. In a similar manner to the Gandalf
+general size vectors and matrices, the format, type and dimensions of a
+Gandalf image may be changed an arbitrary number of times. Gandalf will
+reallocate the image data array and row pointer array as necessary,
+as the internal attributes of the image are changed. However note that
+if the image data array or row pointer array is passed in by the
+user program, as in <TT>gan_image_alloc_data_gl_short()</TT> above,
+The provided array(s) cannot be reallocated, so care should be taken
+never to attempt to set format/type/dimensions that cause the array bounds
+to be exceeded.
+
+<P>
+Let us take one of the above examples and modify it a bit.
+<PRE>
+      Gan_Image *pImage;
+
+      /* create image */
+      pImage = gan_image_alloc_gl_s ( 150, 100 );
+
+      /* convert an existing image to new format, type &amp; dimensions */
+      gan_image_set_rgb_uc ( pImage, 300, 200 );
+</PRE>
+This code fragment allocates an image as a <IMG
+ WIDTH="71" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img98.png"
+ ALT="$150\times 100$"> grey-level short
+integer image, and then converts it into a <IMG
+ WIDTH="71" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img99.png"
+ ALT="$300\times 200$"> RGB unsigned
+character image. This feature allows the same image to be used as the
+result of several different computations, easing the burden of keeping
+track of a large number of images, as well as potentially saving memory.
+
+<P>
+There are also higher level functions that set an image to a format,
+type and dimensions all selected by variables. For instance
+<PRE>
+      Gan_Image *pImage;
+
+      /* create image */
+      pImage = gan_image_alloc_gl_s ( 150, 100 );
+
+      /* convert an existing image to new format, type &amp; dimensions */
+      gan_image_set_format_type_dims ( pImage, GAN_VECTOR_FIELD_2D, GAN_FLOAT,
+                                       200, 50 );
+</PRE>
+sets the image <TT>pImage</TT> to be a 2D vector field (2D image of 2-vectors),
+float type and dimensions 200 by 50. There are also routines for setting
+the format, type or dimensions, leaving the other attributes fixed.
+So for instance
+<PRE>
+      gan_image_set_format_type ( pImage, GAN_VECTOR_FIELD_2D, GAN_FLOAT );
+</PRE>
+sets just the format and type of the image, leaving the dimensions unchanged,
+while
+<PRE>
+      gan_image_set_type ( pImage, GAN_FLOAT );
+</PRE>
+sets only the image type, leaving the format and dimensions unchanged.
+Finally
+<PRE>
+      gan_image_set_dims ( pImage, 200, 50 );
+</PRE>
+changes only the image dimensions.
+
+<P>
+<B>Error detection:</B> All the above routines return <TT>NULL</TT> and invoke the
+Gandalf error handler if they fail. The most likely failure mode is failing
+to reallocate the image data, i.e. an internal <TT>realloc()</TT> call failing.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1507"
+  HREF="node90.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1503"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1497"
+  HREF="node88.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1505"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1508"
+  HREF="node90.html">Accessing single pixels</A>
+<B> Up:</B> <A NAME="tex2html1504"
+  HREF="node88.html">Image file I/O</A>
+<B> Previous:</B> <A NAME="tex2html1498"
+  HREF="node88.html">Image file I/O</A>
+ &nbsp; <B>  <A NAME="tex2html1506"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

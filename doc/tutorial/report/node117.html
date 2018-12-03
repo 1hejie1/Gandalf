@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Edge detection</TITLE>
+<META NAME="description" CONTENT="Edge detection">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node118.html">
+<LINK REL="previous" HREF="node116.html">
+<LINK REL="up" HREF="node115.html">
+<LINK REL="next" HREF="node118.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1896"
+  HREF="node118.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1892"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1886"
+  HREF="node116.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1894"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1897"
+  HREF="node118.html">Displaying an edge map</A>
+<B> Up:</B> <A NAME="tex2html1893"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1887"
+  HREF="node116.html">Image feature coordinate frames</A>
+ &nbsp; <B>  <A NAME="tex2html1895"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00672000000000000000">
+Edge detection</A>
+</H2>
+<PRE>
+      #include &lt;gandalf/vision/edge_feature.h&gt;
+</PRE>
+An <EM>edge map</EM> is a collection of edge points (or edgels) stored in
+an edge map structure. The edge structure is
+<PRE>
+      /* Definition of basic 2D edge feature structure */
+      typedef struct Gan_EdgeFeature
+      {
+         unsigned short r, c; /* row/column coordinates in coordinate frame of 2D
+                                 feature array */
+         Gan_Vector2_f p; /* potentially sub-pixel coordinates of edge feature in
+                             coordinate frame defined by edge map */
+         Gan_Vector2_f pu; /* coordinates of feature with any non-linear image
+                              distortion removed */
+         float strength; /* edge feature strength/contrast value */
+         float angle; /* orientation of edge, where applicable. The angle is
+                         measured clockwise from the positive x axis, and should
+                         be in the range [-pi,pi]. The angle should point in the
+                         direction of higher image intensity, or a suitably
+                         analagous direction. */
+         float cov; /* covariance of feature edge in direction given by the
+                       orientation field (angle) */
+      
+         /* fields for user program to define */
+         short status;
+         short index;
+      
+         /* next and previous features in list for when edges are stored in a
+            list */
+         struct Gan_EdgeFeature *next, *prev;
+      } Gan_EdgeFeature;
+</PRE>
+The <TT>r, c</TT> fields are the integer local coordinates of the edge feature.
+<TT>p</TT> and <TT>pu</TT> are coordinates in the user-defined coordinate frame.
+Note that here and elsewhere in the feature detection structures we employ
+single precision floating point in order to save memory and computation.
+The edge structures are designed to be placed into doubly linked <EM>strings</EM>
+of edges. The edge string is defined as
+<PRE>
+      /* Structure defining a connected string of edge features
+       */
+      typedef struct Gan_EdgeString
+      {
+         Gan_EdgeFeature *first, *last;
+         unsigned length;
+      } Gan_EdgeString;
+</PRE>
+The sense of the direction of the edge string is such that as you traverse the
+string from the <TT>first</TT> edge to the <TT>last</TT> edge, the brighter region
+is on the left. So if you are walking along the string from <TT>first</TT> to
+<TT>last</TT> and stick your left arm out sideways, it will point approximately
+in the edge direction (the <TT>angle</TT> field of a <TT>Gan_EdgeFeature</TT>).
+New edge detection algorithms should be written to conform to this convention,
+since the string direction is relevant to other procedures, such as
+finding line segments given an edge map as input.
+
+<P>
+The edgels and strings are built into an edge map structure as follows:
+<PRE>
+      /* Definition of 2D edge feature map structure */
+      typedef struct Gan_EdgeFeatureMap
+      {
+         unsigned nedges;       /* number of edge features stored */
+         Gan_EdgeFeature *edge; /* array of edge features */
+         unsigned max_nedges;   /* allocated limit on number of edge features */
+
+         unsigned nstrings;      /* number of connected edge strings stored */
+         Gan_EdgeString *string; /* array of connected strings of edges */
+         unsigned max_nstrings;  /* allocated limit on number of strings */
+      
+         /* dimensions of image region in which edge features have been computed */
+         unsigned height, width;
+
+         /* whether the following A, Ai fields are set */
+         Gan_Bool A_set;
+
+         /* transformation between region coordinates (0..width) and (0..height)
+            and edge coordinates, and its inverse */
+         Gan_Matrix23_f A, Ai;
+      
+         /* calibration structure defining camera used for non-linear distortion
+            correction */
+         Gan_Camera_f camera;
+
+         /* local blocked feature index map */
+         Gan_LocalFeatureMap local_fmap;
+
+         /* whether this structure was dynamically allocated */
+         Gan_Bool alloc;
+      } Gan_EdgeFeatureMap;
+</PRE>
+The fields are fairly self-explanatory. The <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> transformation matrix
+between local and user-defined global coordinates is defined by the <TT>A</TT>
+field. If it is not set (<TT>A_set</TT> having value <TT>GAN_FALSE</TT>) then
+the two coordinate systems are identical.
+
+<P>
+The most important function in this module sets up the edge feature map
+structure, a necessary precursor to filling it with edges. Here is in an
+example call to the routine.
+<PRE>
+      Gan_EdgeFeatureMap EdgeMap;
+
+      /* initialise edge map */
+      gan_edge_feature_map_form ( &amp;EdgeMap,
+                                  10000,   /* initial limit on number of edges */
+                                    500 ); /* initial limit on number of edge strings */
+</PRE>
+If the initially allocated number of edges or strings is exceeded,
+<TT>gan_realloc_array()</TT> is used to reallocate the array(s),
+so if you have no idea what reasonable initial limits should be,
+you can pass zero for either or both.
+
+<P>
+The edge detection algorithm will then add edges and strings to the edge map,
+using the functions
+<BR><TT>gan_edge_feature_add()</TT> and
+<TT>gan_edge_feature_string_add()</TT> defined in the <TT>edge_feature.[ch]</TT>
+module. To free the edge map afterwards, call
+<PRE>
+      /* free edge map */
+      gan_edge_feature_map_free ( &amp;EdgeMap );
+</PRE>
+The other low-level edge routines defined
+in the <TT>edge_feature.[ch]</TT> module are
+relevant only if you are developing your own edge detector; examples
+of their use can be found in the Canny edge detector code.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1896"
+  HREF="node118.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1892"
+  HREF="node115.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1886"
+  HREF="node116.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1894"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1897"
+  HREF="node118.html">Displaying an edge map</A>
+<B> Up:</B> <A NAME="tex2html1893"
+  HREF="node115.html">Feature detection</A>
+<B> Previous:</B> <A NAME="tex2html1887"
+  HREF="node116.html">Image feature coordinate frames</A>
+ &nbsp; <B>  <A NAME="tex2html1895"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

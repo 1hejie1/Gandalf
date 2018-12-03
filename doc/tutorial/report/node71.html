@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Accessing the elements of a general size matrix</TITLE>
+<META NAME="description" CONTENT="Accessing the elements of a general size matrix">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node72.html">
+<LINK REL="previous" HREF="node70.html">
+<LINK REL="up" HREF="node67.html">
+<LINK REL="next" HREF="node72.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1276"
+  HREF="node72.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1272"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1266"
+  HREF="node70.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1274"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1277"
+  HREF="node72.html">Copying a general size</A>
+<B> Up:</B> <A NAME="tex2html1273"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1267"
+  HREF="node70.html">Filling a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1275"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00422400000000000000">
+Accessing the elements of a general size matrix</A>
+</H3>
+To read the value of a specific element of a matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> use
+<PRE>
+      Gan_Matrix mA; /* matrix A */
+      double dEl;
+
+      /* ... create and fill matrix A ... */
+      dEl = gan_mat_get_el ( &amp;mA, 1, 2 ); /* returns A[1][2], A = (A[0][0] A[0][1] ... )
+                                                                  (A[1][0] A[1][1] ... )
+                                                                  (   :       :    ... ) */
+</PRE>
+This sets <TT>dEl</TT> to the third element of the second row of matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">.
+To set an element to a specific value use
+<PRE>
+      gan_mat_set_el ( &amp;mA, 0, 3, 3.0 ); /* sets A[0][3] to 3.0 */
+</PRE>
+This sets the fourth element of the first row of <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> to 3.
+There are also routines to increment or decrement an element of a matrix:
+<PRE>
+      gan_mat_inc_el ( &amp;mA, 0, 1, 2.5 ); /* A[0][1] += 2.5 */
+      gan_mat_dec_el ( &amp;mA, 3, 2, 5.0 ); /* A[3][2] -= 5.0 */
+</PRE>
+which respectively increment the second element of the first row of <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">
+by 2.5 and subtract 5 from the third element of the fourth row of <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$">.
+
+<P>
+For special square matrices there are equivalent routines which can be
+illustrated by the following code fragment.
+<PRE>
+      Gan_SquMatrix smA; /* matrix A */
+      double dEl;
+
+      /* ... create and fill matrix A ... */
+      dEl = gan_squmat_get_el ( &amp;smA, 1, 2 ); /* returns A[1][2] */
+      gan_squmat_set_el ( &amp;smA, 0, 3, 3.0 ); /* sets A[0][3] to 3.0 */
+      gan_squmat_inc_el ( &amp;smA, 0, 1, 2.5 ); /* A[0][1] += 2.5 */
+      gan_squmat_dec_el ( &amp;smA, 3, 2, 5.0 ); /* A[3][2] -= 5.0 */
+</PRE>
+
+<P>
+<B>Error detection:</B> <TT>gan_{squ}mat_set_el()</TT>,
+<TT>gan_{squ}mat_inc_el()</TT> and <TT>gan_{squ}mat_dec_el()</TT>
+all return boolean values, with <TT>GAN_FALSE</TT>
+returned on failure, in which case the Gandalf error handler is invoked.
+The most likely failure modes is accessing an element outside the bounds of
+the matrix, or seting an illegal element of a square matrix
+(e.g. an off-diagonal element of a diagonal matrix).
+If <TT>NDEBUG</TT> is set then no error checking is done.
+<TT>gan_{squ}mat_get_el()</TT> operate similarly, but return
+<TT>DBL_MAX</TT> on error.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1276"
+  HREF="node72.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1272"
+  HREF="node67.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1266"
+  HREF="node70.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1274"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1277"
+  HREF="node72.html">Copying a general size</A>
+<B> Up:</B> <A NAME="tex2html1273"
+  HREF="node67.html">General size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1267"
+  HREF="node70.html">Filling a general size</A>
+ &nbsp; <B>  <A NAME="tex2html1275"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

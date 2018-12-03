@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Computing a 2D homography from an array of feature matches</TITLE>
+<META NAME="description" CONTENT="Computing a 2D homography from an array of feature matches">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node111.html">
+<LINK REL="previous" HREF="node109.html">
+<LINK REL="up" HREF="node109.html">
+<LINK REL="next" HREF="node111.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1804"
+  HREF="node111.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1800"
+  HREF="node109.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1794"
+  HREF="node109.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1802"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1805"
+  HREF="node111.html">Computing a 2D affine</A>
+<B> Up:</B> <A NAME="tex2html1801"
+  HREF="node109.html">Computing a homography between</A>
+<B> Previous:</B> <A NAME="tex2html1795"
+  HREF="node109.html">Computing a homography between</A>
+ &nbsp; <B>  <A NAME="tex2html1803"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00631000000000000000">
+Computing a 2D homography from an array of feature matches</A>
+</H2>
+The above routines are designed for incremental computation of the homography
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img152.png"
+ ALT="$P$"> as more point/line feature matches become available. An alternative is
+to store all the feature matches in an array of match structures;
+indeed the array can in practice be the result of feature matching.
+The match structure defined here has the same match options as the above
+routines, encapsulated into the following enumerated type.
+<PRE>
+      /* type of matching feature when computing 2D homography */
+      typedef enum { GAN_HOMOG33_POINT, /* Match scene point to image point */
+                     GAN_HOMOG33_LINE, /* Match scene line to image line */
+                     GAN_HOMOG33_LINE_ENDPOINTS, /* Match scene line endpoints to
+                                                    image line */
+                     GAN_HOMOG33_IGNORE } /* rejected match */
+       Gan_Homog33MatchType;
+</PRE>
+where <TT>GAN_HOMOG33_IGNORE</TT> denotes a match that has been rejected.
+The match structure contains the details of the match:
+<PRE>
+      /* structure to hold details of scene and image data to be used in
+       * computing 2D homographies
+       */
+      typedef struct
+      {
+         Gan_Homog33MatchType type;
+         union
+         {
+            struct { Gan_Vector3 X, x; } p; /* point --&gt; point match */
+            struct { Gan_Vector3 L, l; } l; /* line --&gt; line match */
+            struct { Gan_Vector3 X1, X2, l; } le; /* line endpoints --&gt; line match */
+         } d;
+      } Gan_Homog33Match;
+</PRE>
+Given an array of the <TT>Gan_Homog33Match</TT> structures, you can compute
+the homography from scene to image by calling
+<PRE>
+      Gan_Homog33Match *aMatch;
+      unsigned uiNoMatches;
+      Gan_Matrix33 m33P;
+
+      /* ... create and fill array of matches, set uiNoMatches to the number
+             of structures in the array ... */
+
+      /* fit projective 2D homography */
+      gan_homog33_fit ( aMatch, uiNoMatches, &amp;m33P );
+</PRE>
+
+<P>
+<TT>Error detection:</TT> <TT>gan_homog33_fit()</TT> returns a boolean value;
+hence <TT>GAN_FALSE</TT> is returned on error and the Gandalf error handler
+is invoked.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

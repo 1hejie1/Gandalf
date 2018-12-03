@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Smoothing an image using a 1D convolution mask</TITLE>
+<META NAME="description" CONTENT="Smoothing an image using a 1D convolution mask">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node114.html">
+<LINK REL="previous" HREF="node112.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node114.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1838"
+  HREF="node114.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1834"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1828"
+  HREF="node112.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1836"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1839"
+  HREF="node114.html">Smoothing an image using</A>
+<B> Up:</B> <A NAME="tex2html1835"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1829"
+  HREF="node112.html">Computing a homography between</A>
+ &nbsp; <B>  <A NAME="tex2html1837"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00650000000000000000">
+Smoothing an image using a 1D convolution mask</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/vision/mask1D.h&gt;
+      #include &lt;gandalf/vision/convolve1D.h&gt;
+</PRE>
+This module deals with creating 1D convolution masks, used in Gandalf for
+convolving an image with a separable filter,
+which is a filter whose functional form can be factored into independent
+one-dimensional filters in the <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> and <IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img113.png"
+ ALT="$y$"> directions.
+2D Gaussian convolution, for instance, can be implemented using two
+1D convolutions in sequence, one in the <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> direction and one in the
+<IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img113.png"
+ ALT="$y$"> direction. In this case the 1D convolution mask would be symmetrical
+around zero. Convolution by a derivative of Gaussian filter is also
+separable, but in this case the derivative filter is antisymmetric.
+Knowledge of the specific shape of the filter can help improve the
+efficiency of the convolution, by reducing the number of required
+multiplications. Gandalf defines an enumerated type defining the shape
+of a convolution mask:
+<PRE>
+      /* format of convolution mask */
+      typedef enum { GAN_MASK1D_SYMMETRIC, GAN_MASK1D_ANTISYMMETRIC,
+                     GAN_MASK1D_GENERIC }
+         Gan_Mask1DFormat;
+</PRE>
+<TT>GAN_MASK1D_GENERIC</TT> should be used when the filter does not fit
+one of the special types. The following code creates a symmetrical
+convolution mask.
+<PRE>
+      Gan_Mask1D *pMask;
+
+      /* create symmetric 1D convolution mask */
+      pMask = *gan_mask1D_alloc ( GAN_MASK1D_SYMMETRIC, GAN_FLOAT, 9 );
+</PRE>
+This mask can be filled with data by directly accessing the <TT>data.f</TT>
+field of the mask structure, in this case an array of five <TT>float</TT>s
+containing the positive <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$"> half of the convolution mask.
+For Gaussian convolutions there is a
+function to create the mask and fill it with values:
+<PRE>
+      Gan_Mask1D *pMask;
+
+      /* create symmetric 1D convolution mask */
+      pMask = gan_gauss_mask_new ( GAN_FLOAT,
+                                   1.0, /* standard deviation of Gaussian */
+                                   9, /* size of mask */
+                                   1.0, /* scaling of values */,
+                                   NULL );
+</PRE>
+The convolution mask can then be applied to an image, using the
+following routines:
+<PRE>
+      Gan_Image *pOriginalImage; /* declare original image */
+      Gan_Image *pXSmoothedImage; /* declare image smoothed in x-direction */
+      Gan_Image *pXYSmoothedImage; /* declare image smoothed in x &amp; y directions */
+      Gan_Mask1D *pMask;
+
+      /* ... create and fill original image, create smoothed images, and
+             build Gaussian convolution mask ... */
+
+      /* apply smoothing in the x direction */
+      gan_image_convolve1Dx_q ( pOriginalImage, GAN_INTENSITY_CHANNEL,
+                                pMask, pXSmoothedImage );
+
+      /* apply smoothing in the y direction */
+      gan_image_convolve1Dy_q ( pXSmoothedImage, GAN_INTENSITY_CHANNEL,
+                                pMask, pXYSmoothedImage );
+</PRE>
+The second <TT>Gan_ImageChannelType</TT> argument allows you to selectively
+convolve a single channel of a multi-channel image,
+such as an RGB colout image.
+The result of this pair of 1D convolutions is a 2D Gaussian image convolution
+(they could be applied in the reverse order to achieve the same result).
+The convolution is computed only where all the pixels within the mask
+are available, so, for instance, convolution in the <IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$x$">-direction with
+a Gaussian mask of size nine reduces the width of the result image by eight
+pixels.
+
+<P>
+There are also functions to compute the convolved images without first
+creating them:
+<PRE>
+      /* apply smoothing in the x direction */
+      pXSmoothedImage = gan_image_convolve1Dx_s ( pOriginalImage, GAN_INTENSITY_CHANNEL,
+                                                  pMask );
+
+      /* apply smoothing in the y direction */
+      pXYSmoothedImage = gan_image_convolve1Dy_s ( pXSmoothedImage, GAN_INTENSITY_CHANNEL,
+                                                   pMask );
+</PRE>
+To free a convolution mask use the function
+<PRE>
+      gan_mask1D_free ( pMask );
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1838"
+  HREF="node114.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1834"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1828"
+  HREF="node112.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1836"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1839"
+  HREF="node114.html">Smoothing an image using</A>
+<B> Up:</B> <A NAME="tex2html1835"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html1829"
+  HREF="node112.html">Computing a homography between</A>
+ &nbsp; <B>  <A NAME="tex2html1837"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

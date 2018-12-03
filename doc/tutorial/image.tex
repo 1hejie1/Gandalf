@@ -1,0 +1,1505 @@
+\chapter{The Image Package} \label{image-chapter}
+The {\bf image} package covers images of all formats and types, and defines
+low-level image manipulation routines.
+To be able to use any routine or structure in the image package
+use the declaration
+\begin{verbatim}
+      #include <gandalf/image.h>
+\end{verbatim}
+but including individual module header files instead will speed up program
+compilation.
+
+\section{Image formats and types} \label{formats-types-sec}
+Gandalf distinguishes between the external {\tt file} format of an image
+and the an internal image format used by Gandalf to represent the image data.
+The former is often used to select the latter, but it is important to
+separate the two. The available internal Gandalf image formats are defined
+by the {\tt Gan\_ImageFormat} enumerated type, found
+in {\tt <gandalf/image/pixel.h>}:
+\begin{verbatim}
+      typedef enum { GAN_GREY_LEVEL_IMAGE,       /* grey-level images */
+                     GAN_GREY_LEVEL_ALPHA_IMAGE, /* grey-level images with alpha
+                                                    channel */
+                     GAN_RGB_COLOUR_IMAGE,       /* RGB colour images */
+                     GAN_RGB_COLOUR_ALPHA_IMAGE, /* RGB colour images with alpha
+                                                    channel */
+                     GAN_VECTOR_FIELD_2D,        /* 2D image of 2D vectors */
+                     GAN_VECTOR_FIELD_3D }       /* 2D image of 3D vectors */
+        Gan_ImageFormat;
+\end{verbatim}
+The formats are (hopefully) self-explanatory, and allow Gandalf to represent
+most useful kinds of image data. Along with the format there is also an
+image {\bf type}, which determines what type of data is stored in each pixel
+of the image. The {\tt Gan\_Type} enumerated type is used to distinguish
+the image type. It allows for instance boolean, unsigned character, short
+integer or floating point types to be defined, and is described in
+Section~\ref{simple-types-sec}.
+Note that not all types are supported by each format.
+For instance boolean images ({\tt GAN\_BOOL} type) are only supported as
+grey-level format images (format {\tt GAN\_GREY\_LEVEL\_IMAGE}), and
+the vector field formats {\tt GAN\_VECTOR\_FIELD\_2D} and
+{\tt GAN\_VECTOR\_FIELD\_3D} are currently supported only for signed types.
+Support for extra types can be added when required.
+
+There is also a structure to represent a rectangular sub-window of an
+image, useful in many situations:
+\begin{verbatim}
+      /* Definition of a rectangular sub-part of an image.
+       */
+      typedef struct Gan_ImageWindow
+      {
+         /* offset of window relative to top-left corner of the image */
+         unsigned c0, r0;
+
+         /* dimensions of window */
+         unsigned width, height;
+      } Gan_ImageWindow;
+\end{verbatim}
+
+Apart from the standard simple C types, boolean and pointer image types are
+supported. These are described in Sections~\ref{binary-image-sec}
+and~\ref{pointer-image-sec}.
+
+\section{Simple image/pixel routines} \label{simple-image-sec}
+To minimise computational overheads, Gandalf provides a common set
+of low level image and pixel handling routines specific to each
+supported format and type of image. We will illustrate the routines with
+reference to two representative examples:
+\begin{enumerate}
+  \item Grey-level signed short integer images. The format here is
+	{\tt GAN\_GREY\_LEVEL\_IMAGE}, and the type is {\tt GAN\_SHORT}.
+	To use the routines specific to this format and type use the
+	header file
+	\begin{verbatim}
+      #include <gandalf/image/image_gl_short.h>
+	\end{verbatim}
+  \item RGB colour unsigned character images. The format here is
+	{\tt GAN\_RGB\_COLOUR\_IMAGE}, and the type is {\tt GAN\_UCHAR}.
+	To use the routines specific to this format and type use the
+	header file
+	\begin{verbatim}
+      #include <gandalf/image/image_rgb_uchar.h>
+	\end{verbatim}
+\end{enumerate}
+We need to use two examples because the way that pixels are handled for
+simple grey-level images is different to RGB colour and other image formats,
+since in the latter and related formats (every format except grey-level)
+a pixel is represented as a structure rather than a simple C object.
+
+There are also higher level routines that work with all the formats and
+types, accessible through the header file.
+\begin{verbatim}
+      #include <gandalf/image/image_rgb_uchar.h>
+\end{verbatim}
+Examples of these are also provided in the following sections.
+
+\subsection{Image creation/destruction}
+In the same manner as the general size matrix/vector package, Gandalf images
+can be represented either using structures or pointers to structures.
+The normal Gandalf convention is to use pointers, because images are
+relatively large objects, and the extra overhead of having to use
+{\tt malloc()} to create the image structure is insignificant relative to
+the computation time needed to process the image. We will follow this
+convention, but bear in mind that either convention is possible.
+To create a grey-level short integer image, use the routine
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      pImage = gan_image_alloc_gl_s ( 150, 100 );
+\end{verbatim}
+This creates an image with dimensions 150 (height) by 100 (width).
+The same operation using an image structure rather than a pointer would be
+\begin{verbatim}
+      Gan_Image Image;
+
+      gan_image_form_gl_s ( &Image, 150, 100 );
+\end{verbatim}
+To free the image, use
+\begin{verbatim}
+      gan_image_free ( pImage ); /* OR */
+      gan_image_free ( &Image );
+\end{verbatim}
+This function can be used universally to free a Gandalf image created in
+any of the ways described here.
+
+Sometimes the image data array is already present in memory, and we want
+to create a Gandalf image that points to the data. Let us assume that the
+data for a $256\times 256$ pixel grey-level short integer image is available
+in an array {\tt asData}. Assume for now that it is a contiguous array,
+stored with rows following rows consecutively without any gaps, i.e. an
+array of 65536 elements. Then to build a Gandalf image that points into
+this data we might use the code
+\begin{verbatim}
+      short asData[65536];
+
+      /* ... set up array asData with image data ... */
+      pImage = gan_image_alloc_data_gl_s ( 256, 256, 256*sizeof(short),
+                                           asData, 65536, NULL, 0 ); /* OR */
+      gan_image_form_data_gl_s ( &Image, 256, 256, 256*sizeof(short),
+                                 asData, 65536, NULL, 0 );
+\end{verbatim}
+After the height and width arguments is a ``stride'' argument, which indicates
+the separation in memory between adjacent rows of the image, as stored in
+the {\tt asData} array. Here it is 256 pixels (the image width), but since
+stride is measured in bytes, we need to multiply by the pixel size, as here.
+The data array {\tt asData} is passed in along with its size in pixels (65536).
+The size is passed mainly as a means of error checking: if the requested
+Gandalf image as defined by the height, width and stride were to exceed the
+size of the data array, it would be an error, the Gandalf error handler
+would be invoked, and {\tt NULL} would be returned. Here the data array size
+and the image size match exactly. The final two arguments allow the programmer
+also to pass in an array of {\em row pointers} which point into the start
+of each row of the image. Here we pass {\tt NULL} for the row pointers, which
+means that they will be allocated inside the function.
+
+Note that the {\tt Gan\_Image} structure stores the information concerning
+which parts of the structure were dynamically allocated: the structure itself,
+the image data array and the row pointer array. {\tt gan\_image\_free()}
+then knows which bits to free.
+
+A slightly more complex example is when the rows of the image as stored
+in the data array are not contiguous in memory. This might happen for
+instance in frame-grabber (video) memory, where the hardware might restrict
+the stride to a fixed number of bytes, say 1024. We shall also provide
+an array of row pointers to the image creation function. Then we would have to
+call the above functions as follows:
+\begin{verbatim}
+      short *psData, *apRowPointer[256];
+
+      /* ... set psData to point to video memory ... */
+      pImage = gan_image_alloc_data_gl_s ( 256, 256, 1024,
+                                           asData, 65536, apRowPointer, 256 ); /* OR */
+      gan_image_form_data_gl_s ( &Image, 256, 256, 256*sizeof(short),
+                                 asData, 131072, apRowPointer, 256 );
+\end{verbatim}
+Here we assume that {\tt short}s are 2 bytes. These function calls will
+set the Gandalf image to point directly into the video memory, so that
+if desired the image stored may be copied for further processing (see below)
+or processed directly.
+
+For RGB unsigned character images, the function calls would be similar:
+\begin{verbatim}
+      Gan_Image *pImage, Image;
+      Gan_RGBPixel_uc argbucData[65536];
+
+      pImage = gan_image_alloc_rgb_uc ( 150, 100 ); /* OR */
+      gan_image_form_rgb_uc ( &Image, 150, 100 ); /* OR */
+
+      /* ... set up array aucData with image data ... */
+      pImage = gan_image_alloc_data_rgb_uc ( 256, 256, 256*sizeof(unsigned char),
+                                             argbucData, 65536, NULL, 0 ); /* OR */
+      gan_image_form_data_rgb_uc ( &Image, 256, 256, 256*sizeof(unsigned char),
+                                   argbucData, 65536, NULL, 0 );
+\end{verbatim}
+For RGB and other similar formats, Gandalf assumes that the channels for
+each pixel are grouped in memory, so that a pixel can be represented as
+a structure, rather than the channels being stored in separate arrays.
+For RGB unsigned character images, the pixel structure is
+{\tt Gan\_RGBPixel\_uc}, as defined in {\tt <gandalf/image/pixel.h>}:
+\begin{verbatim}
+      /* Structure defining RGB colour unsigned character pixel
+       */
+      typedef struct Gan_RGBPixel_uc
+      {
+         unsigned char R, G, B;
+      } Gan_RGBPixel_uc;
+\end{verbatim}
+A different structure type is defined for each image format
+(apart from grey-level) and type.
+
+There are also higher level functions which create a Gandalf images using
+arguments to determine the format and type. Use these functions only if
+the format/type is determined at run-time. An example emulating the above
+examples for grey-level images is
+\begin{verbatim}
+      Gan_Image *pImage, Image;
+
+      pImage = gan_image_alloc ( GAN_GREY_LEVEL_IMAGE, GAN_SHORT, 150, 100 ); /* OR */
+      gan_image_form ( &Image, GAN_GREY_LEVEL_IMAGE, GAN_SHORT, 150, 100 );
+\end{verbatim}
+
+{\bf Error detection:} All the above routines return {\tt NULL} and invoke the
+Gandalf error handler if they fail. The most likely failure modes are failing
+to allocate the data required (i.e. internal {\tt malloc()} or {\tt realloc()}
+calls failing), or passing too small an array into the
+{\tt ...\_alloc\_data...()} or  {\tt ...\_form\_data...()} routines.
+
+\section{Image file I/O}
+\begin{verbatim}
+      #include <gandalf/image/io/image_io.h>
+\end{verbatim}
+Currently Gandalf supports six image file formats: PNG, PBM, PGM, PPM, TIFF
+and JPEG. These are described by the\\ {\tt Gan\_ImageFormat} enumerated type:
+\begin{verbatim}
+      /* image file formats supported by Gandalf */
+      typedef enum
+      {
+         GAN_PNG_FORMAT,  /**< PNG image format */
+         GAN_PBM_FORMAT,  /**< Portable bitmap image format */
+         GAN_PGM_FORMAT,  /**< Portable greymap image format */
+         GAN_PPM_FORMAT,  /**< Portable pixmap image format */
+         GAN_TIFF_FORMAT, /**< TIFF image format */
+         GAN_JPEG_FORMAT, /**< JPEG image format */
+         GAN_UNKNOWN_FORMAT /**< Unknown Image Format */
+      } Gan_ImageFileFormat;
+\end{verbatim}
+PBM, PGM and PPM are very simple formats, for boolean, grey-level and
+RGB colour image formats respectively, and the code to implement I/O in those
+formats is built into Gandalf, although currently only binary file formats
+are supported. PNG, TIFF and JPEG formats are considerably
+more complex, and require specific libraries to be installed.
+The Gandalf {\tt configure} script detects the presence of the PNG,
+TIFF and JPEG libraries, and only compiles
+in the I/O code for those formats when the relevant libraries
+are detected on the host system.
+
+The {\tt image\_io.h} header file contains declaration of the basic
+image I/O functions. To read a image from a PNG image file, for instance,
+you can use the code
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      /* read the image from a file in PNG format */
+      pImage = gan_image_read ( "image1.png", GAN_PNG_FORMAT, NULL );
+\end{verbatim}
+The first argument is the file name, the second the file format (Gandalf
+doesn't currently support automatic file format determination via magic
+numbers. Who wants to volunteer?). The last argument is either a pointer
+to an already created image structure or {\tt NULL}, as here. In the latter
+case the image is created inside the {\tt gan\_image\_read()} function
+and returned.
+
+To write an RGB unsigned character image to a PNG file you could write
+\begin{verbatim}
+      Gan_Image *pRGBImage;
+
+      /* ... create and fill RGB unsigned character image ... */
+
+      /* output the image to a file in PNG format */
+      gan_image_write ( "image1.png", GAN_PNG_FORMAT, pRGBImage, 0.0 );
+\end{verbatim}
+We recommend that where possible you should use the PNG format. It is the
+most flexible of the formats supported by Gandalf, allowing alpha channels
+to be stored with the image, and also supporting binary images. PPM images
+are restricted to unsigned character type ({\tt GAN\_UCHAR}), while
+PGM format supports unsigned character and binary ({\tt GAN\_BOOL}) type.
+However the binary support in PGM files is very inefficient, storing
+one byte per pixel, so again PNG is the better format.
+
+\subsection{Setting an image to a new format, type and dimensions}
+Once an image has been created with a certain format, type, width and height,
+that is not the end of the matter. In a similar manner to the Gandalf
+general size vectors and matrices, the format, type and dimensions of a
+Gandalf image may be changed an arbitrary number of times. Gandalf will
+reallocate the image data array and row pointer array as necessary,
+as the internal attributes of the image are changed. However note that
+if the image data array or row pointer array is passed in by the
+user program, as in {\tt gan\_image\_alloc\_data\_gl\_short()} above,
+The provided array(s) cannot be reallocated, so care should be taken
+never to attempt to set format/type/dimensions that cause the array bounds
+to be exceeded.
+
+Let us take one of the above examples and modify it a bit.
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      /* create image */
+      pImage = gan_image_alloc_gl_s ( 150, 100 );
+
+      /* convert an existing image to new format, type & dimensions */
+      gan_image_set_rgb_uc ( pImage, 300, 200 );
+\end{verbatim}
+This code fragment allocates an image as a $150\times 100$ grey-level short
+integer image, and then converts it into a $300\times 200$ RGB unsigned
+character image. This feature allows the same image to be used as the
+result of several different computations, easing the burden of keeping
+track of a large number of images, as well as potentially saving memory.
+
+There are also higher level functions that set an image to a format,
+type and dimensions all selected by variables. For instance
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      /* create image */
+      pImage = gan_image_alloc_gl_s ( 150, 100 );
+
+      /* convert an existing image to new format, type & dimensions */
+      gan_image_set_format_type_dims ( pImage, GAN_VECTOR_FIELD_2D, GAN_FLOAT,
+                                       200, 50 );
+\end{verbatim}
+sets the image {\tt pImage} to be a 2D vector field (2D image of 2-vectors),
+float type and dimensions 200 by 50. There are also routines for setting
+the format, type or dimensions, leaving the other attributes fixed.
+So for instance
+\begin{verbatim}
+      gan_image_set_format_type ( pImage, GAN_VECTOR_FIELD_2D, GAN_FLOAT );
+\end{verbatim}
+sets just the format and type of the image, leaving the dimensions unchanged,
+while
+\begin{verbatim}
+      gan_image_set_type ( pImage, GAN_FLOAT );
+\end{verbatim}
+sets only the image type, leaving the format and dimensions unchanged.
+Finally
+\begin{verbatim}
+      gan_image_set_dims ( pImage, 200, 50 );
+\end{verbatim}
+changes only the image dimensions.
+
+{\bf Error detection:} All the above routines return {\tt NULL} and invoke the
+Gandalf error handler if they fail. The most likely failure mode is failing
+to reallocate the image data, i.e. an internal {\tt realloc()} call failing.
+
+\subsection{Accessing single pixels}
+To return the value of a single image pixel use
+\begin{verbatim}
+      Gan_Image *pImage;
+      short sPixel;
+
+      /* ... create and fill grey-level short integer image pImage ... */
+      sPixel = gan_image_get_pix_gl_s ( pImage, 33, 40 );
+\end{verbatim}
+This returns the pixel value at row position 33 and column position 40
+(starting from zero). The RGB colour version would be
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc rgbucPixel;
+
+      /* ... create and fill RGB colour unsigned character image pImage ... */
+      rgbucPixel = gan_image_get_pix_rgb_uc ( pImage, 33, 40 );
+\end{verbatim}
+
+An alternative is to return a pointer to a pixel. This operation is available
+for every type and format of image except binary images, which are stored
+packed with 32 or 64 pixels to a memory word. To return a pointer to the
+above pixels you would use
+\begin{verbatim}
+      Gan_Image *pImage;
+      short *psPixel;
+
+      /* ... create and fill grey-level short integer image pImage ... */
+      psPixel = gan_image_get_pixptr_gl_s ( pImage, 33, 40 );
+\end{verbatim}
+for a grey-level image, or
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc *prgbucPixel;
+
+      /* ... create and fill RGB colour unsigned character image pImage ... */
+      prgbucPixel = gan_image_get_pixptr_rgb_uc ( pImage, 33, 40 );
+\end{verbatim}
+for an RGB colour image. This type of image access is useful when you want
+to read or set a lot of consecutive pixels on a row of an image, since you
+can use the returned pointer as a starting point. For instance the code
+fragment
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc *prgbucPixel, rgbucZeroPixel = {0,0,0};
+      int iCount;
+
+      /* ... create and fill RGB colour unsigned character image pImage ... */
+      prgbucPixel = gan_image_get_pixptr_rgb_uc ( pImage, 33, 40 );
+      for ( iCount = 4; iCount >= 0; iCount-- )
+         *prgbucPixel++ = rgbucZeroPixel;
+\end{verbatim}
+sets the five RGB pixels at positions (33,40-44) to zero.
+
+To set a pixel in a grey-level short integer image to a particular value, use
+the routine
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      /* ... create grey-level short integer image pImage ... */
+      gan_image_set_pix_gl_s ( pImage, 33, 40, 123 );
+\end{verbatim}
+This sets the pixel value at position 33, 40 to value 123. For an RGB unsigned
+character image you would use the code
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc rgbucPixel = {12, 13, 14};
+
+      /* ... create RGB colour unsigned character image pImage ... */
+      gan_image_set_pix_rgb_uc ( pImage, 33, 40, &rgbucPixel );
+\end{verbatim}
+This builds a pixel with RGB values 12 (red), 13 (green), 14 (blue) and
+sets the pixel at position 33, 40 to that RGB value.
+
+With {\tt NDEBUG} set these routines evaluate to macros which implement
+direct memory access, so there is no efficiency advantage to be gained
+from using other methods of accessing individual image pixels.
+
+The higher level routines for accessing single pixels use the {\tt Gan\_Pixel}
+structure, which can be used to store data for a single pixel of any format
+and type. The {\tt Gan\_Pixel} structure stores the format and type of the
+pixel internally, and is defined in {\tt <gandalf/image/pixel.h>}:
+\begin{verbatim}
+      /* structure definition for image pixel of any format or type */
+      typedef struct Gan_Pixel
+      {
+         /// format of image: grey-level, RGB colour etc.
+         Gan_ImageFormat format;
+
+         /// type of pixel values: unsigned char, float etc.
+         Gan_Type type;
+
+         /// nested union defining pixel types
+         union
+         {
+            /// grey level
+            union
+            {
+               unsigned char  uc;
+               short          s;
+               unsigned short us;
+               int            i;
+               unsigned int   ui;
+               double         d;
+               float          f;
+               Gan_Bool       b;
+               void          *p;
+
+      #ifdef GAN_UINT8
+               gan_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               gan_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               gan_ui32 ui32;
+      #endif
+            } gl;
+
+            /// grey level with alpha channel
+            union
+            {
+               Gan_GLAPixel_uc uc;
+               Gan_GLAPixel_s  s;
+               Gan_GLAPixel_us us;
+               Gan_GLAPixel_i  i;
+               Gan_GLAPixel_ui ui;
+               Gan_GLAPixel_d  d;
+               Gan_GLAPixel_f  f;
+
+      #ifdef GAN_UINT8
+               Gan_GLAPixel_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               Gan_GLAPixel_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               Gan_GLAPixel_ui32 ui32;
+      #endif
+            } gla;
+
+            /// RGB colour
+            union
+            {
+               Gan_RGBPixel_uc uc;
+               Gan_RGBPixel_s  s;
+               Gan_RGBPixel_us us;
+               Gan_RGBPixel_i  i;
+               Gan_RGBPixel_ui ui;
+               Gan_RGBPixel_d  d;
+               Gan_RGBPixel_f  f;
+
+      #ifdef GAN_UINT8
+               Gan_RGBPixel_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               Gan_RGBPixel_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               Gan_RGBPixel_ui32 ui32;
+      #endif
+            } rgb;
+
+            /// RGB colour with alpha channel
+            union
+            {
+               Gan_RGBAPixel_uc uc;
+               Gan_RGBAPixel_s  s;
+               Gan_RGBAPixel_us us;
+               Gan_RGBAPixel_i  i;
+               Gan_RGBAPixel_ui ui;
+               Gan_RGBAPixel_d  d;
+               Gan_RGBAPixel_f  f;
+
+      #ifdef GAN_UINT8
+               Gan_RGBAPixel_ui8 ui8;
+      #endif
+      #ifdef GAN_UINT16
+               Gan_RGBAPixel_ui16 ui16;
+      #endif
+      #ifdef GAN_UINT32
+               Gan_RGBAPixel_ui32 ui32;
+      #endif
+            } rgba;
+
+            /// 2D vector field
+            union
+            {
+               Gan_Vector2_f f;
+               Gan_Vector2   d;
+               Gan_Vector2_s s;
+               Gan_Vector2_i i;
+            } vfield2D;
+
+            /// 3D vector field
+            union
+            {
+               Gan_Vector3_f f;
+               Gan_Vector3   d;
+               Gan_Vector3_s s;
+               Gan_Vector3_i i;
+            } vfield3D;
+         } data;
+      } Gan_Pixel;
+\end{verbatim}
+The {\tt Gan\_Pixel} structure should be accessed directly. There are no
+Gandalf access routines for it. The doubly nested union contains a structure
+for each Gandalf image format and type. These structures are also defined
+in the {\tt pixel.h} header file. We have seen the definition of the
+{\tt Gan\_RGBPixel\_uc} structure above, and the other structures are
+defined similarly. For instance the pixel to represent a single-precision
+floating point RGB pixel with alpha channel is
+\begin{verbatim}
+      /**
+       * \brief Structure defining RGB single precision floating point pixel with alpha channel.
+       */
+      typedef struct Gan_RGBAPixel_f
+      {
+         float R, /**< Red channel */
+               G, /**< Green channel */
+               B, /**< Blue channel */
+               A; /**< Alpha channel */
+      } Gan_RGBAPixel_f;
+\end{verbatim}
+Note that the vector field pixels use Gandalf fixed size vectors to hold
+the image data.
+
+To set/get a pixel in an image using the higher level routines
+{\tt gan\_image\_set\_pix()} and {\tt gan\_image\_get\_pix()},
+look at the following code fragment.
+\begin{verbatim}
+      Gan_Image *pImage;
+      int iRow, iCol;
+      Gan_Pixel Pixel;
+
+      /* create grey-level signed short image */
+      pImage = gan_image_alloc_gl_s ( 200, 100 );
+
+      /* set up pixel format and type */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_SHORT;
+
+      /* fill image with ramp data */
+      for ( iRow = (int)pImage->height-1; iRow >= 0; iRow-- )
+         for ( iCol = (int)pImage->width-1; iCol >= 0; iCol-- )
+         {
+            /* set pixel data */
+            Pixel.data.gl.s = iRow+iCol;
+
+            /* fill pixel in image. The format and type of the pixel should
+               be the same as that of the image */
+            gan_image_set_pix ( pImage, iRow, iCol, &Pixel );
+         }
+
+      /* print pixel value, should be 27+35 = 62 */
+      Pixel = gan_image_get_pix ( pImage, 27, 35 );
+      printf ( "pixel value = %d\n", Pixel.data.gl.s );
+\end{verbatim}
+Here we created an image, filled it with ``ramp'' data that linearly
+increases the grey-level value with the row and column coordinates of the
+image, and extract a single pixel. For an RGB image we could add the
+following code:
+\begin{verbatim}
+      /* convert the image to RGB format and unsigned character type */
+      gan_image_set_rgb_uc ( pImage, 100, 50 );
+
+      /* set up pixel format and type */
+      Pixel.format = GAN_RGB_COLOUR_IMAGE;
+      Pixel.type = GAN_UCHAR;
+
+      /* fill image with ramp data */
+      for ( iRow = (int)pImage->height-1; iRow >= 0; iRow-- )
+         for ( iCol = (int)pImage->width-1; iCol >= 0; iCol-- )
+         {
+            /* set pixel data */
+            Pixel.data.rgb.uc.R = iRow+iCol;
+            Pixel.data.rgb.uc.G = iRow;
+            Pixel.data.rgb.uc.B = iCol;
+
+            /* fill pixel in image. The format and type of the pixel should
+               be the same as that of the image */
+            gan_image_set_pix ( pImage, iRow, iCol, &Pixel );
+         }
+
+      /* print pixel value, should be R=37+11=48, G=37, B=11 */
+      Pixel = gan_image_get_pix ( pImage, 37, 11 );
+      printf ( "pixel value R=%d G=%d B=%d\n",
+               Pixel.data.rgb.uc.R, Pixel.data.rgb.uc.G, Pixel.data.rgb.uc.B );
+\end{verbatim}
+
+If you have a {\tt Gan\_Pixel} structure in a different format/type to the
+image, use {\tt gan\_image\_convert\_pixel\_[qsi]()} to convert
+it to the format \& type of the image before calling
+{\tt gan\_image\_set\_pix()}. See Section~\ref{convert-pixel-sec} for
+details.
+
+{\bf Error detection:} The {\tt ..\_get\_pix...()} routines cannot return
+an error condition. Instead they invoke\\ {\tt gan\_assert()}
+(see Section~\ref{debugging-tools-sec}) to check for errors, which aborts the
+program if an error is found. The\\ {\tt ...\_set\_pix...()} routines return
+a boolean value, returning {\tt GAN\_TRUE} on success, invoking the
+Gandalf error handler and returning {\tt GAN\_FALSE} on failure.
+The most likely failure modes are accessing a pixel outside the image
+(both {\tt ...\_get\_pix...()} and {\tt ...\_set\_pix...()}) and
+mismatch between image and pixel format/type ({\tt ...\_set\_pix...()} only).
+These errors are program bugs rather than data-dependent errors, so
+using {\tt gan\_assert()} to handle errors is fairly safe.
+
+\subsection{Filling an image with a constant value}
+To fill a grey-level image with a constant value use this routine:
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      /* create grey-level signed short image */
+      pImage = gan_image_alloc_gl_s ( 200, 100 );
+
+      /* fill with constant */
+      gan_image_fill_const_gl_s ( pImage, 23 );
+\end{verbatim}
+which fills each pixel with the value 23. For other formats of image
+you will need to build a structure of the relevant type, for instance
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_RGBPixel_uc rgbucPixel;
+
+      /* create RGB unsigned character image */
+      pImage = gan_image_alloc_rgb_uc ( 200, 100 );
+
+      /* set up pixel */
+      rgbucPixel.R = 34;
+      rgbucPixel.G =  2;
+      rgbucPixel.B = 65;
+
+      /* fill with constant RGB value */
+      gan_image_fill_const_rgb_uc ( pImage, &rgbucPixel );
+\end{verbatim}
+
+Higher level routines are available using the {\tt Gan\_Pixel} structure:
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_Pixel Pixel;
+
+      /* create RGBA single precision floating point image */
+      pImage = gan_image_alloc_rgba_f ( 200, 100 );
+
+      /* set up pixel */
+      Pixel.format = GAN_RGB_COLOUR_ALPHA_IMAGE;
+      Pixel.type = GAN_FLOAT;
+      Pixel.data.rgba.f.R = 0.1F;
+      Pixel.data.rgba.f.G = 0.2F;
+      Pixel.data.rgba.f.B = 0.3F;
+      Pixel.data.rgba.f.A = 0.4F;
+
+      /* fill with constant RGBA value. The format & type of the pixel and
+         image should match */
+      gan_image_fill_const ( pImage, &Pixel );
+\end{verbatim}
+
+If the {\tt Gan\_Pixel} structure has a different format/type to the
+image, use {\tt gan\_image\_convert\_pixel\_[qsi]()} to convert
+it to the format \& type of the image before calling
+{\tt gan\_image\_fill\_const()}. See Section~\ref{convert-pixel-sec} for
+details.
+
+There is a special function {\tt gan\_image\_fill\_zero()} to fill an image
+with zero, whatever format and type it has:
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      /* create RGBA single precision floating point image */
+      pImage = gan_image_alloc_rgba_f ( 200, 100 );
+
+      /* set all image pixels to zero */
+      gan_image_fill_zero ( pImage );
+\end{verbatim}
+
+For boolean images (Section~\ref{binary-image-sec}), ``zero'' is interpreted
+as false ({\tt GAN\_FALSE}), and for pointer images
+(Section~\ref{pointer-image-sec}) ``zero'' means {\tt NULL}.
+To fill a single pixel with zero, use
+\begin{verbatim}
+      /* set a single pixel at position row=10, column=21 to zero */
+      gan_image_set_pix_zero ( pImage, 10, 21 );
+\end{verbatim}
+
+There are also routines to fill a rectangular sub-region of an image,
+either with a constant value or zero:
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_Pixel Pixel;
+
+      /* create grey-level signed short image */
+      pImage = gan_image_alloc_gl_s ( 200, 100 );
+
+      /* set pixels in 30x40 (heightxwidth) pixel region starting at position
+         100,30 (row,column) to constant value 125 */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_SHORT;
+      Pixel.data.gl.s = 125;
+      gan_image_fill_const_window ( pImage, 100, 30, 30, 40, &Pixel );
+
+      /* reset image to RGB unsigned character */
+      gan_image_set_rgb_uc ( pImage, 100, 50 );
+
+      /* set pixels in 20x15 (heightxwidth) pixel region starting at position
+         10,35 (row,column) to zero */
+      gan_image_fill_zero_window ( pImage, 10, 35, 20, 15 );
+\end{verbatim}
+
+{\bf Error detection:} The image filling routines return a boolean value,
+so a return value of {\tt GAN\_FALSE} indicates failure, with the Gandalf
+error handling module being invoked.
+
+\subsection{Converting a pixel to a given format/type}
+\label{convert-pixel-sec}
+Gandalf routines taking {\tt Gan\_Pixel} structure pointers as arguments,
+such as {\tt gan\_image\_fill\_const()}, require that the format and type
+of the pixel and image arguments match. This can be done by using the
+routines in this section. To convert a pixel to a specific format and type
+use the routine
+\begin{verbatim}
+      Gan_Pixel Pixel1, Pixel2; /* declare pixels 1 & 2 */
+
+      /* let's initialise pixel 1 to a grey-level unsigned character value */
+      Pixel1.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel1.type = GAN_UCHAR;
+      Pixel1.data.gl.uc = 255;
+
+      /* now convert pixel to RGB format and floating point type */
+      gan_image_convert_pixel_q ( &Pixel1, GAN_RGB_COLOUR_IMAGE, GAN_FLOAT,
+                                  &Pixel2 );
+
+      /* print new pixel value, which should be R=G=B=1 */
+      printf ( "pixel RGB value %f %f %f\n", Pixel2.data.rgb.f.R,
+               Pixel2.data.rgb.f.G, Pixel2.data.rgb.f.B );
+\end{verbatim}
+Another version of this function returns the result as a new pixel:
+\begin{verbatim}
+      /* convert pixel to RGB format and floating point type */
+      Pixel2 = gan_image_convert_pixel_s ( &Pixel1, GAN_RGB_COLOUR_IMAGE, GAN_FLOAT );
+\end{verbatim}
+There is also a routine that converts the format and type in-place in the
+input pixel:
+\begin{verbatim}
+      /* convert pixel to RGB format and floating point type in-place */
+      gan_image_convert_pixel_i ( &Pixel1, GAN_RGB_COLOUR_IMAGE, GAN_FLOAT );
+\end{verbatim}
+
+\section{Binary images} \label{binary-image-sec}
+\begin{verbatim}
+      #include <gandalf/image/image_bit.h>
+\end{verbatim}
+Gandalf binary images support compact storage of an array of boolean values.
+Binary images have format {\tt GAN\_GREY\_LEVEL\_IMAGE} and type
+{\tt GAN\_BOOL}. The complete set of functions described above is
+available for binary images, as well as other special functions.
+Here is an illustration of using the standard routines.
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_Pixel Pixel;
+
+      /* allocate 300x200 binary image, and initialise all values to
+         zero (false) */
+      pImage = gan_image_alloc_b ( 300, 200 );
+      gan_image_fill_zero(pImage);
+
+      /* fill rectangular region of image with ones (true) */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_BOOL;
+      Pixel.data.gl.b = GAN_TRUE;
+      gan_image_fill_const_window ( pImage, 120, 100, 40, 30, &Pixel );
+
+      /* reset size of image and fill with zero again */
+      gan_image_set_b ( pImage, 400, 600 );
+      gan_image_fill_zero(pImage);
+
+      /* set some other pixels to one (true) */
+      gan_image_set_pix_b ( pImage, 250,   4, GAN_TRUE );
+      gan_image_set_pix_b ( pImage,  50, 140, GAN_TRUE );
+      gan_image_set_pix_b ( pImage, 150,  40, GAN_TRUE );
+
+      /* free image */
+      gan_image_free ( pImage );
+\end{verbatim}
+
+Several other routines are provided for binary images. Firstly there is
+a routine to return the ``active'' region of an image, defined as the
+bounding box around the pixels set to one:
+\begin{verbatim}
+      Gan_ImageWindow SubWindow;
+
+      /* ... set pImage as a binary image with ones and zeros ... */
+
+      /* determine image window surrounding "active" pixels, i.e. those
+         set to one */
+      gan_image_get_active_subwindow_b ( pImage, GAN_WORD_ALIGNMENT,
+                                         &SubWindow );
+\end{verbatim}
+The {\tt Gan\_ImageWindow} result structure was described in
+Section~\ref{formats-types-sec}. The second argument defines how
+precisely to determine the horizontal limits of the bounding box.
+The coarsest method is to find the limits to the nearest word, as in the
+above example. More precise but slower alignment is possible using
+either {\tt GAN\_BYTE\_ALIGNMENT} or {\tt GAN\_BIT\_ALIGNMENT}.
+
+To compute the number of active bits in a binary image use
+\begin{verbatim}
+      int iCount;
+
+      iCount = gan_image_get_pixel_count_b ( pImage, GAN_TRUE, NULL );
+\end{verbatim}
+The second argument is {\tt GAN\_TRUE} to count the ones or {\tt GAN\_FALSE}
+to count the zeroes. The last argument is an optional pointer to a
+sub-window of the image in which to apply the count.
+
+There are functions to return a boolean value indicating whether a local
+group of pixels are all set to one. These routines are
+\begin{verbatim}
+      /* check whether the group of four pixels at positions (100,100),
+         (100,101), (101,100), (101,101) are all set to one */
+      if ( gan_image_pix_get_pix_4group ( pImage, 100, 100 ) )
+         printf ( "group of four found\n" );
+
+      /* check whether the group of four pixels at positions (99,100),
+         (100,99), (100,100), (100,101) and (101,100) are all set to one */
+      if ( gan_image_pix_get_pix_5group ( pImage, 100, 100 ) )
+         printf ( "group of five found\n" );
+
+      /* check whether the group of three pixels at positions (100,99),
+         (100,100), (100,101) are all set to one */
+      if ( gan_image_pix_get_pix_3group_horiz ( pImage, 100, 100 ) )
+         printf ( "group of three horizontally found\n" );
+
+      /* check whether the group of three pixels at positions (99,100),
+         (100,100), (101,100) are all set to one */
+      if ( gan_image_pix_get_pix_3group_vert ( pImage, 100, 100 ) )
+         printf ( "group of three vertically found\n" );
+\end{verbatim}
+
+There is a set of functions to apply a boolean operation to every pixel
+in one image or a pair of images. Firstly there is are routines to invert
+a boolean image:
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2, *pImage3;
+
+      /* ... create and fill image 1 as a boolean image, create image 2 ... */
+
+      gan_image_bit_invert_q ( pImage1, pImage2 ); /* invert image 1 into image 2, OR */
+      pImage3 = gan_image_bit_invert_s ( pImage1 ); /* invert image 1 as a new image, OR */
+      gan_image_bit_invert_i ( pImage1 ); /* replace image 1 with its inverse */
+\end{verbatim}
+Then there are routines to apply the operations AND, OR, exclusive-OR (EOR) and
+not-AND (NAND) to a pair of binary images, which must have the same dimensions.
+Illustrating the AND operation first, we have the options
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 & 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_and_q ( pImage1, pImage2, pImage3 ); /* AND(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_and_s ( pImage1, pImage2 ); /* AND(1,2) as a new image, OR */
+      gan_image_bit_and_i ( pImage1, pImage2 ); /* replace image 1 with AND(1,2) */
+\end{verbatim}
+The other operations follow similar lines. Firstly the OR operation:
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 & 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_or_q ( pImage1, pImage2, pImage3 ); /* OR(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_or_s ( pImage1, pImage2 ); /* OR(1,2) as a new image, OR */
+      gan_image_bit_or_i ( pImage1, pImage2 ); /* replace image 1 with OR(1,2) */
+\end{verbatim}
+Now the exclusive-OR operation:
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 & 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_eor_q ( pImage1, pImage2, pImage3 ); /* EOR(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_eor_s ( pImage1, pImage2 ); /* EOR(1,2) as a new image, OR */
+      gan_image_bit_eor_i ( pImage1, pImage2 ); /* replace image 1 with EOR(1,2) */
+\end{verbatim}
+Finally the not-AND operation:
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2, *pImage3, *pImage4;
+
+      /* ... create and fill images 1 & 2 as boolean images, create image 3 ... */
+
+      gan_image_bit_nand_q ( pImage1, pImage2, pImage3 ); /* NAND(1,2) into image 3, OR */
+      pImage4 = gan_image_bit_nand_s ( pImage1, pImage2 ); /* NAND(1,2) as a new image, OR */
+      gan_image_bit_nand_i ( pImage1, pImage2 ); /* replace image 1 with NAND(1,2) */
+\end{verbatim}
+
+A few more miscellaneous routines are available for binary images.
+To fill part of a row with either zero or one use the routine
+\begin{verbatim}
+      /* fill section of row 13 of image with ones (true) starting at
+         horizontal position 20 and filling 30 pixels */
+      gan_image_bit_fill_row ( pImage, 13, 20, 30, GAN_TRUE );
+\end{verbatim}
+To invert part of a row of a binary image use
+\begin{verbatim}
+      /* invert section of row 13 starting at horizontal position 20 and
+         filling 30 pixels */
+      gan_image_bit_invert_row ( pImage, 13, 20, 30 );
+\end{verbatim}
+Finally if you want to clear a binary image to zero except inside a
+specified rectangular region of the image, try this:
+\begin{verbatim}
+      /* clear binary image to zero except in 50(h)x30(w) pixel area starting
+         at position 20,60 (y,x) */
+      gan_image_mask_window_b ( pImage, 20, 60, 50, 30 );
+\end{verbatim}
+
+{\bf Error detection:} The standard binary image routines detect errors
+as described in Section~\ref{simple-image-sec}. The boolean operation
+routines ({\tt gan\_image\_bit\_invert\_q()} etc.) return a pointer to
+the result image, and return {\tt NULL} on an error. All the other binary
+image routines, with one exception, return a boolean value;
+thus {\tt GAN\_FALSE} is returned on error. The exception is
+{\tt gan\_image\_get\_pixel\_count\_b()}, which returns an integer
+value, which in case of error is returned as -1.
+The Gandalf error handler is invoked in all these cases.
+
+\section{Pointer images} \label{pointer-image-sec}
+\begin{verbatim}
+      #include <gandalf/image/image_pointer.h>
+\end{verbatim}
+Gandalf pointer images allow storage and manipulation of a 2D array of
+generic pointers, stored as {\tt void *} values. Pointer images have
+format {\tt GAN\_GREY\_LEVEL\_IMAGE} and type {\tt GAN\_POINTER}.
+All the standard functions given above. Note that when a pointer image
+is freed, the pointer pixels are left ``hanging'', so they should
+if necessary be freed first before freeing the pointer image.
+This code fragment illustrates the use of pointer image functions.
+\begin{verbatim}
+      Gan_Image *pImage;
+      Gan_Vector4 *apv4Vector[5], *pv4Vector;
+      int iCount, iRow, iCol;
+
+      /* allocate 300x200 pointer image, and initialise all pointer "pixels"
+         to NULL */
+      pImage = gan_image_alloc_p ( 300, 200 );
+      gan_image_fill_zero(pImage);
+
+      /* allocate some pointers to 4-vectors */
+      for ( iCount = 5-1; iCount >= 0; iCount-- )
+         apv4Vector[iCount] = gan_malloc_object(Gan_Vector4);
+
+      /* set some pointer "pixels" */
+      gan_image_set_pix_p ( pImage, 271,  39, apv4Vector[0] );
+      gan_image_set_pix_p ( pImage,  30, 120, apv4Vector[1] );
+      gan_image_set_pix_p ( pImage,  78,  49, apv4Vector[2] );
+      gan_image_set_pix_p ( pImage, 147, 120, apv4Vector[3] );
+      gan_image_set_pix_p ( pImage, 232, 130, apv4Vector[4] );
+
+      /* now free allocated vectors by searching for non-NULL values in the
+         image */
+      for ( iRow = (int)pImage->height-1; iRow >= 0; iRow-- )
+         for ( iCol = (int)pImage->width-1; iCol >= 0; iCol-- )
+            if ( (pv4Vector = gan_image_get_pix_p ( pImage, iRow, iCol )) != NULL )
+               free(pv4Vector);
+
+      /* free image */
+      gan_image_free ( pImage );
+\end{verbatim}
+
+\section{Copying/converting the whole or part of an image}
+\begin{verbatim}
+      #include <gandalf/image/image_defs.h>
+\end{verbatim}
+To copy a whole image of any format or type, use one of the following
+routines:
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2, *pImage3; /* declare images 1, 2 & 3 */
+
+      /* ... create images 1 & 2, fill image 1 ... */
+      gan_image_copy_q ( pImage1, pImage2 ); /* copy image 1 to image 2, OR */
+      pImage3 = gan_image_copy_s ( pImage1 ); /* copy image 1 as new image */
+\end{verbatim}
+Image 2 here may have been created with any format, type or dimensions.
+Gandalf will reset the attributes of image 2 to those of image 1 before
+copying the image data. These routines make copies of the image data,
+so image 1 may be destroyed after it is copied.
+
+To copy parts of an image, you will need to include the header file
+\begin{verbatim}
+      #include <gandalf/image/image_extract.h>
+\end{verbatim}
+The routines to extract sub-parts of an image are
+{\tt gan\_image\_extract\_q()} and {\tt gan\_image\_extract\_s()}.
+They have the following extra features over a simple routine to
+copy image sub-regions:
+\begin{enumerate}
+  \item You can convert the image sub-region to any desired format and type,
+        avoiding the need to perform the two steps of extracting and
+        converting sequentially, and thus saving computation and memory.
+  \item There is an option to make the resulting sub-image point into the
+        source image, rather than copy the pixel data from it.
+        This saves computation time, and the sub-image produced can be
+        manipulated in the same way as other Gandalf images.
+        Obviously use of this feature precludes use of feature 1.
+\end{enumerate}
+Here are a couple of examples using the sub-region extraction routines.
+Firstly a code fragment showing showing the simplest form, where the
+region is copied from the source image and the format/type remain the same.
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2; /* declare images 1 & 2 */
+      Gan_RGBPixel_uc rgbucPixel;
+
+      /* create RGB unsigned character image 1 and fill with constant */
+      pImage1 = gan_image_alloc_rgb_uc ( 200, 100 );
+      rgbucPixel.R = 128; rgbucPixel.R = 80; rgbucPixel.R = 200;
+      gan_image_fill_const_rgb_uc ( pImage1, &rgbucPixel );
+
+      /* create image 2 in an arbitrary way */
+      pImage2 = gan_image_alloc_gl_uc(0,0);
+
+      /* extract sub-region in image 1 into image 2, with height 60, width 50,
+         starting as position 30,40 (y,x), leaving the format/type the same.
+         The pixel data is copied */
+      gan_image_extract_q ( pImage1, 30, 40, 60, 50,
+                            pImage1->format, pImage1->type, GAN_TRUE,
+                            pImage2 );
+\end{verbatim}
+Now an example continuing from the above, and showing how to make the result
+image point into the source image.
+\begin{verbatim}
+      /* extract sub-region in image 1 into image 2, with height 60, width 50,
+         starting as position 30,40 (y,x), leaving the format/type the same.
+         Here the pixel data is not copied; instead the result image points
+         into the source image */
+      gan_image_extract_q ( pImage1, 30, 40, 60, 50,
+                            pImage1->format, pImage1->type, GAN_FALSE,
+                            pImage2 );
+\end{verbatim}
+Finally an example showing how to convert the sub-region to a different
+format and type.
+\begin{verbatim}
+      {
+         Gan_Image *pImage3; /* declare image 3 */
+
+         /* extract sub-region in image 1 into image 2, with height 60, width 50,
+            starting as position 30,40 (y,x), converting the format to grey-level
+            and the type to unsigned short. Here the format and type are modified
+*           as the pixels are extracted from the source image */
+         pImage3 = gan_image_extract_s ( pImage1, 30, 40, 60, 50,
+                                         GAN_GREY_LEVEL_IMAGE, GAN_USHORT,
+                                         GAN_TRUE );
+      }
+\end{verbatim}
+
+There are also routines to convert the whole of an image to a different
+format or type (or both). These are simpler macro versions of
+{\tt gan\_image\_extract\_[qs]()}, and can be illustrated as follows:
+\begin{verbatim}
+      Gan_Image *pImage1, *pImage2, *pImage3; /* declare images 1, 2 & 3 */
+
+      /* ... create RGB unsigned character image 1 and fill with constant,
+             and create image 2 in an arbitrary way ... */
+
+      /* convert image 1 to grey-level format and unsigned short type */
+      gan_image_convert_q ( pImage1, GAN_GREY_LEVEL_IMAGE, GAN_USHORT,
+                            pImage2 ); /* convert image 1 to image 2, OR */
+      pImage3 = gan_image_convert_s ( pImage1, GAN_GREY_LEVEL_IMAGE, GAN_USHORT );
+\end{verbatim}
+
+{\bf Error detection:} These routines return the result image pointer,
+and return {\tt NULL} on error.
+
+\subsection{Accessing channels of an image}
+\begin{verbatim}
+      #include <gandalf/image/image_channel.h>
+\end{verbatim}
+Gandalf stores images with the channels combined for each pixel.
+If you wish to extract a channel of an image as a separate image, Gandalf
+provides the following function:
+\begin{verbatim}
+      Gan_Image *pRGBImage; /* declare RGB image */
+      Gan_Image *pRedChannel; /* declare image storing red channel */
+
+      /* ... create and fill RGB image, create red channel image ... */
+
+      /* extract red channel from image */
+      gan_image_extract_channel_q ( pRGBImage, GAN_RED_CHANNEL,
+                                    0, 0, pRGBImage->height, pRGBImage->width,
+                                    pRedChannel );
+\end{verbatim}
+The second argument specifies which channel is to be extracted.
+The different options are described by the following enumerated type.
+\begin{verbatim}
+      /**
+       * \brief Image channel types for extracting individual channels.
+       */
+      typedef enum
+      {
+         /// for grey-level/alpha images
+         GAN_INTENSITY_CHANNEL,
+
+         ///for RGB and RGB/alpha images
+         GAN_RED_CHANNEL, GAN_GREEN_CHANNEL, GAN_BLUE_CHANNEL,
+
+         /// for grey-level/alpha and RGB/alpha images
+         GAN_ALPHA_CHANNEL,
+
+         /// for 2D and 3D vector field images
+         GAN_X_CHANNEL,
+
+         /// likewise
+         GAN_Y_CHANNEL,
+
+         /// for 3D vector field images
+         GAN_Z_CHANNEL,
+
+         /// all channels
+         GAN_ALL_CHANNELS
+      } Gan_ImageChannelType;
+\end{verbatim}
+The offset (3,4) and dimension (5,6) arguments allow a sub-region to
+be extracted rather than the whole image, and work in the same way
+as with {\tt gan\_image\_extract\_q()}. There is also a version which
+extracts the channel as a new image:
+\begin{verbatim}
+      pRedChannel = gan_image_extract_channel_s ( pRGBImage, GAN_RED_CHANNEL,
+                                                  0, 0,
+                                                  pRGBImage->height, pRGBImage->width );
+\end{verbatim}
+
+There are also functions for filling a channel of an RGB image with
+a constant value. For instance
+\begin{verbatim}
+      Gan_Pixel Pixel;
+
+      /* ... fill pRGBImage as an RGB unsigned character image ...*/
+
+      /* fill green channel of pRGBImage with constant value */
+      Pixel.format = GAN_GREY_LEVEL_IMAGE;
+      Pixel.type = GAN_UCHAR;
+      Pixel.data.gl.uc = 128;
+      gan_image_fill_channel_const ( pRGBImage, GAN_GREEN_CHANNEL, &Pixel );
+\end{verbatim}
+sets the all the green pixel components to the value 128. Note that
+the format of the pixel is set to grey-level, so defining a single channel
+pixel. To set the channel to zero there is the macro
+\begin{verbatim}
+      gan_image_fill_channel_zero ( pRGBImage, GAN_GREEN_CHANNEL );
+\end{verbatim}
+instead.
+
+{\bf Error detection:} The {\tt gan\_image\_extract\_channel\_[qs]()}
+return a pointer to the result image, returning {\tt NULL} and invoking
+the Gandalf error handler on error. {\tt gan\_image\_fill\_channel\_const()}
+and\\ {\tt gan\_image\_fill\_channel\_zero()} return a boolean value, so
+{\tt GAN\_FALSE} is returned on error.
+
+\section{Displaying images}
+\begin{verbatim}
+      #include <gandalf/image/image_display.h>
+\end{verbatim}
+Gandalf uses OpenGL to display images. It assumes that as well as the
+standard OpenGL libraries, the GL user toolkit (GLUT) is also installed.
+Because GLUT is event-driven, program control needs to be passed to the
+GLUT event handler by calling {\tt glutMainLoop()} after creating the
+initial windows you want. Remember that creating a window using the
+{\tt gan\_display\_new\_window()} function (see below) will not make it
+appear immediately. The window creation event needs to be processed by GLUT.
+This needs to be borne in mind when reading the description of the functions
+below. The simplest example using the functions is in
+{\tt gandalf/image/bitmap\_test.c}.
+
+Once an OpenGL window has been set up and a Gandalf image {\tt pImage}
+created, calls to
+\begin{verbatim}
+      glRasterPos2i ( 0, 0 );
+      gan_image_display ( pImage );
+\end{verbatim}
+will display the image using the OpenGL function {\tt glDrawPixels}.
+This involves a fair amount of OpenGL calls to set the display windows up.
+To simply create an OpenGL window and display a Gandalf image in it,
+Gandalf provides functions to make this easy for you. You can use the code
+\begin{verbatim}
+      Gan_Image *pImage;
+      int iWindowID;
+
+      /* create OpenGL window to display image/graphics with coordinates
+         in the range (0-200) vertically and (0-300) horizontally, using a
+         zoom factor of 2 so that the size on the screen will be 400x600.
+         The window is placed at offset 100,100 from the corner of the screen.
+       */
+      gan_display_new_window ( 200, 300, 2.0, "Graphics", 100, 100,
+                               &iWindowID );
+
+      /* ... create and fill image pImage ... */
+
+      /* display image with top-left pixel at position (0,0) */
+      gan_image_display ( pImage );
+\end{verbatim}
+The image is drawn so that if its dimensions match those passed as the first
+two arguments to\\ {\tt gan\_display\_new\_window()}, the displayed image will
+completely fill the window. If you want the image displayed at a position
+offset from the top-left corner of the window you will need
+an appropriate call to {\tt glRasterPos2i()}, such as
+\begin{verbatim}
+      /* set position in OpenGL window as top-left position in image drawn
+       * subsequently by gan_image_display() */
+      glRasterPos2i ( 30, 40 );
+\end{verbatim}
+The window is available for the standard
+OpenGL graphics functions. The name of the window ("Graphics" in the above
+example) is shown in the bar at the top of the graphics window.
+If the graphics window changes, the window
+identifier {\tt iWindowID} can be used to switch back to the created
+window using
+\begin{verbatim}
+      glutSetWindow ( iWindowID );
+\end{verbatim}
+To create several identically sized graphics windows, use this routine:
+\begin{verbatim}
+      int iWindowID, *aiWindowID;
+
+      /* create an OpenGL window containing 2 rows and 3 columns of
+         sub-windows, each containing a 300x200 graphics window, each of
+         which contains a (0-900) by (0-600) coordinate frame shrunk to
+         300x200 using a zoom factor of 1/3 */
+      gan_display_new_window_array ( 2, 3, 900, 600, 1.0/3.0, "Graphics",
+                                     100, 100, &iWindowID, &aiWindowID );
+\end{verbatim}
+The sub-windows are created using the function {\tt glutCreateSubWindow()}.
+In this case there is both a window identifier for the main display window
+and an array of window identifiers for the sub-windows, stored in the
+array in raster-scan order.
+
+Gandalf also provides a routine that creates a window and displays the
+image all in one, determining the graphics window size from a zoom factor
+passed in:
+\begin{verbatim}
+      /* create display window and display image zoomed to double its size */
+      gan_image_display_new_window ( pImage, 2.0, "Graphics", 100, 100, &iWindowID );
+\end{verbatim}
+This is useful for debugging purposes as the easiest way to display an image.
+
+The {\tt gan\_display\_new\_window()} function stores the windows
+created in a list, so that the images displayed in the windows can be
+automatically refreshed. When you have finished with the graphics windows
+created by {\tt gan\_display\_new\_window()}, remove them using
+the function
+\begin{verbatim}
+      gan_image_display_free_windows();
+\end{verbatim}
+Note that this free function only applies to windows created by
+{\tt gan\_display\_new\_window()}. Graphics windows created using
+the other functions in this section are refreshed using standard
+OpenGL routines ({\tt glutDisplayFunc()} etc.).
+
+{\bf Error detection:} All the routines except
+{\tt gan\_image\_display\_free\_windows()} return a boolean result,
+which is {\tt GAN\_FALSE} if an error occurs, invoking the Gandalf
+error handler.
+
+\section{Image pyramids}
+\begin{verbatim}
+      #include <gandalf/image/image_pyramid.h>
+\end{verbatim}
+A quite common construction in image processing is a ``pyramid'' of
+images, a multi-resolution representation of an image. We think in fact
+of an {\em inverted} pyramid, with the top level of the pyramid representing
+the image at the original resolution, and lower levels representing the
+image at lower resolutions (the inversion of the pyramid is to avoid
+changing the sense of ``high'' and ``low'' between describing the
+``resolution'' and the ``level''). The pyramid is constructed as an
+array of structures, one for each resolution level. The structure is
+defined as
+\begin{verbatim}
+      /* structure to hold image and mask at a single pyramid level */
+      typedef struct Gan_ImagePyramid
+      {
+         Gan_Image *img; /* image represented at a single resolution level */
+         Gan_Image *mask; /* mask at this level defining which pixels are set */
+      } Gan_ImagePyramid;
+\end{verbatim}
+Intrinsic to the pyramid is the notion of a ``mask'' of pixels, a binary
+image defining which pixels are available in the image. The convention is
+that available pixels are marked in the mask as ones. Gandalf currently
+supports pyramids produced in the simplest way, by averaging four adjacent
+pixels to convert the image from a higher resolution image to a lower
+resolution image. An example code fragment to create an image pyramid is
+\begin{verbatim}
+      Gan_Image *pImage, *pMask; /* declare image and mask */
+      Gan_ImagePyramid *aPyramid;
+
+      /* ... create and fill pImage and pMask ... */
+
+      /* build image with four resolution levels */
+      gan_image_pyramid_build ( pImage, pMask, 4, &aPyramid );
+\end{verbatim}
+The image and mask pointer at the original (highest) resolution levels can
+be accessed as {\tt aPyramid[0].img} and {\tt aPyramid[0].mask} respectively.
+There are four levels here so the lowest resolution image and mask are
+{\tt aPyramid[3].img} and {\tt aPyramid[3].mask}. The mask can be passed
+into {\tt gan\_image\_pyramid\_build()} as {\tt NULL}, indicating that
+all the pixels in the image are available. In this case the masks at all
+resolution levels will be set to {\tt NULL}.
+
+To free the pyramid, use
+\begin{verbatim}
+      gan_image_pyramid_free ( aPyramid, 4, GAN_FALSE );
+\end{verbatim}
+The second argument here is the number of resolution levels of the pyramid.
+The last argument determines whether the image/mask at the top level of
+the pyramid are to freed. Here {\tt GAN\_FALSE} is passed, so the original
+image {\tt pImage} and mask {\tt pMask} will not be freed and are available
+for further processing.
+
+Note that when transferring pixels to a lower resolution, a pixel is
+computed and a mask bit at the lower resolution only if all four corresponding
+pixels in the higher resolution image are set.
+
+{\bf Error detection:} {\tt gan\_image\_pyramid\_build()} returns a boolean
+value, which is {\tt GAN\_FALSE} on error, the Gandalf error handler being
+invoked.
+
+\section{Inverting an image}
+\begin{verbatim}
+      #include <gandalf/image_invert.h>
+\end{verbatim}
+Image inversion in Gandalf use {\tt gan\_image\_invert\_[qsi]}.
+The simplest call is
+\begin{verbatim}
+      Gan_Image *pImage, *pInvImage; /* declare image and inverted image */
+
+      /* ... create and fill pImage ... */
+
+      /* invert image the simple way */
+      pInvImage = gan_image_invert_s ( pImage );
+\end{verbatim}
+or else invert using a pre-allocated result image:
+\begin{verbatim}
+      /* ... create and fill pImage, allocate pInvImage ... */
+
+      /* invert image the simple way */
+      gan_image_invert_q ( pImage, pInvImage );
+\end{verbatim}
+and finally the in-place version:
+\begin{verbatim}
+      /* ... create and fill pImage ... */
+
+      /* invert image in-place */
+      gan_image_invert_i ( pImage );
+\end{verbatim}
+
+\section{Image sequence I/O}
+\begin{verbatim}
+      #include <gandalf/image/io/movie.h>
+\end{verbatim}
+Gandalf has a module for reading and writing image sequences.
+These are accessed one image at a time. The {\tt Gan\_MovieStruct}
+structure defines an image sequence.
+A movie structure is created using the {\tt gan\_movie\_new()} function.
+An example call is
+\begin{verbatim}
+      Gan_MovieStruct *pMovie;
+
+      pMovie = gan_movie_new ( "/tmp", "movie.", 3, ".png", 1, 20,
+                               GAN_PNG_FORMAT );
+\end{verbatim}
+The arguments to the function define the image sequence attributes,
+in the following order:
+\begin{enumerate}
+  \item The directory in which to find the images;
+  \item the base name of the image file names;
+  \item the number of digits in the number part of the image file name;
+  \item the suffix of each image, usually related to the image file format;
+  \item the number of the first image in the sequence;
+  \item the image file format;
+\end{enumerate}
+The above example defines a sequence of PNG format image files
+\begin{verbatim}
+      /tmp/movie.001.png
+      /tmp/movie.002.png
+              .
+              .
+              .
+      /tmp/movie.020.png
+\end{verbatim}
+
+Other parameters of a movie structure have defaults which can be set using
+functions before the movie images are accessed. These functions are
+\begin{verbatim}
+      gan_movie_set_step ( pMovie, 2 );
+\end{verbatim}
+to set the step in numbers between images. The default is one, and the above
+call would set the frame numbers to 1, 3, 5 etc.
+\begin{verbatim}
+      gan_movie_set_crop_window ( pMovie, 5, 10, 8, 12 );
+\end{verbatim}
+sets the values of any crop parameters, i.e. the widths of areas at the edge
+of each image which should be ignored by image processing operations.
+The widths are give for the left, right, top and bottom edges respectively.
+
+The movie structure is used both for reading and writing images in a
+sequence. The number of digits indicates the amount of zero-padding of
+the file number. A value of zero indicates that no padding is done.
+To read a single image from the sequence, use the function
+{\tt gan\_movie\_image\_read()}, for example
+\begin{verbatim}
+      Gan_Image *pImage;
+
+      pImage = gan_movie_image_read ( pMovie, 8, NULL );
+\end{verbatim}
+The second argument indicates which image in the sequence is to be read,
+from 0 to 19 in this case. The value 8 indicates the file
+{\tt /tmp/movie.009.png}. This reads the image file into a new image.
+If {\tt pImage} is already created, you can use
+\begin{verbatim}
+      gan_movie_image_read ( pMovie, 8, pImage );
+\end{verbatim}
+
+To write an image in a sequence use
+\begin{verbatim}
+      gan_movie_image_write ( pMovie, 10, pImage );
+\end{verbatim}
+This will write the file {\tt /tmp/movie.011.png}.
+
+Sometimes it is desirable to build the full name of a movie image file,
+for instance when generating error messages to say that a given file
+cannot be read or written. To write an image file name into a string,
+use the function
+\begin{verbatim}
+      char acString[300];
+
+      gan_movie_image_name ( pMovie, 0, acString, 300 );
+\end{verbatim}
+This writes the name of the first image of the sequence into the provided
+string, up to the 300 character total size of the {\tt acString} array.
+For the movie created in the above example this will fill the string
+{\tt acString} with the value {\tt "/tmp/movie.001.png"}. The second
+argument is the number of the image in the sequence, so passing 5 would
+give the string {\tt "/tmp/movie.006.png"}.
+
+Finally, to free a movie structure use
+\begin{verbatim}
+      gan_movie_free ( pMovie );
+\end{verbatim}
+
+{\tt Error detection:} {\tt gan\_movie\_new()} returns a pointer to the
+allocated movie structure, and {\tt NULL} is returned in case of error.
+{\tt gan\_movie\_image\_read()} and {\tt gan\_movie\_image\_name()} also return
+{\tt NULL} on error.\\ {\tt gan\_movie\_image\_write()} returns a boolean
+value, so {\tt GAN\_FALSE} is returned on error. In all cases the Gandalf
+error handler is invoked.
+
+

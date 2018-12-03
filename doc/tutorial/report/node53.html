@@ -1,0 +1,334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fixed size matrix decompositions</TITLE>
+<META NAME="description" CONTENT="Fixed size matrix decompositions">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node54.html">
+<LINK REL="previous" HREF="node52.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node54.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1017"
+  HREF="node54.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1013"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1007"
+  HREF="node52.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1015"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1018"
+  HREF="node54.html">Fixed size matrix file</A>
+<B> Up:</B> <A NAME="tex2html1014"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1008"
+  HREF="node52.html">Determinant, trace, norms of</A>
+ &nbsp; <B>  <A NAME="tex2html1016"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION004121200000000000000"></A> <A NAME="fixed-decomp-sec"></A>
+<BR>
+Fixed size matrix decompositions
+</H3>
+Gandalf supports several of the standard matrix decompositions. Cholesky
+factorisation applies to any positive definite symmetric matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$">, producing
+the lower triangular matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img44.png"
+ ALT="$L$"> so that
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+S = L L^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="63" HEIGHT="24" BORDER="0"
+ SRC="img45.png"
+ ALT="\begin{displaymath}S = L L^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+It can be computed for <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> symmetric matrices using the routines
+<PRE>
+      Gan_SquMatrix33 sm33S, sm33L;
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_cholesky_q ( &amp;sm33S, &amp;sm33L ); /* L = chol(S) */
+      sm33L = gan_symmat33_cholesky_s ( &amp;sm33S ); /* L = chol(S) */
+</PRE>
+There is also a routine for computing the Cholesky factorisation in-place
+in the input matrix, converting an input symmetric matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> into a lower
+triangular matrix:
+<PRE>
+      Gan_SquMatrix33 sm33A;
+
+      /* ... set up sm33A as symmetric using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_cholesky_i ( &amp;sm33A ); /* A = chol(A) */
+</PRE>
+The routines <TT>gan_symmat33_cholesky_[qi]()</TT> return <TT>NULL</TT> and
+invoke the Gandalf error handler
+<BR><TT>gan_err_register()</TT> if the matrix
+is not positive definite (<TT>gan_symmat33_cholesky_s()</TT> aborts the
+program on error, so don't use it unless you're SURE your matrix is OK!).
+If you don't want to invoke the error package when factorisation is attempted
+on a non-positive-definite matrix, there is a set of routines which allows
+to instead to return the error condition as part of the result.
+For instance the code fragment
+<PRE>
+      Gan_SquMatrix33 sm33S, sm33L;
+      int error_code;
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q() ... */
+      if ( gan_symmat33_choleksy ( &amp;sm33S, &amp;sm33L, &amp;error_code ) == NULL )
+      {
+         /* error found, act on it ... */
+      }
+
+      /* no error found */
+</PRE>
+attempts to factorise matrix <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$">, and if an error is found, returns NULL,
+with the error condition returned in the <TT>error_code</TT> variable.
+For non-positive-definite matrices the error condition is
+<TT>GAN_ERROR_NOT_POSITIVE_DEFINITE</TT>.
+
+<P>
+Other factorisations are available in Gandalf. Singular value decomposition
+(SVD) can be used to decompose almost any matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> into factors as
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+A = UWV^{\top}
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="85" HEIGHT="24" BORDER="0"
+ SRC="img46.png"
+ ALT="\begin{displaymath}A = UWV^{\top}
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img47.png"
+ ALT="$U$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img48.png"
+ ALT="$V$"> are orthogonal matrices and <IMG
+ WIDTH="21" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img49.png"
+ ALT="$W$"> is diagonal.
+Currently Gandalf supports SVD for <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> and <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$4\times 4$"> matrices.
+To use the functions for <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices, include the header file
+<PRE>
+      #include &lt;gandalf/linalg/3x3matrix_svd.h&gt;
+</PRE>
+There are routines for SVD of a matrix or its transpose, as follows
+<PRE>
+      Gan_Matrix33 m33A, m33U, m33VT;
+      Gan_Vector3 v3W;
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_svd ( &amp;m33A, &amp;m33U, &amp;v3W, &amp;m33VT ); /* A = U*W*V^T, OR */
+      gan_mat33T_svd ( &amp;m33A, &amp;m33U, &amp;v3W, &amp;m33VT ); /* A^T = U*W*V^T */
+</PRE>
+These routines return a <TT>Gan_Bool</TT> result, which is <TT>GAN_TRUE</TT>
+on success and <TT>GAN_FALSE</TT> on failure.
+
+<P>
+There are also a number of routines for computing the eigenvalues and
+eigenvectors of fixed size matrices. For <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices only there
+is a routine to compute the eigenvectors and complex eigenvalues of
+a <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrix. To use the routine include the header file
+<PRE>
+      #include &lt;gandalf/linalg/3x3matrix_eigen.h&gt;
+</PRE>
+The matrix <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$A$"> has ``left'' and ``right'' eigenvectors associated with the
+same eigenvalues <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img50.png"
+ ALT="$\lambda_i$">, so that the equation
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+A {\bf v}_i = \lambda_i {\bf v}_i
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="76" HEIGHT="26" BORDER="0"
+ SRC="img51.png"
+ ALT="\begin{displaymath}A {\bf v}_i = \lambda_i {\bf v}_i
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+defines the right eigenvectors, and
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+{\bf u}_i^H A = \lambda_i {\bf u}_i^H
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="92" HEIGHT="28" BORDER="0"
+ SRC="img52.png"
+ ALT="\begin{displaymath}{\bf u}_i^H A = \lambda_i {\bf u}_i^H
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+defines the left eigenvectors, where <IMG
+ WIDTH="26" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img53.png"
+ ALT="${\bf u}_i^H$"> denotes the conjugate
+transpose of vector <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img54.png"
+ ALT="${\bf u}_i$">.
+The computed eigenvectors are normalized to have Euclidean norm   
+equal to one and largest component real. The Gandalf routine that implements
+this is built on the equivalent CLAPACK routine <TT>dgeev()</TT>:
+<PRE>
+      Gan_Matrix33 m33A; /* matrix to be decomposed */
+      Gan_Matrix33 m33UL, m33VR; /* left and right eigenvectors */
+      Gan_Vector3 v3lr, v3li; /* real and imaginary parts of eigenvalues */
+
+      /* ... set up m33A using e.g. gan_mat33_fill_q() ... */
+      gan_mat33_eigen ( &amp;m33A, &amp;v3lr, &amp;v3li, &amp;m33UL, &amp;m33VR );
+</PRE>
+
+<P>
+The eigenvalues of symmetric matrices are guaranteed to be real.
+Routines are available for computing the eigenvalues and eigenvectors of
+<IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> and <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$4\times 4$"> symmetric matrices, based on either the
+CLAPACK routine <TT>dspev()</TT> or the CCMath routine <TT>eigval()</TT>.
+For <IMG
+ WIDTH="40" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$3\times 3$"> matrices the routine is declared in the header file
+<PRE>
+      #include &lt;gandalf/linalg/3x3matrix_eigsym.h&gt;
+</PRE>
+Here is an example using the routine
+<PRE>
+      Gan_SquMatrix33 sm33S; /* symmetric matrix to be decomposed */
+      Gan_Matrix33 m33Z; /* (right) eigenvectors of A */
+      Gan_Vector3 v3W; /* eigenvalues */
+
+      /* ... set up sm33S using e.g. gan_symmat33_fill_q() ... */
+      gan_symmat33_eigen ( &amp;sm33S, &amp;v3W, &amp;m33Z );
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1017"
+  HREF="node54.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1013"
+  HREF="node41.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1007"
+  HREF="node52.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1015"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1018"
+  HREF="node54.html">Fixed size matrix file</A>
+<B> Up:</B> <A NAME="tex2html1014"
+  HREF="node41.html">Fixed size matrices</A>
+<B> Previous:</B> <A NAME="tex2html1008"
+  HREF="node52.html">Determinant, trace, norms of</A>
+ &nbsp; <B>  <A NAME="tex2html1016"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

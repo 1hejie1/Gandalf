@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Fast Hough Transform</TITLE>
+<META NAME="description" CONTENT="Fast Hough Transform">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="previous" HREF="node130.html">
+<LINK REL="up" HREF="node101.html">
+<LINK REL="next" HREF="node135.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html2097"
+  HREF="node135.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2093"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2089"
+  HREF="node133.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2095"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2098"
+  HREF="node135.html">The Fast Hough Transform</A>
+<B> Up:</B> <A NAME="tex2html2094"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html2090"
+  HREF="node133.html">Levenberg-Marquardt software</A>
+ &nbsp; <B>  <A NAME="tex2html2096"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION006110000000000000000">
+Fast Hough Transform</A>
+</H1>
+<PRE>
+      #include &lt;gandalf/vision/fast_hough_transform.h&gt;
+</PRE>
+A Hough transform is a mapping from an <EM>observation space</EM> into a
+<EM>parameter space</EM>. In computer vision, observation space could be a
+digital image, an edge map etc. Now assume that
+a certain structure is thought to be present in image space. For an edge
+map, this could be a straight line or a circle. The parameters of the
+structure define parameter space (gradient and intercept for a line, radius
+and centre coordinates for a circle). In a Hough transform, each point
+in image space ``votes'' for that part of parameter space which describes
+structures which include the point. For instance, to find circles in an
+edge map, edges vote for the region in parameter space (in fact a conical
+surface) which describes circles that pass through them. A part of parameter
+space receiving a large number of votes corresponds to a possible fit.
+
+<P>
+In the normal Hough transform approach, parameter space is bounded by
+setting lower and upper limits on the parameter values, and then divided
+into blocks in each direction, and an accumulator assigned
+to each block. The Hough transform proceeds with each point in image space
+being transformed to an region in parameter space as described in the
+previous paragraph. When the region intersects one of the blocks,
+the corresponding accumulator is incremented. The block whose
+accumulator has the most
+votes can then be taken as the best fit of the structure to the image
+points, the values of the parameters usually being calculated at the
+centre of the block.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html2099"
+  HREF="node135.html">The Fast Hough Transform (FHT)</A>
+<UL>
+<LI><A NAME="tex2html2100"
+  HREF="node136.html">Notation</A>
+<LI><A NAME="tex2html2101"
+  HREF="node137.html">The FHT Algorithm</A>
+<LI><A NAME="tex2html2102"
+  HREF="node138.html">Example: Line Fitting</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html2103"
+  HREF="node139.html">Example: Plane Fitting</A>
+<UL>
+<LI><A NAME="tex2html2104"
+  HREF="node140.html">Calculating the Intersection of a Plane and a Sphere</A>
+<LI><A NAME="tex2html2105"
+  HREF="node141.html">Calculating the Plane Parameters of a Child Cube</A>
+<LI><A NAME="tex2html2106"
+  HREF="node142.html">Formal Statement of the FHT Plane Fitting Algorithm</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html2107"
+  HREF="node143.html">Speed Improvement to FHT Line Finder</A>
+<UL>
+<LI><A NAME="tex2html2108"
+  HREF="node144.html">Formal Statement of Algorithm</A>
+<LI><A NAME="tex2html2109"
+  HREF="node145.html">Comparision of Speed and Memory Requirement with Standard FHT</A>
+<LI><A NAME="tex2html2110"
+  HREF="node146.html">Complexity Comparison of FHT and MFHT</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html2097"
+  HREF="node135.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html2093"
+  HREF="node101.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html2089"
+  HREF="node133.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html2095"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html2098"
+  HREF="node135.html">The Fast Hough Transform</A>
+<B> Up:</B> <A NAME="tex2html2094"
+  HREF="node101.html">The Vision Package</A>
+<B> Previous:</B> <A NAME="tex2html2090"
+  HREF="node133.html">Levenberg-Marquardt software</A>
+ &nbsp; <B>  <A NAME="tex2html2096"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>

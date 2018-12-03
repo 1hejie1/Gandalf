@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The Vision Package</TITLE>
+<META NAME="description" CONTENT="The Vision Package">
+<META NAME="keywords" CONTENT="report">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="report.css">
+
+<LINK REL="next" HREF="node147.html">
+<LINK REL="previous" HREF="node84.html">
+<LINK REL="up" HREF="report.html">
+<LINK REL="next" HREF="node102.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1646"
+  HREF="node102.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1642"
+  HREF="report.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1636"
+  HREF="node100.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1644"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1647"
+  HREF="node102.html">Cameras</A>
+<B> Up:</B> <A NAME="tex2html1643"
+  HREF="report.html">Gandalf: The Fast Computer</A>
+<B> Previous:</B> <A NAME="tex2html1637"
+  HREF="node100.html">Image sequence I/O</A>
+ &nbsp; <B>  <A NAME="tex2html1645"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00600000000000000000"></A> <A NAME="vision-chapter"></A>
+<BR>
+The Vision Package
+</H1>
+The <B>vision</B> package includes some higher level image manipulation
+routines.
+To be able to use any routine or structure in the vision package
+use the declaration
+<PRE>
+      #include &lt;gandalf/vision.h&gt;
+</PRE>
+but including individual module header files instead will speed up program
+compilation.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1648"
+  HREF="node102.html">Cameras</A>
+<UL>
+<LI><A NAME="tex2html1649"
+  HREF="node103.html">Building cameras</A>
+<LI><A NAME="tex2html1650"
+  HREF="node104.html">Projecting points and lines</A>
+<LI><A NAME="tex2html1651"
+  HREF="node105.html">Adding/removing camera distortion</A>
+<LI><A NAME="tex2html1652"
+  HREF="node106.html">Building the camera calibration matrix</A>
+<LI><A NAME="tex2html1653"
+  HREF="node107.html">Converting cameras between precisions</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html1654"
+  HREF="node108.html">Computing the fundamental/essential matrix</A>
+<LI><A NAME="tex2html1655"
+  HREF="node109.html">Computing a homography between 2D scene and image</A>
+<UL>
+<LI><A NAME="tex2html1656"
+  HREF="node110.html">Computing a 2D homography from an array of feature matches</A>
+<LI><A NAME="tex2html1657"
+  HREF="node111.html">Computing a 2D affine homography</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html1658"
+  HREF="node112.html">Computing a homography between 3D scene and image</A>
+<LI><A NAME="tex2html1659"
+  HREF="node113.html">Smoothing an image using a 1D convolution mask</A>
+<LI><A NAME="tex2html1660"
+  HREF="node114.html">Smoothing an image using a 2D convolution mask </A>
+<LI><A NAME="tex2html1661"
+  HREF="node115.html">Feature detection</A>
+<UL>
+<LI><A NAME="tex2html1662"
+  HREF="node116.html">Image feature coordinate frames</A>
+<LI><A NAME="tex2html1663"
+  HREF="node117.html">Edge detection</A>
+<LI><A NAME="tex2html1664"
+  HREF="node118.html">Displaying an edge map</A>
+<LI><A NAME="tex2html1665"
+  HREF="node119.html">The Canny edge detector</A>
+<LI><A NAME="tex2html1666"
+  HREF="node120.html">Corner detection</A>
+<LI><A NAME="tex2html1667"
+  HREF="node121.html">Displaying a corner map</A>
+<LI><A NAME="tex2html1668"
+  HREF="node122.html">The Harris corner detector</A>
+<LI><A NAME="tex2html1669"
+  HREF="node123.html">Line segment detection</A>
+<LI><A NAME="tex2html1670"
+  HREF="node124.html">Displaying a line map</A>
+<LI><A NAME="tex2html1671"
+  HREF="node125.html">The Gandalf line detector</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html1672"
+  HREF="node126.html">Representing 3D rotations</A>
+<UL>
+<LI><A NAME="tex2html1673"
+  HREF="node127.html">Quaternion routines</A>
+<LI><A NAME="tex2html1674"
+  HREF="node128.html">General rotation routines</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html1675"
+  HREF="node129.html">Representing 3D Euclidean transformations</A>
+<LI><A NAME="tex2html1676"
+  HREF="node130.html">Levenberg-Marquardt minimisation</A>
+<UL>
+<LI><A NAME="tex2html1677"
+  HREF="node131.html">Robust observations</A>
+<LI><A NAME="tex2html1678"
+  HREF="node132.html">Generalised observations</A>
+<LI><A NAME="tex2html1679"
+  HREF="node133.html">Levenberg-Marquardt software</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html1680"
+  HREF="node134.html">Fast Hough Transform</A>
+<UL>
+<LI><A NAME="tex2html1681"
+  HREF="node135.html">The Fast Hough Transform (FHT)</A>
+<UL>
+<LI><A NAME="tex2html1682"
+  HREF="node136.html">Notation</A>
+<LI><A NAME="tex2html1683"
+  HREF="node137.html">The FHT Algorithm</A>
+<LI><A NAME="tex2html1684"
+  HREF="node138.html">Example: Line Fitting</A>
+</UL>
+<LI><A NAME="tex2html1685"
+  HREF="node139.html">Example: Plane Fitting</A>
+<UL>
+<LI><A NAME="tex2html1686"
+  HREF="node140.html">Calculating the Intersection of a Plane and a Sphere</A>
+<LI><A NAME="tex2html1687"
+  HREF="node141.html">Calculating the Plane Parameters of a Child Cube</A>
+<LI><A NAME="tex2html1688"
+  HREF="node142.html">Formal Statement of the FHT Plane Fitting Algorithm</A>
+</UL>
+<LI><A NAME="tex2html1689"
+  HREF="node143.html">Speed Improvement to FHT Line Finder</A>
+<UL>
+<LI><A NAME="tex2html1690"
+  HREF="node144.html">Formal Statement of Algorithm</A>
+<LI><A NAME="tex2html1691"
+  HREF="node145.html">Comparision of Speed and Memory Requirement with Standard FHT</A>
+<LI><A NAME="tex2html1692"
+  HREF="node146.html">Complexity Comparison of FHT and MFHT</A>
+</UL></UL></UL>
+<!--End of Table of Child-Links-->
+<BR><HR>
+<ADDRESS>
+Philip McLauchlan
+2009-01-27
+</ADDRESS>
+</BODY>
+</HTML>
